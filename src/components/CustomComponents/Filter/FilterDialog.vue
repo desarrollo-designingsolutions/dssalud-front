@@ -153,7 +153,7 @@ const loadSelectsInfinites = () => {
   // Llena selectsInfinites basado en los dialog.inputs filtrados
   searchSelectsInfinites.forEach(async (element) => {
     selectsInfinites[element.key] = []; // Configuración inicial de selectsInfinites
-
+    element.paramsFilter = element.paramsFilter ? JSON.parse(element.paramsFilter) : 0
     // Crear las variables reactivas utilizando ref
     variablesDinamicas[element.key + "_arrayInfo"] = ref<Array<object>>([]);
     variablesDinamicas[element.key + "_countLinks"] = ref<number>(1);

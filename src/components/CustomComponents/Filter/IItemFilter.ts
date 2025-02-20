@@ -1,5 +1,6 @@
 interface IItemFilter {
   key?: null | string
+  key_select?: null | string
   input: null | string
   search_key: null | string
   title: string

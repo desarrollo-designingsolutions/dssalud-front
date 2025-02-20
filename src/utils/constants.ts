@@ -5,7 +5,6 @@ export const BASE_BACK_STORAGE = `${import.meta.env.VITE_API_BASE_BACK}/storage/
 export const ROLE_SUPERADMIN_UUID = "21626ff9-4940-4143-879a-0f75b46eadb7";
 
 
-// src/enums/StatusRipsEnum.js
 
 export const StatusRipsEnum = {
   INCOMPLETE: 'INCOMPLETE',
@@ -21,4 +20,9 @@ export const StatusRipsEnum = {
   VALIDATED: 'VALIDATED',
   ERROR_NIT: 'NIT ERROR',
   ERROR_XML: 'XML ERROR',
+};
+
+export const TypeFilingEnum = {
+  RADICATION_OLD: 'RADICATION_OLD',
+  RADICATION_2275: 'RADICATION_2275',
 };

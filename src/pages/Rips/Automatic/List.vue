@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import ModalErrors from "@/pages/Rips/Automatic/Components/ModalErrors.vue";
 import ModalUploadFileZip from "@/pages/Rips/Automatic/Components/ModalUploadFileZip.vue";
+
 import { useAuthenticationStore } from "@/stores/useAuthenticationStore";
 
 definePage({

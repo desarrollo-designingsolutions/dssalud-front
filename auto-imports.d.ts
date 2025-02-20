@@ -13,6 +13,7 @@ declare global {
   const EffectScope: typeof import('vue')['EffectScope']
   const ROLE_SUPERADMIN_UUID: typeof import('./src/utils/constants')['ROLE_SUPERADMIN_UUID']
   const StatusRipsEnum: typeof import('./src/utils/constants')['StatusRipsEnum']
+  const TypeFilingEnum: typeof import('./src/utils/constants')['TypeFilingEnum']
   const VITE_API_BASE_BACK: typeof import('./src/utils/constants')['VITE_API_BASE_BACK']
   const acceptHMRUpdate: typeof import('pinia')['acceptHMRUpdate']
   const alphaDashValidator: typeof import('./src/@core/utils/validators')['alphaDashValidator']
@@ -239,6 +240,7 @@ declare global {
   const useFavicon: typeof import('@vueuse/core')['useFavicon']
   const useFetch: typeof import('@vueuse/core')['useFetch']
   const useFileDialog: typeof import('@vueuse/core')['useFileDialog']
+  const useFileDrop: typeof import('./src/composables/useFileDrop')['useFileDrop']
   const useFileSystemAccess: typeof import('@vueuse/core')['useFileSystemAccess']
   const useFileUpload: typeof import('./src/composables/useFileUpload')['useFileUpload']
   const useFloor: typeof import('@vueuse/math')['useFloor']
@@ -396,6 +398,7 @@ declare module 'vue' {
     readonly EffectScope: UnwrapRef<typeof import('vue')['EffectScope']>
     readonly ROLE_SUPERADMIN_UUID: UnwrapRef<typeof import('./src/utils/constants')['ROLE_SUPERADMIN_UUID']>
     readonly StatusRipsEnum: UnwrapRef<typeof import('./src/utils/constants')['StatusRipsEnum']>
+    readonly TypeFilingEnum: UnwrapRef<typeof import('./src/utils/constants')['TypeFilingEnum']>
     readonly acceptHMRUpdate: UnwrapRef<typeof import('pinia')['acceptHMRUpdate']>
     readonly alphaDashValidator: UnwrapRef<typeof import('./src/@core/utils/validators')['alphaDashValidator']>
     readonly alphaValidator: UnwrapRef<typeof import('./src/@core/utils/validators')['alphaValidator']>
@@ -616,6 +619,7 @@ declare module 'vue' {
     readonly useFavicon: UnwrapRef<typeof import('@vueuse/core')['useFavicon']>
     readonly useFetch: UnwrapRef<typeof import('@vueuse/core')['useFetch']>
     readonly useFileDialog: UnwrapRef<typeof import('@vueuse/core')['useFileDialog']>
+    readonly useFileDrop: UnwrapRef<typeof import('./src/composables/useFileDrop')['useFileDrop']>
     readonly useFileSystemAccess: UnwrapRef<typeof import('@vueuse/core')['useFileSystemAccess']>
     readonly useFileUpload: UnwrapRef<typeof import('./src/composables/useFileUpload')['useFileUpload']>
     readonly useFloor: UnwrapRef<typeof import('@vueuse/math')['useFloor']>

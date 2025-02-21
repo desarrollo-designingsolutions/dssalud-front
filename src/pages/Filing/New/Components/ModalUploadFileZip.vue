@@ -21,6 +21,8 @@ const handleDialogVisible = () => {
 const openModal = async () => {
   handleDialogVisible();
 
+  resetValues()
+
 };
 
 const submitForm = async () => {
@@ -68,7 +70,7 @@ defineExpose({
 const refModalQuestion = ref()
 
 //dropZoneRef
-const { dropZoneRef, fileData, open, error } = useFileDrop(1, ['zip']);
+const { dropZoneRef, fileData, open, error, resetValues } = useFileDrop(1, ['zip']);
 
 // Manejar errores
 watch(error, (newError) => {
@@ -78,7 +80,7 @@ watch(error, (newError) => {
     refModalQuestion.value.componentData.btnSuccessText = 'Ok'
     refModalQuestion.value.componentData.title = newError
 
-    error.value = null
+
   }
 });
 
@@ -95,10 +97,16 @@ const echoChannel = (data: any) => {
   window.Echo.channel(`filing.${data.id}`)
     .listen('.FilingFinishProcessJob', (event: any) => {
 
+      console.log("event", event);
+
+
       setTimeout(() => {
         refLoading.value.stopLoading()
       }, 1000);
 
+      if (event.status == "ERROR_ZIP") {
+        openModalErrors(event)
+      }
       if (event.status == "ERROR_TXT") {
         openModalErrors(event)
       }
@@ -128,10 +136,17 @@ const deleteFiling = async () => {
 //ModalContract
 const refModalContract = ref()
 const openModalContract = () => {
-  refModalContract.value.openModal(filingData.value.id)
-  handleDialogVisible();
+  if (!error.value) {
+    refModalContract.value.openModal(filingData.value.id)
+    handleDialogVisible();
+  }
+}
 
-} 
+// Modificar el click handler del drop zone
+const openFileDialog = () => {
+  error.value = null; // Limpiar errores antes de abrir
+  open();
+};
 </script>
 
 <template>
@@ -151,7 +166,7 @@ const openModalContract = () => {
         <VCardText>
           <div class="flex">
             <div class="w-full h-auto relative">
-              <div ref="dropZoneRef" class="cursor-pointer" @click="() => open()">
+              <div ref="dropZoneRef" class="cursor-pointer" @click="openFileDialog">
                 <div v-if="fileData.length === 0"
                   class="d-flex flex-column justify-center align-center gap-y-3 px-6 py-10 border-dashed drop-zone">
                   <IconBtn variant="tonal" class="rounded-sm">

@@ -30,6 +30,11 @@ defineExpose({
 })
 
 const errorMessages = ref([]);
+const validationZip = ref<{
+  infoValidationZip: boolean
+}>({
+  infoValidationZip: false
+});
 const validationTxt = ref<{
   totalSuccessfulInvoices: number
 }>({
@@ -42,16 +47,17 @@ const init = async () => {
   const { data, response } = await useApi(`/filing/showErrorsValidation`).post({
     id: objData.value.id,
   })
-  loading.getData = false
   if (response.value?.ok && data.value) {
     errorMessages.value = data.value.errorMessages
-    validationTxt.value = data.value.validationTxt
+
+    data.value.validationTxt ? validationTxt.value = data.value.validationTxt : null
+    data.value.validationZip ? validationZip.value = data.value.validationZip : null
   }
+
+  loading.getData = false
+
 }
 
-onMounted(async () => {
-
-})
 
 // headers
 const inputsTableFilter = [
@@ -142,10 +148,12 @@ const openModalQuestion = () => {
             Cancelar
           </VBtn>
 
-          <VBtn v-if="validationTxt.totalSuccessfulInvoices > 0" :disabled="loading.getData" :loading="loading.getData"
-            @click="openModalQuestion()" color="primary">
-            Continuar
-          </VBtn>
+          <template v-if="!validationZip.infoValidationZip">
+            <VBtn v-if="validationTxt.totalSuccessfulInvoices > 0" :disabled="loading.getData"
+              :loading="loading.getData" @click="openModalQuestion()" color="primary">
+              Continuar
+            </VBtn>
+          </template>
         </VCardText>
       </VCard>
     </VDialog>

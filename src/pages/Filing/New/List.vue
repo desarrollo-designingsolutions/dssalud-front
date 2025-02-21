@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import CountAllDataInvoices from "@/pages/Filing/New/Components/CountAllDataInvoices.vue";
+import { router } from "@/plugins/1.router";
 import { useAuthenticationStore } from "@/stores/useAuthenticationStore";
 
 definePage({
@@ -13,10 +14,6 @@ definePage({
 });
 
 const authenticationStore = useAuthenticationStore();
-
-const goView = (data: { action: string, id: number | null } = { action: "create", id: null }) => {
-  // router.push({ name: "Client-Form", params: { action: data.action, id: data.id } })
-}
 
 //TABLE
 const tableFull = ref()
@@ -99,6 +96,12 @@ const finishFilling = () => {
 
 }
 
+
+//Visualizar usuarios
+const goViewUsers = (item: any) => {
+  router.push({ name: "Filing-New-ListUsers", params: { id: route.params.id, invoice_id: item.id } })
+
+}
 </script>
 
 <template>
@@ -133,7 +136,7 @@ const finishFilling = () => {
       </VCardTitle>
 
       <VCardText class=" mt-2">
-        <TableFull ref="tableFull" :optionsTable="optionsTable" :optionsFilter="optionsFilter" @goView="goView"
+        <TableFull ref="tableFull" :optionsTable="optionsTable" :optionsFilter="optionsFilter"
           @dataFilter="returnFilter">
 
           <template #item.actions="{ item }">
@@ -145,7 +148,7 @@ const finishFilling = () => {
 
                     <VListItem @click="() => { }">Subir soportes</VListItem>
                     <VListItem @click="() => { }">Subir XML</VListItem>
-                    <VListItem @click="() => { }">Ver usuarios</VListItem>
+                    <VListItem @click="goViewUsers(item)">Ver usuarios</VListItem>
                     <VListItem @click="() => { }">Descargar XML</VListItem>
                     <VListItem @click="() => { }">Eliminar factura</VListItem>
                     <VListItem @click="() => { }">Ver inconsistencias</VListItem>

@@ -79,12 +79,22 @@ export function useFileDrop(maxAllowedFiles: number, allowedExtensions: string[]
     return fileExtension ? allowedExtensions.includes(fileExtension) : false;
   };
 
+  const resetValues = () => {
+    fileData.value = []
+    error.value = null
+
+    // Aseguramos que cualquier Blob URL previo sea limpiado
+    fileData.value.forEach(data => {
+      if (data.url) URL.revokeObjectURL(data.url);
+    });
+  }
   useDropZone(dropZoneRef, onDrop);
 
   return {
     dropZoneRef,
     fileData,
     open,
+    resetValues,
     error
   };
 }

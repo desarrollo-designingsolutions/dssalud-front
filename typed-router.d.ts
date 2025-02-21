@@ -31,6 +31,7 @@ declare module 'vue-router/auto-routes' {
     'filing-new-components-modal-errors': RouteRecordInfo<'filing-new-components-modal-errors', '/Filing/New/Components/ModalErrors', Record<never, never>, Record<never, never>>,
     'filing-new-components-modal-upload-file-zip': RouteRecordInfo<'filing-new-components-modal-upload-file-zip', '/Filing/New/Components/ModalUploadFileZip', Record<never, never>, Record<never, never>>,
     'Filing-New-List': RouteRecordInfo<'Filing-New-List', 'Filing/New/List/:id', Record<never, never>, Record<never, never>>,
+    'Filing-New-ListUsers': RouteRecordInfo<'Filing-New-ListUsers', 'Filing/New/ListUsers/:id/:invoice_id', Record<never, never>, Record<never, never>>,
     'Filing-New-Index': RouteRecordInfo<'Filing-New-Index', '/Filing/New/Index', Record<never, never>, Record<never, never>>,
     'Home': RouteRecordInfo<'Home', '/home', Record<never, never>, Record<never, never>>,
     'rips-automatic-components-modal-errors': RouteRecordInfo<'rips-automatic-components-modal-errors', '/Rips/Automatic/Components/ModalErrors', Record<never, never>, Record<never, never>>,

@@ -1,5 +1,5 @@
 import { ref } from 'vue';
-export function useFileDrop(maxAllowedFiles: number, allowedExtensions: string[]) {
+export function useFileDrop(maxAllowedFiles: number, allowedExtensions: string[] = []) {
   const dropZoneRef = ref<HTMLDivElement>();
   const fileData = ref<FileData[]>([]);
   const { open, onChange } = useFileDialog({});
@@ -75,9 +75,14 @@ export function useFileDrop(maxAllowedFiles: number, allowedExtensions: string[]
   };
 
   const validateFileExtension = (file: File): boolean => {
+    if (allowedExtensions.length === 0) {
+      return true; // Permite cualquier archivo si allowedExtensions está vacío
+    }
+
     const fileExtension = file.name.split('.').pop()?.toLowerCase();
     return fileExtension ? allowedExtensions.includes(fileExtension) : false;
   };
+
 
   const resetValues = () => {
     fileData.value = []

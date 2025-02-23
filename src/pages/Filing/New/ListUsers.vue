@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import CountAllDataInvoices from "@/pages/Filing/New/Components/CountAllDataInvoices.vue";
+import { useRoute } from 'vue-router';
+
 definePage({
   path: "Filing/New/ListUsers/:id/:invoice_id",
   name: "Filing-New-ListUsers",
@@ -9,13 +12,10 @@ definePage({
   },
 });
 
-import { onMounted, ref } from 'vue';
 
-// ID de la factura (ajústalo para que sea dinámico si usas parámetros de ruta)
 const route = useRoute();
 const invoiceId = ref(route.params.invoice_id);
 
-// Estado reactivo
 const users = ref([]);
 const loading = ref(false);
 const pagination = ref({
@@ -26,29 +26,40 @@ const pagination = ref({
   from: 0,
   to: 0,
 });
+const options = ref({
+  page: 1,
+  itemsPerPage: 10,
+  sortBy: [],
+  sortDesc: [],
+});
 
-// Encabezados de la tabla
-const headers = ref([
-  { title: 'Documento', key: 'numDocumentoIdentificacion', align: 'start', sortable: true },
-  { title: 'Tipo Usuario', key: 'tipoUsuario', align: 'center', sortable: true },
-  { title: 'Sexo', key: 'codSexo', align: 'center', sortable: true },
+const inputsTableFilter = ref([
+  { key: "actions", title: "Acciones", type: "actions", sortable: false, width: "100", fixed: true },
+  { key: "consecutivo", title: "Consecutivo", sortable: true, width: "10" },
+  { key: "tipoDocumentoIdentificacion", title: "Tipo de Documento", sortable: true, width: "350" },
+  { key: "numDocumentoIdentificacion", title: "No Documento", sortable: true, width: "200" },
+  { key: "tipoUsuario", title: "Tipo de Usuario", sortable: true, width: "350" },
+  { key: "fechaNacimiento", title: "Fecha de Nacimiento", sortable: true, width: "200" },
+  { key: "codSexo", title: "Sexo", sortable: true, width: "200" },
+  { key: "codPaisResidencia", title: "Pais Residencia", sortable: true, width: "350" },
+  { key: "codMunicipioResidencia", title: "Municipio Residencia", sortable: true, width: "350" },
+  { key: "codZonaTerritorialResidencia", title: "Zona Territorial Residencia", sortable: true, width: "350" },
+  { key: "incapacidad", title: "Incapacidad", sortable: true, width: "200" },
+  { key: "codPaisOrigen", title: "Pais Origen", sortable: true, width: "350" },
 ]);
 
-// Función para obtener los usuarios
-const fetchUsers = async (options = {}) => {
+const fetchUsers = async (opts = {}) => {
   loading.value = true;
-
-  // Extraer opciones de paginación y ordenamiento
-  const { page, itemsPerPage, sortBy, sortDesc } = options;
+  const { page, itemsPerPage, sortBy, sortDesc } = opts;
 
   try {
     const { data, response } = await useApi<any>(
       createUrl(`/filing-invoices/${invoiceId.value}/users`, {
         query: {
-          page: page || pagination.value.current_page,
-          per_page: itemsPerPage || pagination.value.per_page,
-          sortBy: sortBy?.[0] || '', // Primer campo de ordenamiento
-          sortDesc: sortDesc?.[0] || false, // Dirección del primer ordenamiento
+          page: page || options.value.page,
+          per_page: itemsPerPage || options.value.itemsPerPage,
+          sortBy: sortBy?.length ? sortBy[0] : '',
+          sortDesc: sortDesc?.length ? sortDesc[0] : false,
         },
       })
     );
@@ -56,6 +67,8 @@ const fetchUsers = async (options = {}) => {
     if (response.value?.ok && data.value) {
       users.value = data.value.data;
       pagination.value = data.value.pagination;
+      options.value.page = pagination.value.current_page;
+      options.value.itemsPerPage = pagination.value.per_page;
     }
   } catch (error) {
     console.error('Error al obtener usuarios:', error);
@@ -64,23 +77,114 @@ const fetchUsers = async (options = {}) => {
   }
 };
 
-// Cargar datos iniciales
 onMounted(() => {
-  fetchUsers({ page: 1, itemsPerPage: 10 });
+  fetchUsers(options.value);
 });
 </script>
 
 <template>
   <div>
-    <v-data-table :headers="headers" :items="users" :server-items-length="pagination.total"
-      :items-per-page="pagination.per_page" :page="pagination.current_page" :loading="loading" class="elevation-1"
-      @update:options="fetchUsers">
-      <!-- Mensaje cuando no hay datos -->
-      <template v-slot:no-data>
-        <v-alert :value="true" color="warning" icon="mdi-alert">
-          No hay usuarios disponibles
-        </v-alert>
-      </template>
-    </v-data-table>
+    <CountAllDataInvoices :filing_id="route.params.id" />
+
+
+    <VCard class="mt-5">
+      <VCardTitle class="d-flex justify-space-between">
+        <span>
+          Lista de usuarios
+        </span>
+
+        <div class="d-flex justify-end gap-3 flex-wrap ">
+          <VBtn icon>
+            <VIcon icon="tabler-arrow-narrow-left" />
+            <VTooltip location="top" transition="scale-transition" activator="parent" text="Regresar">
+            </VTooltip>
+          </VBtn>
+
+          <!-- Cuadro estilizado -->
+          <div class="info-box">
+            <div class="info-row">
+              <span class="info-title">Número de factura:</span>
+              <span class="info-value">FE</span>
+            </div>
+            <div class="info-row">
+              <span class="info-title">Cant. usuarios:</span>
+              <span class="info-value">1</span>
+            </div>
+          </div>
+        </div>
+
+      </VCardTitle>
+
+      <VCardText class="mt-5">
+        <VDataTable :headers="inputsTableFilter" :items="users" :server-items-length="pagination.total"
+          :items-per-page="pagination.per_page" :page="pagination.current_page" :loading="loading"
+          :options.sync="options" @update:options="fetchUsers">
+
+
+          <template #item.actions="{ item }">
+            <div>
+              <VBtn icon color="primary">
+                <VIcon icon="tabler-square-rounded-chevron-down"></VIcon>
+                <VMenu activator="parent">
+                  <VList>
+
+                    <VListItem @click="() => { }">Gestionar Servicios</VListItem>
+
+                  </VList>
+                </VMenu>
+              </VBtn>
+            </div>
+          </template>
+          <template #no-data>
+            <v-alert :value="true" color="warning" icon="mdi-alert">
+              No hay usuarios disponibles
+            </v-alert>
+          </template>
+        </VDataTable>
+      </VCardText>
+
+    </VCard>
   </div>
 </template>
+
+<style scoped>
+.info-box {
+  background-color: #f5f5f5;
+  /* Fondo gris claro */
+  border: 1px solid #e0e0e0;
+  /* Borde sutil */
+  border-radius: 8px;
+  /* Bordes redondeados */
+  padding: 10px;
+  /* Espacio interno */
+  min-width: 200px;
+  /* Ancho mínimo */
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  /* Título a la izquierda, valor a la derecha */
+  align-items: center;
+  padding: 5px 0;
+  /* Espacio vertical entre filas */
+  gap: 20px;
+  /* Separación adicional entre título y valor */
+}
+
+.info-title {
+  font-weight: bold;
+  /* Título en negrita */
+  color: #333;
+  /* Color del texto */
+  flex-shrink: 0;
+  /* Evita que el título se encoja demasiado */
+}
+
+.info-value {
+  color: #007bff;
+  /* Color del valor */
+  text-align: right;
+  /* Alinea el valor a la derecha */
+}
+</style>

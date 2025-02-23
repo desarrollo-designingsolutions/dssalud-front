@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import CountAllDataInvoices from "@/pages/Filing/New/Components/CountAllDataInvoices.vue";
+import ModalSupportFiles from "@/pages/Filing/New/Components/ModalSupportFiles.vue";
 import { router } from "@/plugins/1.router";
 import { useAuthenticationStore } from "@/stores/useAuthenticationStore";
+
 
 definePage({
   path: "Filing/New/List/:id",
@@ -80,8 +82,6 @@ const returnFilter = (filter: any) => {
   filterTable.value = filter
 }
 
-
-
 const loading = reactive({ excel: false })
 
 //ModalQuestion
@@ -93,15 +93,20 @@ const finishFilling = () => {
   refModalQuestion.value.componentData.principalIcon = 'tabler-circle-check'
   refModalQuestion.value.componentData.btnSuccessText = 'Aceptar'
   refModalQuestion.value.componentData.title = 'Radicación finalizada de manera exitosa'
-
 }
-
 
 //Visualizar usuarios
 const goViewUsers = (item: any) => {
   router.push({ name: "Filing-New-ListUsers", params: { id: route.params.id, invoice_id: item.id } })
 
 }
+
+//ModalSupportFiles
+const refModalSupportFiles = ref()
+
+const openModalSupportFiles = (item: any) => {
+  refModalSupportFiles.value.openModal(item.id)
+} 
 </script>
 
 <template>
@@ -146,7 +151,7 @@ const goViewUsers = (item: any) => {
                 <VMenu activator="parent">
                   <VList>
 
-                    <VListItem @click="() => { }">Subir soportes</VListItem>
+                    <VListItem @click="openModalSupportFiles(item)">Subir soportes</VListItem>
                     <VListItem @click="() => { }">Subir XML</VListItem>
                     <VListItem @click="goViewUsers(item)">Ver usuarios</VListItem>
                     <VListItem @click="() => { }">Descargar XML</VListItem>
@@ -175,6 +180,9 @@ const goViewUsers = (item: any) => {
     </VCard>
 
     <ModalQuestion ref="refModalQuestion" />
+
+    <ModalSupportFiles ref="refModalSupportFiles" />
+
 
   </div>
 </template>

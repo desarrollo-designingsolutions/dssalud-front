@@ -1,50 +1,40 @@
 <script setup lang="ts">
-import type { VForm } from 'vuetify/components/VForm';
-
 import { useAuthenticationStore } from "@/stores/useAuthenticationStore";
-const authenticationStore = useAuthenticationStore();
 
+const authenticationStore = useAuthenticationStore();
 const emits = defineEmits(["execute"]);
 
 const titleModal = ref<string>("Cargar soportes");
 const isDialogVisible = ref<boolean>(false);
 const disabledFiledsView = ref<boolean>(false);
 const isLoading = ref<boolean>(false);
-const formValidation = ref<VForm>();
 const uploadId = ref<string | null>(null);
-const progress = ref<number>(0); // Definir progreso general
+const progress = ref<number>(0);
 const countFilesRequest = ref<number>(0);
 
-
 const form = ref({
-  support_type_id: null as null | string,
-  filing_invoice_id: null as null | string,
-})
+  filing_id: '' as string,
+});
 
 const handleClearForm = () => {
   for (const key in form.value) {
-    form.value[key] = null
+    form.value[key] = null;
   }
-}
-
-
+};
 
 const handleDialogVisible = () => {
   isDialogVisible.value = !isDialogVisible.value;
 };
 
-const openModal = async (filing_invoice: any) => {
+const openModal = async (filing_id: string) => {
   handleClearForm();
   handleDialogVisible();
   resetValues();
-
-  form.value.filing_invoice_id = filing_invoice.id
-  titleModal.value = `Cargar soportes a la factura ${filing_invoice.invoice_number}`
+  form.value.filing_id = filing_id;
+  await loadValidData();
 };
 
 const submitForm = async () => {
-  const validation = await formValidation.value?.validate();
-  if (!validation?.valid) return;
 
   if (fileData.value.length === 0) {
     refModalQuestion.value.componentData.isDialogVisible = true;
@@ -54,30 +44,38 @@ const submitForm = async () => {
     return;
   }
 
-  isLoading.value = true; // Activar isLoading para mostrar la barra
-  progress.value = 0; // Reiniciar progreso
+  const errors = errorsFiles.value;
+  if (errors.length > 0) {
+    refModalQuestion.value.componentData.isDialogVisible = true;
+    refModalQuestion.value.componentData.showBtnCancel = false;
+    refModalQuestion.value.componentData.btnSuccessText = 'Ok';
+    refModalQuestion.value.componentData.title = 'Errores en los nombres de archivo:\n' + errors.map(e => e.message).join('\n');
+    return;
+  }
+
+  isLoading.value = true;
+  progress.value = 0;
 
   const formData = new FormData();
   fileData.value.forEach((fileItem) => {
     formData.append('files[]', fileItem.file);
     fileItem.status = 'uploading';
-    fileItem.progress = 0; // Aunque no lo usemos en la UI, lo mantenemos por consistencia
+    fileItem.progress = 0;
   });
-  formData.append('support_type_id', form.value.support_type_id.value);
-  formData.append('support_type_code', form.value.support_type_id.code);
+
   formData.append('company_id', authenticationStore.company.id);
-  formData.append('company_nit', authenticationStore.company.nit);
-  formData.append('fileable_type', "FilingInvoice");
-  formData.append('fileable_id', form.value.filing_invoice_id);
+  formData.append('fileable_type', "Filing");
+  formData.append('fileable_id', form.value.filing_id);
 
   try {
-    const { data, response } = await useApi('/file/massUpload').post(formData);
+    const { data, response } = await useApi('/filing/saveDataModalSupportMasiveFiles').post(formData);
     if (response.value?.ok && data.value) {
       uploadId.value = data.value.upload_id;
       countFilesRequest.value = fileData.value.length;
       listenToProgress(data.value.upload_id);
     }
   } catch (error) {
+    isLoading.value = false;
     console.error('Error al enviar archivos:', error);
     fileData.value.forEach((fileItem) => {
       fileItem.status = 'failed';
@@ -91,7 +89,7 @@ const submitForm = async () => {
 const listenToProgress = (uploadId: string) => {
   window.Echo.channel(`upload-progress.${uploadId}`)
     .listen('.file-progress', (event: any) => {
-      progress.value = event.progress; // Actualizar progreso general
+      progress.value = event.progress;
 
       const fileItem = fileData.value.find((item) => item.file.name === event.fileName);
       if (fileItem) {
@@ -103,7 +101,6 @@ const listenToProgress = (uploadId: string) => {
 
       if (progress.value === 100) {
         isLoading.value = false;
-
         refModalQuestion.value.componentData.isDialogVisible = true;
         refModalQuestion.value.componentData.showBtnCancel = false;
         refModalQuestion.value.componentData.btnSuccessText = 'Ok';
@@ -111,15 +108,11 @@ const listenToProgress = (uploadId: string) => {
 
         countFilesRequest.value = 0; // Reiniciar contador
         progress.value = 0; // Reiniciar progreso
-
       }
     });
 };
 
-defineExpose({
-  openModal,
-  disabledFiledsView,
-});
+defineExpose({ openModal, disabledFiledsView });
 
 const refModalQuestion = ref();
 const { dropZoneRef, fileData, open, error, resetValues } = useFileDrop(5);
@@ -138,15 +131,113 @@ const openFileDialog = () => {
   open();
 };
 
+// Lista de facturas y códigos de soporte válidos
+const validInvoiceNumbers = ref<string[]>([]);
+const validSupportCodes = ref<string[]>([]);
 
+const loadValidData = async () => {
+  try {
+    isLoading.value = true;
+    const { response, data } = await useApi(`/filing/${form.value.filing_id}/getDataModalSupportMasiveFiles`).get();
+    if (response.value?.ok && data.value) {
+      validSupportCodes.value = data.value.validSupportCodes;
+      validInvoiceNumbers.value = data.value.validInvoiceNumbers;
+    }
+    setTimeout(() => {
+      isLoading.value = false;
+    }, 3000);
+  } catch (err) {
+    isLoading.value = false;
+    console.error('Error cargando datos válidos:', err);
+  }
+};
+
+// Validación de nombres de archivo
+const errorsFiles = computed(() => {
+  const errors: { fileName: string; message: string }[] = [];
+  const companyNit = authenticationStore.company.nit;
+  const seenConsecutives = new Set<string>();
+
+  fileData.value.forEach((item) => {
+    const fileName = item.file.name;
+    const [nameWithoutExt, extension] = fileName.split('.');
+    const parts = nameWithoutExt.split('_');
+    const [nit, numFac, codeSupport, consecutive] = parts;
+
+    if (parts.length !== 4 || !extension) {
+      errors.push({
+        fileName,
+        message: 'Formato inválido. Debe ser NIT_NUMFAC_CODESUPPORT_CONSECUTIVE.EXT',
+      });
+      return;
+    }
+
+    if (nit !== companyNit) {
+      errors.push({
+        fileName,
+        message: `El NIT (${nit}) no coincide con el de la compañía (${companyNit})`,
+      });
+      return;
+    }
+
+    if (!validInvoiceNumbers.value.includes(numFac)) {
+      errors.push({
+        fileName,
+        message: `El número de factura (${numFac}) no es válido`,
+      });
+      return;
+    }
+
+    if (!validSupportCodes.value.includes(codeSupport)) {
+      errors.push({
+        fileName,
+        message: `El código de soporte (${codeSupport}) no es válido`,
+      });
+      return;
+    }
+
+    if (!/^\d+$/.test(consecutive)) {
+      errors.push({
+        fileName,
+        message: `El consecutivo (${consecutive}) debe ser un valor numérico`,
+      });
+      return;
+    }
+
+    const key = `${nit}_${numFac}_${codeSupport}_${consecutive}`;
+    if (seenConsecutives.has(key)) {
+      errors.push({
+        fileName,
+        message: `El consecutivo (${consecutive}) está duplicado para NIT_${numFac}_${codeSupport}`,
+      });
+    } else {
+      seenConsecutives.add(key);
+    }
+  });
+
+  return errors;
+});
+
+// Función para eliminar un archivo individual con error
+const removeFileWithError = (fileName: string) => {
+  const index = fileData.value.findIndex(item => item.file.name === fileName);
+  if (index !== -1) {
+    fileData.value.splice(index, 1);
+  }
+};
+
+// Función para eliminar todos los archivos con error
+const removeAllFilesWithErrors = () => {
+  const errorFileNames = errorsFiles.value.map(error => error.fileName);
+  fileData.value = fileData.value.filter(item => !errorFileNames.includes(item.file.name));
+};
 </script>
 
 <template>
   <div>
-
     <VDialog v-model="isDialogVisible" :overlay="false" max-width="90rem" transition="dialog-transition" persistent>
       <DialogCloseBtn @click="handleDialogVisible" />
-      <VCard :loading="isLoading" :disabled="isLoading" class="w-100">
+      <VCard :loading="isLoading" class="w-100" :disabled="isLoading">
         <div>
           <VToolbar color="primary">
             <VToolbarTitle>{{ titleModal }}</VToolbarTitle>
@@ -157,18 +248,32 @@ const openFileDialog = () => {
           <ProgressBar ref="refProgressBar" :progress="progress" />
         </VCardText>
 
-        <VCardText :disabled="isLoading">
-          <VForm ref="formValidation" @submit.prevent="() => { }">
-            <VRow>
-              <VCol cols="12" md="6">
-                <SelectInfiniteSupportType label="Tipos de soporte" v-model="form.support_type_id"
-                  :rules="[requiredValidator]" />
-              </VCol>
-            </VRow>
-          </VForm>
+        <!-- Sección de errores mejorada -->
+        <VCardText v-if="errorsFiles.length > 0" class="pa-4">
+          <VAlert type="error" title="Errores encontrados"
+            :text="`${errorsFiles.length} problema(s) detectado(s) en los nombres de los archivos:`" border="top"
+            class="mb-4">
+            <div class="d-flex justify-space-between align-center mb-2">
+              <span></span>
+              <VBtn color="error" variant="elevated" size="small" prepend-icon="mdi-delete" class="bg-white"
+                @click="removeAllFilesWithErrors">
+                Eliminar todos los errores
+              </VBtn>
+            </div>
+            <VList density="compact" class="mt-2">
+              <VListItem v-for="error in errorsFiles" :key="error.fileName" :title="error.fileName"
+                :subtitle="error.message" prepend-icon="mdi-alert-circle-outline" class="text-error">
+                <template #append>
+                  <VBtn variant="text" color="error" size="small" @click="removeFileWithError(error.fileName)">
+                    Eliminar
+                  </VBtn>
+                </template>
+              </VListItem>
+            </VList>
+          </VAlert>
         </VCardText>
 
-        <VCardText :disabled="isLoading">
+        <VCardText>
           <div class="flex">
             <div class="w-full h-auto relative">
               <div ref="dropZoneRef" class="cursor-pointer" @click="openFileDialog">
@@ -185,8 +290,6 @@ const openFileDialog = () => {
                 </div>
 
                 <div v-else class="d-flex justify-center align-center gap-3 pa-8 border-dashed drop-zone flex-wrap">
-
-
                   <VRow class="match-height w-100">
                     <template v-for="(item, index) in fileData" :key="index">
                       <VCol cols="12" sm="3">
@@ -226,7 +329,9 @@ const openFileDialog = () => {
 
         <VCardText class="d-flex justify-end gap-3 flex-wrap">
           <VBtn :loading="isLoading" color="secondary" variant="tonal" @click="handleDialogVisible()">Cancelar</VBtn>
-          <VBtn :disabled="isLoading" :loading="isLoading" @click="submitForm()" color="primary">Guardar</VBtn>
+          <VBtn :disabled="isLoading || errorsFiles.length > 0" :loading="isLoading" @click="submitForm()"
+            color="primary">
+            Guardar</VBtn>
         </VCardText>
       </VCard>
     </VDialog>

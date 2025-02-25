@@ -30,6 +30,7 @@ declare module 'vue-router/auto-routes' {
     'filing-new-components-modal-contract': RouteRecordInfo<'filing-new-components-modal-contract', '/Filing/New/Components/ModalContract', Record<never, never>, Record<never, never>>,
     'filing-new-components-modal-errors': RouteRecordInfo<'filing-new-components-modal-errors', '/Filing/New/Components/ModalErrors', Record<never, never>, Record<never, never>>,
     'filing-new-components-modal-support-files': RouteRecordInfo<'filing-new-components-modal-support-files', '/Filing/New/Components/ModalSupportFiles', Record<never, never>, Record<never, never>>,
+    'filing-new-components-modal-support-masive-files': RouteRecordInfo<'filing-new-components-modal-support-masive-files', '/Filing/New/Components/ModalSupportMasiveFiles', Record<never, never>, Record<never, never>>,
     'filing-new-components-modal-upload-file-zip': RouteRecordInfo<'filing-new-components-modal-upload-file-zip', '/Filing/New/Components/ModalUploadFileZip', Record<never, never>, Record<never, never>>,
     'Filing-New-List': RouteRecordInfo<'Filing-New-List', 'Filing/New/List/:id', Record<never, never>, Record<never, never>>,
     'Filing-New-ListUsers': RouteRecordInfo<'Filing-New-ListUsers', 'Filing/New/ListUsers/:id/:invoice_id', Record<never, never>, Record<never, never>>,

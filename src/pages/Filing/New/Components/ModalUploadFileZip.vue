@@ -22,6 +22,7 @@ const openModal = async () => {
   handleDialogVisible();
 
   resetValues()
+  progress.value = 0
 
 };
 
@@ -209,8 +210,8 @@ const openFileDialog = () => {
                           </VCardText>
                           <VSpacer />
                           <VCardActions>
-                            <VBtn variant="outlined" block @click.stop="fileData.splice(index, 1)">
-                              Eliminar archivo
+                            <VBtn variant="outlined" @click.stop="fileData.splice(index, 1)">
+                              <VIcon icon="tabler-trash" />
                             </VBtn>
                           </VCardActions>
                         </VCard>

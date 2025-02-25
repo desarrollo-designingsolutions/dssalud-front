@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import CountAllDataInvoices from "@/pages/Filing/New/Components/CountAllDataInvoices.vue";
 import ModalSupportFiles from "@/pages/Filing/New/Components/ModalSupportFiles.vue";
+import ModalSupportMasiveFiles from "@/pages/Filing/New/Components/ModalSupportMasiveFiles.vue";
 import { router } from "@/plugins/1.router";
 import { useAuthenticationStore } from "@/stores/useAuthenticationStore";
 
@@ -105,8 +106,39 @@ const goViewUsers = (item: any) => {
 const refModalSupportFiles = ref()
 
 const openModalSupportFiles = (item: any) => {
-  refModalSupportFiles.value.openModal(item.id)
-} 
+  refModalSupportFiles.value.openModal(item)
+}
+
+//ModalShowFiles
+const refModalShowFiles = ref()
+
+const openModalShowFiles = (item: any) => {
+  refModalShowFiles.value.openModal(item.id, "FilingInvoice")
+}
+
+
+const echoChannel = () => {
+
+  tableFull.value.optionsTable.tableData.forEach(element => {
+    window.Echo.channel(`filing_invoice.${element.id}`)
+      .listen('.FilingInvoiceRowUpdated', (event: any) => {
+
+        element.files_count = event.files_count
+
+      });
+  });
+}
+
+
+
+
+//ModalSupportMasiveFiles
+const refModalSupportMasiveFiles = ref()
+
+const openModalSupportMasiveFiles = () => {
+  refModalSupportMasiveFiles.value.openModal(route.params.id)
+}
+
 </script>
 
 <template>
@@ -130,7 +162,7 @@ const openModalSupportFiles = (item: any) => {
             Más opciones
             <VMenu activator="parent">
               <VList>
-                <VListItem @click="() => { }">Subir soportes masivo</VListItem>
+                <VListItem @click="openModalSupportMasiveFiles()">Subir soportes masivo</VListItem>
                 <VListItem @click="() => { }">Subir XML masivo</VListItem>
                 <VListItem @click="() => { }">Descargar certificacion de radicación</VListItem>
                 <VListItem @click="() => { }">Descargar CSV de radicación</VListItem>
@@ -142,16 +174,19 @@ const openModalSupportFiles = (item: any) => {
 
       <VCardText class=" mt-2">
         <TableFull ref="tableFull" :optionsTable="optionsTable" :optionsFilter="optionsFilter"
-          @dataFilter="returnFilter">
+          @dataFilter="returnFilter" @responseData="echoChannel">
 
           <template #item.actions="{ item }">
-            <div>
+            <div class="d-flex justify-end gap-3">
+              <ProgressCircularChannel :channel="'filing_invoice.' + item.id" tooltipText="Subiendo Soportes" />
+
               <VBtn icon color="primary">
                 <VIcon icon="tabler-square-rounded-chevron-down"></VIcon>
                 <VMenu activator="parent">
                   <VList>
 
                     <VListItem @click="openModalSupportFiles(item)">Subir soportes</VListItem>
+                    <VListItem v-if="item.files_count > 0" @click="openModalShowFiles(item)">Ver soportes</VListItem>
                     <VListItem @click="() => { }">Subir XML</VListItem>
                     <VListItem @click="goViewUsers(item)">Ver usuarios</VListItem>
                     <VListItem @click="() => { }">Descargar XML</VListItem>
@@ -161,6 +196,7 @@ const openModalSupportFiles = (item: any) => {
                   </VList>
                 </VMenu>
               </VBtn>
+
             </div>
           </template>
 
@@ -182,6 +218,8 @@ const openModalSupportFiles = (item: any) => {
     <ModalQuestion ref="refModalQuestion" />
 
     <ModalSupportFiles ref="refModalSupportFiles" />
+    <ModalShowFiles ref="refModalShowFiles" />
+    <ModalSupportMasiveFiles ref="refModalSupportMasiveFiles" />
 
 
   </div>

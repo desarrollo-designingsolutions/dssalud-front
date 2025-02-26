@@ -20,7 +20,7 @@ export function useFileDrop(
   function onDrop(DroppedFiles: File[] | null) {
     if (!DroppedFiles) return;
 
-    if (fileData.value.length >= maxAllowedFiles) {
+    if (maxAllowedFiles > 0 && fileData.value.length >= maxAllowedFiles) {
       error.value = `Se ha alcanzado el límite de ${maxAllowedFiles} archivo${maxAllowedFiles !== 1 ? 's' : ''}.`;
       return;
     }
@@ -52,7 +52,7 @@ export function useFileDrop(
   onChange(selectedFiles => {
     if (!selectedFiles) return;
 
-    if (fileData.value.length >= maxAllowedFiles) {
+    if (maxAllowedFiles > 0 && fileData.value.length >= maxAllowedFiles) {
       error.value = `Se ha alcanzado el límite de ${maxAllowedFiles} archivo${maxAllowedFiles !== 1 ? 's' : ''}.`;
       return;
     }
@@ -82,7 +82,7 @@ export function useFileDrop(
   });
 
   const verifyFileLimit = (fileCount: number): boolean => {
-    if (fileData.value.length + fileCount > maxAllowedFiles) {
+    if (maxAllowedFiles > 0 && fileData.value.length + fileCount > maxAllowedFiles) {
       error.value = `Solo puedes seleccionar hasta ${maxAllowedFiles - fileData.value.length} archivo${maxAllowedFiles - fileData.value.length !== 1 ? 's' : ''} más.`;
       return false;
     }

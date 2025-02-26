@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import ModalUploadFileJson from "@/pages/Filing/New/Components/ModalUploadFileJson.vue";
 import ModalUploadFileZip from "@/pages/Filing/New/Components/ModalUploadFileZip.vue";
 
 definePage({
@@ -16,6 +17,13 @@ const openModalUploadFileZip = () => {
   refModalUploadFileZip.value.openModal()
 }
 
+
+//ModalUploadFileJson
+const refModalUploadFileJson = ref()
+
+const openModalUploadFileJson = () => {
+  refModalUploadFileJson.value.openModal()
+}
 </script>
 
 <template>
@@ -30,11 +38,14 @@ const openModalUploadFileZip = () => {
 
       <VCardText class="d-flex justify-space-around">
         <VBtn size="x-large" @click="openModalUploadFileZip()">Radicación antigua</VBtn>
-        <VBtn size="x-large">Radicación 2275</VBtn>
+        <VBtn size="x-large" @click="openModalUploadFileJson()">Radicación 2275</VBtn>
       </VCardText>
     </VCard>
 
     <ModalUploadFileZip ref="refModalUploadFileZip" />
+
+    <ModalUploadFileJson ref="refModalUploadFileJson" />
+
 
   </div>
 </template>

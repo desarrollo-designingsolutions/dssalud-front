@@ -130,15 +130,14 @@ const echoChannel = () => {
   });
 }
 
-
-
-
 //ModalSupportMasiveFiles
 const refModalSupportMasiveFiles = ref()
 
 const openModalSupportMasiveFiles = () => {
   refModalSupportMasiveFiles.value.openModal(filing_id)
 }
+
+
 
 </script>
 

@@ -16,18 +16,19 @@ definePage({
   },
 });
 
+const route = useRoute()
 const authenticationStore = useAuthenticationStore();
+const filing_id = route.params.id;
 
 //TABLE
 const tableFull = ref()
-const route = useRoute()
 
 const optionsTable = {
   url: "/filing/list",
   params: {
     company_id: authenticationStore.company.id,
     type: TypeFilingEnum.RADICATION_OLD,
-    filing_id: route.params.id,
+    filing_id: filing_id,
   },
   headers: [
     { key: 'invoice_number', title: 'Número de factura' },
@@ -98,7 +99,7 @@ const finishFilling = () => {
 
 //Visualizar usuarios
 const goViewUsers = (item: any) => {
-  router.push({ name: "Filing-New-ListUsers", params: { id: route.params.id, invoice_id: item.id } })
+  router.push({ name: "Filing-New-ListUsers", params: { id: filing_id, invoice_id: item.id } })
 
 }
 
@@ -136,14 +137,14 @@ const echoChannel = () => {
 const refModalSupportMasiveFiles = ref()
 
 const openModalSupportMasiveFiles = () => {
-  refModalSupportMasiveFiles.value.openModal(route.params.id)
+  refModalSupportMasiveFiles.value.openModal(filing_id)
 }
 
 </script>
 
 <template>
   <div>
-    <CountAllDataInvoices :filing_id="route.params.id" />
+    <CountAllDataInvoices :filing_id="filing_id" />
 
     <VCard class="mt-5">
       <VCardTitle class="d-flex justify-space-between">
@@ -152,6 +153,8 @@ const openModalSupportMasiveFiles = () => {
         </span>
 
         <div class="d-flex justify-end gap-3 flex-wrap ">
+          <ProgressCircularChannel :channel="'filing.' + filing_id" tooltipText="Subiendo soportes masivos" />
+
           <VBtn :loading="loading.excel" :disabled="loading.excel" color="primary" @click="finishFilling">
             Finalizar radicación
           </VBtn>
@@ -178,7 +181,9 @@ const openModalSupportMasiveFiles = () => {
 
           <template #item.actions="{ item }">
             <div class="d-flex justify-end gap-3">
-              <ProgressCircularChannel :channel="'filing_invoice.' + item.id" tooltipText="Subiendo Soportes" />
+
+              <ProgressCircularChannel :channel="'filing_invoice.' + item.id"
+                tooltipText="Subiendo soportes a la factura" />
 
               <VBtn icon color="primary">
                 <VIcon icon="tabler-square-rounded-chevron-down"></VIcon>

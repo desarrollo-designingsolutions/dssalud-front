@@ -115,7 +115,7 @@ const listenToProgress = (uploadId: string) => {
 defineExpose({ openModal, disabledFiledsView });
 
 const refModalQuestion = ref();
-const { dropZoneRef, fileData, open, error, resetValues } = useFileDrop(5);
+const { dropZoneRef, fileData, open, error, resetValues } = useFileDrop(5, [], ['zip', 'rar']);
 
 watch(error, (newError) => {
   if (newError) {

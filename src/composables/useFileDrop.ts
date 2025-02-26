@@ -1,5 +1,10 @@
 import { ref } from 'vue';
-export function useFileDrop(maxAllowedFiles: number, allowedExtensions: string[] = []) {
+
+export function useFileDrop(
+  maxAllowedFiles: number,
+  allowedExtensions: string[] = [],
+  forbiddenExtensions: string[] = [] // Nueva variable para extensiones no permitidas
+) {
   const dropZoneRef = ref<HTMLDivElement>();
   const fileData = ref<FileData[]>([]);
   const { open, onChange } = useFileDialog({});
@@ -25,7 +30,12 @@ export function useFileDrop(maxAllowedFiles: number, allowedExtensions: string[]
     }
 
     DroppedFiles.forEach(file => {
-      if (!validateFileExtension(file)) {
+      const validationResult = validateFileExtension(file);
+      if (validationResult === 'forbidden') {
+        error.value = `No se permiten archivos con extensiones: ${forbiddenExtensions.join(', ')}.`;
+        return;
+      }
+      if (validationResult === 'not_allowed') {
         error.value = `Solo se permiten archivos con extensión ${allowedExtensions.join(', ')}.`;
         return;
       }
@@ -52,9 +62,14 @@ export function useFileDrop(maxAllowedFiles: number, allowedExtensions: string[]
     }
 
     for (const file of selectedFiles) {
-      if (!validateFileExtension(file)) {
+      const validationResult = validateFileExtension(file);
+      if (validationResult === 'forbidden') {
+        error.value = `No se permiten archivos con extensiones: ${forbiddenExtensions.join(', ')}.`;
+        continue;
+      }
+      if (validationResult === 'not_allowed') {
         error.value = `Solo se permiten archivos con extensión ${allowedExtensions.join(', ')}.`;
-        continue; // Pasamos al siguiente archivo sin añadir este
+        continue;
       }
 
       fileData.value.push({
@@ -74,25 +89,35 @@ export function useFileDrop(maxAllowedFiles: number, allowedExtensions: string[]
     return true;
   };
 
-  const validateFileExtension = (file: File): boolean => {
-    if (allowedExtensions.length === 0) {
-      return true; // Permite cualquier archivo si allowedExtensions está vacío
+  const validateFileExtension = (file: File): 'valid' | 'forbidden' | 'not_allowed' => {
+    const fileExtension = file.name.split('.').pop()?.toLowerCase();
+
+    // Si no hay extensión, verificamos según las reglas
+    if (!fileExtension) {
+      return allowedExtensions.length === 0 ? 'valid' : 'not_allowed';
     }
 
-    const fileExtension = file.name.split('.').pop()?.toLowerCase();
-    return fileExtension ? allowedExtensions.includes(fileExtension) : false;
+    // Primero verificamos las extensiones prohibidas
+    if (forbiddenExtensions.length > 0 && forbiddenExtensions.includes(fileExtension)) {
+      return 'forbidden';
+    }
+
+    // Luego verificamos las extensiones permitidas si existen
+    if (allowedExtensions.length > 0 && !allowedExtensions.includes(fileExtension)) {
+      return 'not_allowed';
+    }
+
+    return 'valid';
   };
 
-
   const resetValues = () => {
-    fileData.value = []
-    error.value = null
-
-    // Aseguramos que cualquier Blob URL previo sea limpiado
     fileData.value.forEach(data => {
       if (data.url) URL.revokeObjectURL(data.url);
     });
-  }
+    fileData.value = [];
+    error.value = null;
+  };
+
   useDropZone(dropZoneRef, onDrop);
 
   return {

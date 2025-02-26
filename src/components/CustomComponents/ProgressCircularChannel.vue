@@ -34,14 +34,17 @@ const echoChannel = () => {
     });
 }
 
+const sizeText = computed(() => useAttrs().sizeText as string | undefined)
+
+
 </script>
 <template>
   <div>
     <VTooltip location="top" v-if="progressValue > 0">
       <template #activator="{ props }">
-        <VProgressCircular :rotate="360" :size="40" :width="6" v-bind="{ ...props, ...$attrs }"
+        <VProgressCircular :rotate="360" :size="60" :width="4" v-bind="{ ...props, ...$attrs }"
           :model-value="progressValue">
-          {{ progressValue }}
+          {{ progressValue }}%
         </VProgressCircular>
       </template>
       <span>{{ props.tooltipText }}</span>

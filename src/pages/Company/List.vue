@@ -87,7 +87,7 @@ const selectCompany = (company: object) => {
         </div>
       </VCardTitle>
 
-      <VCardText class="px-0 mt-2">
+      <VCardText class="mt-2">
         <TableFull ref="tableFull" :optionsTable="optionsTable" :optionsFilter="optionsFilter" @goView="goView">
 
           <template #item.logo="{ item }">

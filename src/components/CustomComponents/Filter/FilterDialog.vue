@@ -27,8 +27,9 @@ const recurrentdata = (target: IOptionsFilter, source: IOptionsFilter) => {
       if (Array.isArray(element)) {
         target[key] = element.map(item => {
           // Copiamos objetos anidados de manera recursiva dentro del array
-          if (typeof item === 'object' && item !== null) {
+          if (typeof item === 'object' && item !== null && key != 'paramsFilter') {
             const newObj = {};
+
             recurrentdata(newObj, item);
             return newObj;
           }
@@ -37,6 +38,7 @@ const recurrentdata = (target: IOptionsFilter, source: IOptionsFilter) => {
       }
       // Si el elemento es un objeto, llamamos recursivamente a recurrentdata
       else if (typeof element === 'object' && element !== null) {
+
         recurrentdata(target[key], element);
       } else {
         target[key] = element; // Copiamos valores primitivos directamente
@@ -101,6 +103,7 @@ const arrayFilter = ref<
     multiple: boolean;
     custom_search: boolean;
     chips: boolean;
+    paramsFilter: Object;
   }>
 >([]);
 
@@ -136,6 +139,7 @@ const loadArrayFilter = () => {
       multiple: element.multiple ?? false,
       custom_search: element.custom_search ?? false,
       chips: element.custom_search ?? false,
+      paramsFilter: element.paramsFilter ?? {},
     });
   });
 };
@@ -149,7 +153,7 @@ const loadSelectsInfinites = () => {
   // Llena selectsInfinites basado en los dialog.inputs filtrados
   searchSelectsInfinites.forEach(async (element) => {
     selectsInfinites[element.key] = []; // Configuración inicial de selectsInfinites
-
+    element.paramsFilter = element.paramsFilter ? JSON.parse(element.paramsFilter) : 0
     // Crear las variables reactivas utilizando ref
     variablesDinamicas[element.key + "_arrayInfo"] = ref<Array<object>>([]);
     variablesDinamicas[element.key + "_countLinks"] = ref<number>(1);
@@ -170,8 +174,10 @@ const loadSelectsInfinites = () => {
 
     selectKey[element.key] = false;
 
+    const paramsFilter = element.paramsFilter ? JSON.parse(JSON.stringify(element.paramsFilter)) : {};
+
     // Realizar la petición POST
-    const { data, response } = await useApi(`/${element.api}`).post();
+    const { data, response } = await useApi(`/${element.api}`).post(paramsFilter);
 
     // Verificar la respuesta
     if (response.value?.ok && data.value) {
@@ -180,6 +186,8 @@ const loadSelectsInfinites = () => {
       variablesDinamicas[element.key + "_countLinks"].value =
         data.value[element.key + "_countLinks"];
 
+      const paramsFilter2 = element.paramsFilter ? JSON.parse(JSON.stringify(element.paramsFilter)) : {};
+
       // Ejemplo de uso de useSelect con los datos actualizados
       let newVariable = useSelect(
         funcionesDinamicas[
@@ -187,7 +195,7 @@ const loadSelectsInfinites = () => {
         ], // Utilizamos la función dinámica correspondiente
         variablesDinamicas[element.key + "_arrayInfo"],
         variablesDinamicas[element.key + "_countLinks"],
-        {} // Opciones adicionales si es necesario
+        paramsFilter2 // Opciones adicionales si es necesario
       );
       newVariable.dataNueva.value = JSON.parse(
         JSON.stringify(variablesDinamicas[element.key + "_arrayInfo"].value)
@@ -290,42 +298,44 @@ const loadFullComponent = computed(() => {
     <template v-if="loadFullComponent">
       <div class="d-flex justify-end gap-3 flex-wrap">
         <VRow>
-          <VCol>
+          <VCol cols="12" md="6">
             <AppTextField :label="optionsFilter.inputGeneral.placeholder" clearable v-model="generalSearch"
               :placeholder="optionsFilter.inputGeneral.placeholder" prepend-inner-icon="tabler-search">
             </AppTextField>
           </VCol>
+          <VCol cols="12" md="6" class="mt-4">
+            <div class="d-flex justify-start gap-3 flex-wrap">
+              <VBtn class="mt-2" v-if="arrayFilter.length > 0" :loading="!allTrueSelect" :disabled="!allTrueSelect"
+                color="primary" @click="openModalFilter()">
+                <template #prepend>
+                  <VIcon icon="tabler-filter" start />
+                </template>
+                Filtros
+              </VBtn>
+              <VBtn class="mt-2" v-if="filterAplicated" :loading="!allTrueSelect" :disabled="!allTrueSelect"
+                color="success" @click="clearFilter">
+                <VTooltip activator="parent" location="bottom"> Limpiar </VTooltip>
+                <VIcon icon="tabler-filter-cancel"></VIcon>
+              </VBtn>
+              <VBtn v-if="!optionsFilter.showBtnSearch" class="mt-2" @click="fecthSearch()">
+                <VTooltip activator="parent" location="bottom"> Actualizar </VTooltip>
+                <VIcon icon="tabler-rotate-clockwise" />
+              </VBtn>
+              <VBtn v-if="optionsFilter.showBtnSearch" class="mt-2" @click="fecthSearch()">
+                <template #prepend>
+                  <VIcon icon="tabler-search" />
+                </template>
+                Buscar
+              </VBtn>
+
+              <div class="mt-2">
+                <slot name="newBtns"></slot>
+              </div>
+
+            </div>
+          </VCol>
           <slot name="newFields"></slot>
         </VRow>
-      </div>
-      <div class="d-flex justify-start gap-3 flex-wrap">
-        <VBtn class="mt-2" v-if="arrayFilter.length > 0" :loading="!allTrueSelect" :disabled="!allTrueSelect"
-          color="primary" @click="openModalFilter()">
-          <template #prepend>
-            <VIcon icon="tabler-filter" start />
-          </template>
-          Filtros
-        </VBtn>
-        <VBtn class="mt-2" v-if="filterAplicated" :loading="!allTrueSelect" :disabled="!allTrueSelect" color="primary"
-          @click="clearFilter">
-          <VTooltip activator="parent" location="bottom"> Limpiar </VTooltip>
-          <VIcon icon="tabler-filter-cancel"></VIcon>
-        </VBtn>
-        <VBtn v-if="!optionsFilter.showBtnSearch" class="mt-2" @click="fecthSearch()">
-          <VTooltip activator="parent" location="bottom"> Actualizar </VTooltip>
-          <VIcon icon="tabler-rotate-clockwise" />
-        </VBtn>
-        <VBtn v-if="optionsFilter.showBtnSearch" class="mt-2" @click="fecthSearch()">
-          <template #prepend>
-            <VIcon icon="tabler-search" />
-          </template>
-          Buscar
-        </VBtn>
-
-        <div class="mt-2">
-          <slot name="newBtns"></slot>
-        </div>
-
       </div>
     </template>
 

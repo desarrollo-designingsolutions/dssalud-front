@@ -35,7 +35,6 @@ onMounted(async () => {
 
   if (response.value?.ok && data.value) {
     countData.value = data.value.data
-    console.log("data", data.value.data);
 
   }
 });

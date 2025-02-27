@@ -161,7 +161,7 @@ const downloadFileData = async (file: any) => {
 
 <template>
   <div>
-    <!-- <CountAllDataInvoices :filing_id="filing_id" /> -->
+    <CountAllDataInvoices :filing_id="filing_id" />
 
     <VCard class="mt-5">
       <VCardTitle class="d-flex justify-space-between">

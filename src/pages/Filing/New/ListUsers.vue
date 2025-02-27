@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import CountAllDataInvoices from "@/pages/Filing/New/Components/CountAllDataInvoices.vue";
+import { router } from "@/plugins/1.router";
 import { useRoute } from 'vue-router';
+import { useFilingInvoiceUserStore } from "./Components/ServicesView/useFilingInvoiceUserStore";
 
 definePage({
   path: "Filing/New/ListUsers/:id/:invoice_id",
@@ -12,10 +14,16 @@ definePage({
   },
 });
 
+const { dataUser, servicesCount } = storeToRefs(useFilingInvoiceUserStore());
+
 
 const route = useRoute();
 const invoiceId = ref(route.params.invoice_id);
 
+const filingInvoice = ref({
+  id: "" as string,
+  invoice_number: "" as string,
+});
 const users = ref([]);
 const loading = ref(false);
 const pagination = ref({
@@ -65,7 +73,8 @@ const fetchUsers = async (opts = {}) => {
     );
 
     if (response.value?.ok && data.value) {
-      users.value = data.value.data;
+      filingInvoice.value = data.value.filingInvoice;
+      users.value = data.value.dataUsers;
       pagination.value = data.value.pagination;
       options.value.page = pagination.value.current_page;
       options.value.itemsPerPage = pagination.value.per_page;
@@ -78,7 +87,29 @@ const fetchUsers = async (opts = {}) => {
 };
 
 onMounted(() => {
+  dataUser.value = { arrayData: [] };
 });
+
+
+const goViewServices = (obj: any) => {
+
+  dataUser.value = obj;
+
+  const numDocumentoIdentificacion = obj.numDocumentoIdentificacion;
+  router.push({
+    name: "Filing-New-ListUserServicesView",
+    params: {
+      id: route.params.id,
+      numFactura: filingInvoice.value.invoice_number,
+      numDocumentoIdentificacion: numDocumentoIdentificacion,
+    },
+  });
+};
+
+const goBack = () => {
+  router.go(-1);
+}
+
 </script>
 
 <template>
@@ -93,7 +124,7 @@ onMounted(() => {
         </span>
 
         <div class="d-flex justify-end gap-3 flex-wrap ">
-          <VBtn icon>
+          <VBtn icon @click="goBack">
             <VIcon icon="tabler-arrow-narrow-left" />
             <VTooltip location="top" transition="scale-transition" activator="parent" text="Regresar">
             </VTooltip>
@@ -127,7 +158,7 @@ onMounted(() => {
                 <VMenu activator="parent">
                   <VList>
 
-                    <VListItem @click="() => { }">Gestionar Servicios</VListItem>
+                    <VListItem @click="goViewServices(item)">Gestionar Servicios</VListItem>
 
                   </VList>
                 </VMenu>

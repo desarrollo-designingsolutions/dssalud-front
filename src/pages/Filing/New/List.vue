@@ -2,6 +2,7 @@
 import CountAllDataInvoices from "@/pages/Filing/New/Components/CountAllDataInvoices.vue";
 import ModalSupportFiles from "@/pages/Filing/New/Components/ModalSupportFiles.vue";
 import ModalSupportMasiveFiles from "@/pages/Filing/New/Components/ModalSupportMasiveFiles.vue";
+import ModalUploadFileXml from "@/pages/Filing/New/Components/ModalUploadFileXml.vue";
 import { router } from "@/plugins/1.router";
 import { useAuthenticationStore } from "@/stores/useAuthenticationStore";
 
@@ -24,7 +25,7 @@ const filing_id = route.params.id;
 const tableFull = ref()
 
 const optionsTable = {
-  url: "/filing/list",
+  url: "/filingInvoice/list",
   params: {
     company_id: authenticationStore.company.id,
     type: TypeFilingEnum.RADICATION_OLD,
@@ -114,7 +115,9 @@ const openModalSupportFiles = (item: any) => {
 const refModalShowFiles = ref()
 
 const openModalShowFiles = (item: any) => {
-  refModalShowFiles.value.openModal(item.id, "FilingInvoice")
+  refModalShowFiles.value.openModal(item.id, "FilingInvoice", {
+    status: item.status,
+  })
 }
 
 
@@ -138,6 +141,13 @@ const refModalSupportMasiveFiles = ref()
 
 const openModalSupportMasiveFiles = () => {
   refModalSupportMasiveFiles.value.openModal(filing_id)
+}
+
+//ModalUploadFileXml
+const refModalUploadFileXml = ref()
+
+const openModalUploadFileXml = (item: any) => {
+  refModalUploadFileXml.value.openModal(item)
 }
 
 </script>
@@ -192,7 +202,7 @@ const openModalSupportMasiveFiles = () => {
 
                     <VListItem @click="openModalSupportFiles(item)">Subir soportes</VListItem>
                     <VListItem v-if="item.files_count > 0" @click="openModalShowFiles(item)">Ver soportes</VListItem>
-                    <VListItem @click="() => { }">Subir XML</VListItem>
+                    <VListItem @click="openModalUploadFileXml(item)">Subir XML</VListItem>
                     <VListItem @click="goViewUsers(item)">Ver usuarios</VListItem>
                     <VListItem @click="() => { }">Descargar XML</VListItem>
                     <VListItem @click="() => { }">Eliminar factura</VListItem>
@@ -225,6 +235,7 @@ const openModalSupportMasiveFiles = () => {
     <ModalSupportFiles ref="refModalSupportFiles" />
     <ModalShowFiles ref="refModalShowFiles" />
     <ModalSupportMasiveFiles ref="refModalSupportMasiveFiles" />
+    <ModalUploadFileXml ref="refModalUploadFileXml" />
 
 
   </div>

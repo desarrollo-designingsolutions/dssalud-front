@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import ModalContract from "@/pages/Filing/New/Components/ModalContract.vue";
 import ModalErrors from "@/pages/Filing/New/Components/ModalErrors.vue";
 import { useAuthenticationStore } from "@/stores/useAuthenticationStore";
 
@@ -7,44 +6,42 @@ const authenticationStore = useAuthenticationStore();
 
 const emits = defineEmits(["execute"]);
 
-const titleModal = ref<string>("Cargar archivo Zip")
+const titleModal = ref<string>("Cargar archivo XML")
 const isDialogVisible = ref<boolean>(false)
 const disabledFiledsView = ref<boolean>(false)
 const isLoading = ref<boolean>(false)
 const progress = ref(0);
-const filingData = ref<{ id: string | null }>({ id: null })
 
 const handleDialogVisible = () => {
   isDialogVisible.value = !isDialogVisible.value;
 };
 
-const openModal = async () => {
+const openModal = async (filing_invoice: any) => {
   handleDialogVisible();
 
   resetValues()
   progress.value = 0
 
+  titleModal.value = `Cargar XML a la factura ${filing_invoice.invoice_number}`
 };
 
 const submitForm = async () => {
-
   if (fileData.value.length > 0) {
     let formData = new FormData();
 
     // Asegúrate de que hay al menos un archivo en fileData antes de proceder
     if (fileData.value[0]) {
-      formData.append("archiveZip", fileData.value[0].file);
+      formData.append("archiveXml", fileData.value[0].file);
     }
     formData.append("company_id", String(authenticationStore.company.id));
     formData.append("user_id", String(authenticationStore.user.id));
 
     isLoading.value = true;
-    const { response, data } = await useApi(`/filing/uploadZip`).post(formData);
+    const { response, data } = await useApi(`/filingInvoice/uploadXml`).post(formData);
     isLoading.value = false;
 
     if (response.value?.ok && data.value) {
       progress.value = 0
-      filingData.value = data.value
       emits("execute");
       // handleDialogVisible(); // Cierra el modal después de una subida exitosa
 
@@ -71,7 +68,7 @@ defineExpose({
 const refModalQuestion = ref()
 
 //dropZoneRef
-const { dropZoneRef, fileData, open, error, resetValues } = useFileDrop(1, ['zip']);
+const { dropZoneRef, fileData, open, error, resetValues } = useFileDrop(1, ['xml']);
 
 // Manejar errores
 watch(error, (newError) => {
@@ -80,8 +77,6 @@ watch(error, (newError) => {
     refModalQuestion.value.componentData.showBtnCancel = false
     refModalQuestion.value.componentData.btnSuccessText = 'Ok'
     refModalQuestion.value.componentData.title = newError
-
-
   }
 });
 
@@ -95,52 +90,18 @@ const openModalErrors = (item: any) => {
 
 
 const echoChannel = (data: any) => {
-  window.Echo.channel(`filing.${data.id}`)
-    .listen('.FilingFinishProcessJob', (event: any) => {
-
+  window.Echo.channel(`filing_invoice.${data.id}`)
+    .listen('.FilingInvoiceRowUpdated', (event: any) => {
       console.log("event", event);
-
 
       setTimeout(() => {
         refLoading.value.stopLoading()
       }, 1000);
 
-      if (event.status == StatusFilingEnum.ERROR_ZIP) {
+      if (event.status == StatusFillingInvoiceEnum.ERROR_XML) {
         openModalErrors(event)
       }
-      if (event.status == StatusFilingEnum.ERROR_TXT) {
-        openModalErrors(event)
-      }
-      if (event.status == StatusFilingEnum.PROCESSED) {
-        refModalQuestion.value.componentData.isDialogVisible = true
-        refModalQuestion.value.componentData.title = "¿Deseas radicar los archivos?"
-        refModalQuestion.value.componentData.subTitle = "Todo ha finalizado sin novedad..."
-      }
-    })
-    .listen('.FilingProgressEvent', (event: any) => {
-      progress.value = event.progress; // Actualiza el estado de progreso       
     });
-}
-
-const deleteFiling = async () => {
-  handleDialogVisible();
-
-  isLoading.value = true;
-  const { response, data } = await useApi(`/filing/delete/${filingData.value.id}`).delete();
-  isLoading.value = false;
-
-  if (response.value?.ok && data.value) {
-  }
-}
-
-
-//ModalContract
-const refModalContract = ref()
-const openModalContract = () => {
-  if (!error.value) {
-    refModalContract.value.openModal(filingData.value.id)
-    handleDialogVisible();
-  }
 }
 
 // Modificar el click handler del drop zone
@@ -237,11 +198,8 @@ const openFileDialog = () => {
       </VCard>
     </VDialog>
 
-    <ModalQuestion ref="refModalQuestion" @cancel="deleteFiling" @success="openModalContract" />
+    <ModalQuestion ref="refModalQuestion" />
 
-    <ModalErrors ref="refModalErrors" @cancel="deleteFiling" @continue="openModalContract" />
-
-    <ModalContract ref="refModalContract" />
-
+    <ModalErrors ref="refModalErrors" />
   </div>
 </template>

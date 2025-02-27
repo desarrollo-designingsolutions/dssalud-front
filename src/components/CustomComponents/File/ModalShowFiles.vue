@@ -14,18 +14,27 @@ const handleClearForm = () => {
   for (const key in form.value) {
     form.value[key] = null
   }
+  showBtnDelete.value = true;
 }
 
 const handleDialogVisible = () => {
   isDialogVisible.value = !isDialogVisible.value;
 };
 
-const openModal = async (fileable_id: string, fileable_type: string) => {
+const openModal = async (fileable_id: string, fileable_type: string, dataExtra: any={}) => {
   handleClearForm();
   handleDialogVisible();
 
   form.value.fileable_id = fileable_id
   form.value.fileable_type = fileable_type
+
+  if (dataExtra.status == StatusFillingInvoiceEnum.FILING) {
+    showBtnDelete.value = false;
+  }
+
+  console.log(dataExtra, 'dataExtra');
+  console.log(showBtnDelete.value, 'showBtnDelete');
+  
 
   // Update optionsTable after form is filled
   updateTableParams();
@@ -35,9 +44,10 @@ defineExpose({
   openModal,
 });
 
+
 //TABLE
 const tableFull = ref()
-const tableFullKey = ref<number>(0)
+const showBtnDelete = ref(true);
 
 const optionsTable = {
   url: "file/listTableV2",
@@ -56,7 +66,8 @@ const optionsTable = {
       show: false
     },
     delete: {
-      url: "/file/delete"
+      url: "/file/delete",
+      show: true
     },
   }
 }
@@ -66,6 +77,8 @@ const updateTableParams = () => {
     fileable_type: form.value.fileable_type,
     fileable_id: form.value.fileable_id,
   };
+
+  optionsTable.actions.delete.show = showBtnDelete.value;
 };
 
 //FILTER
@@ -100,7 +113,7 @@ const viewFile = (pathname: any) => {
 
 
         <VCardText class="mt-2">
-          <TableFull ref="tableFull" :optionsTable="optionsTable" :optionsFilter="optionsFilter" :key="tableFullKey">
+          <TableFull ref="tableFull" :optionsTable="optionsTable" :optionsFilter="optionsFilter">
             <template #item.actions2="{ item }">
               <VListItem @click="viewFile(item.pathname)">
                 <template #prepend>

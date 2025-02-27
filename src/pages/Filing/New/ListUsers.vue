@@ -54,7 +54,7 @@ const fetchUsers = async (opts = {}) => {
 
   try {
     const { data, response } = await useApi<any>(
-      createUrl(`/filing-invoices/${invoiceId.value}/users`, {
+      createUrl(`/filingInvoice/${invoiceId.value}/users`, {
         query: {
           page: page || options.value.page,
           per_page: itemsPerPage || options.value.itemsPerPage,

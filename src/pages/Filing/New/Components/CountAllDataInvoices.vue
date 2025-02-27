@@ -23,7 +23,7 @@ const isLoading = ref<boolean>(true)
 onMounted(async () => {
   isLoading.value = true;
   const { data, response } = await useApi<any>(
-    createUrl(`/filing/countAllDataFiling`, {
+    createUrl(`/filingInvoice/countAllDataFiling`, {
       query: {
         company_id: authenticationStore.company.id,
         filing_id: props.filing_id,

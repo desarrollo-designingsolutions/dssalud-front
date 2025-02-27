@@ -155,7 +155,7 @@ const loadValidData = async () => {
 // Validación de nombres de archivo
 const errorsFiles = computed(() => {
   const errors: { fileName: string; message: string }[] = [];
-  const companyNit = authenticationStore.company.nit;
+  const thirdNit = authenticationStore.user.third.nit;
   const seenConsecutives = new Set<string>();
 
   fileData.value.forEach((item) => {
@@ -172,10 +172,10 @@ const errorsFiles = computed(() => {
       return;
     }
 
-    if (nit !== companyNit) {
+    if (nit !== thirdNit) {
       errors.push({
         fileName,
-        message: `El NIT (${nit}) no coincide con el de la compañía (${companyNit})`,
+        message: `El NIT (${nit}) no coincide con el del tercero (${thirdNit})`,
       });
       return;
     }

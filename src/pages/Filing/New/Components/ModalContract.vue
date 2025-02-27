@@ -10,7 +10,7 @@ const authenticationStore = useAuthenticationStore();
 
 const emits = defineEmits(["execute"]);
 
-const titleModal = ref<string>("Cargar archivo Zip")
+const titleModal = ref<string>("Tipo de contrato")
 const isDialogVisible = ref<boolean>(false)
 const disabledFiledsView = ref<boolean>(false)
 const isLoading = ref<boolean>(false)

@@ -48,6 +48,7 @@ const submitForm = async () => {
       formData.append("archiveXml", fileData.value[0].file);
     }
     formData.append("company_id", String(authenticationStore.company.id));
+    formData.append("third_nit", String(authenticationStore.user.third.nit));
     formData.append("user_id", String(authenticationStore.user.id));
     formData.append("filing_invoice_id", String(form.value.id));
 

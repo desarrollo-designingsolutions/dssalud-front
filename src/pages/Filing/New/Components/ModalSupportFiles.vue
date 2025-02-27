@@ -66,7 +66,7 @@ const submitForm = async () => {
   formData.append('support_type_id', form.value.support_type_id.value);
   formData.append('support_type_code', form.value.support_type_id.code);
   formData.append('company_id', authenticationStore.company.id);
-  formData.append('company_nit', authenticationStore.company.nit);
+  formData.append('third_nit', authenticationStore.user.third.nit);
   formData.append('fileable_type', "FilingInvoice");
   formData.append('fileable_id', form.value.filing_invoice_id);
 

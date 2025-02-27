@@ -152,6 +152,11 @@ const openModalUploadFileXml = (item: any) => {
   refModalUploadFileXml.value.openModal(JSON.parse(JSON.stringify(item)))
 }
 
+
+//descarga de XML
+const downloadFileData = async (file: any) => {
+  descargarArchivo(file, "prueba");
+};
 </script>
 
 <template>
@@ -207,7 +212,8 @@ const openModalUploadFileXml = (item: any) => {
                     <VListItem v-if="item.files_count > 0" @click="openModalShowFiles(item)">Ver soportes</VListItem>
                     <VListItem @click="openModalUploadFileXml(item)">Subir XML</VListItem>
                     <VListItem @click="goViewUsers(item)">Ver usuarios</VListItem>
-                    <VListItem v-if="item.status_xml == StatusFillingInvoiceEnum.VALIDATED" @click="() => { }">Descargar XML</VListItem>
+                    <VListItem v-if="item.status_xml == StatusFillingInvoiceEnum.VALIDATED"
+                      @click="downloadFileData(item.path_xml)">Descargar XML</VListItem>
                     <VListItem @click="() => { }">Eliminar factura</VListItem>
                     <VListItem @click="() => { }">Ver inconsistencias</VListItem>
 

@@ -78,7 +78,6 @@ const fetchUsers = async (opts = {}) => {
 };
 
 onMounted(() => {
-  fetchUsers(options.value);
 });
 </script>
 

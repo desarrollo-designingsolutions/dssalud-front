@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import CountAllDataInvoices from "@/pages/Filing/New/Components/CountAllDataInvoices.vue";
+// import CountAllDataInvoices from "@/pages/Filing/New/Components/CountAllDataInvoices.vue";
 import ModalSupportFiles from "@/pages/Filing/New/Components/ModalSupportFiles.vue";
 import ModalSupportMasiveFiles from "@/pages/Filing/New/Components/ModalSupportMasiveFiles.vue";
 import ModalUploadFileXml from "@/pages/Filing/New/Components/ModalUploadFileXml.vue";
@@ -126,8 +126,13 @@ const echoChannel = () => {
   tableFull.value.optionsTable.tableData.forEach(element => {
     window.Echo.channel(`filing_invoice.${element.id}`)
       .listen('.FilingInvoiceRowUpdated', (event: any) => {
+        console.log("event", event);
 
         element.files_count = event.files_count
+
+        element.status_xml = event.status_xml
+        element.status_xml_backgroundColor = event.status_xml_backgroundColor
+        element.status_xml_description = event.status_xml_description
 
       });
   });
@@ -144,14 +149,14 @@ const openModalSupportMasiveFiles = () => {
 const refModalUploadFileXml = ref()
 
 const openModalUploadFileXml = (item: any) => {
-  refModalUploadFileXml.value.openModal(item)
+  refModalUploadFileXml.value.openModal(JSON.parse(JSON.stringify(item)))
 }
 
 </script>
 
 <template>
   <div>
-    <CountAllDataInvoices :filing_id="filing_id" />
+    <!-- <CountAllDataInvoices :filing_id="filing_id" /> -->
 
     <VCard class="mt-5">
       <VCardTitle class="d-flex justify-space-between">
@@ -202,7 +207,7 @@ const openModalUploadFileXml = (item: any) => {
                     <VListItem v-if="item.files_count > 0" @click="openModalShowFiles(item)">Ver soportes</VListItem>
                     <VListItem @click="openModalUploadFileXml(item)">Subir XML</VListItem>
                     <VListItem @click="goViewUsers(item)">Ver usuarios</VListItem>
-                    <VListItem @click="() => { }">Descargar XML</VListItem>
+                    <VListItem v-if="item.status_xml == StatusFillingInvoiceEnum.VALIDATED" @click="() => { }">Descargar XML</VListItem>
                     <VListItem @click="() => { }">Eliminar factura</VListItem>
                     <VListItem @click="() => { }">Ver inconsistencias</VListItem>
 
@@ -215,12 +220,12 @@ const openModalUploadFileXml = (item: any) => {
 
           <template #item.status="{ item }">
             <div>
-              <VChip :color="item.status_background">{{ item.status_description }}</VChip>
+              <VChip :color="item.status_backgroundColor">{{ item.status_description }}</VChip>
             </div>
           </template>
           <template #item.status_xml="{ item }">
             <div>
-              <VChip :color="item.status_xml_background">{{ item.status_xml_description }}</VChip>
+              <VChip :color="item.status_xml_backgroundColor">{{ item.status_xml_description }}</VChip>
             </div>
           </template>
 

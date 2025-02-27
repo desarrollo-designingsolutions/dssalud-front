@@ -58,9 +58,7 @@ const submitForm = async () => {
     if (response.value?.ok && data.value) {
       progress.value = 0
       emits("execute");
-      // handleDialogVisible(); // Cierra el modal después de una subida exitosa
-
-      // refLoading.value.startLoading()
+      handleDialogVisible(); // Cierra el modal después de una subida exitosa
 
       echoChannel(data.value)
 
@@ -95,7 +93,6 @@ watch(error, (newError) => {
   }
 });
 
-const refLoading = ref()
 
 //ModalErrors
 const refModalErrors = ref()
@@ -108,10 +105,6 @@ const echoChannel = (data: any) => {
   window.Echo.channel(`filing_invoice.${data.id}`)
     .listen('.FilingInvoiceRowUpdated', (event: any) => {
       console.log("event", event);
-
-      setTimeout(() => {
-        refLoading.value.stopLoading()
-      }, 1000);
 
       if (event.status == StatusFillingInvoiceEnum.ERROR_XML) {
         openModalErrors(event)
@@ -128,8 +121,6 @@ const openFileDialog = () => {
 
 <template>
   <div>
-    <Loading ref="refLoading" :progress="progress" :is-loading="isLoading" />
-
     <VDialog v-model="isDialogVisible" :overlay="false" max-width="30rem" transition="dialog-transition" persistent>
       <DialogCloseBtn @click="handleDialogVisible" />
       <VCard :loading="isLoading" :disabled="isLoading" class="w-100">

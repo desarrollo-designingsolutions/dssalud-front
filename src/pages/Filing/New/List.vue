@@ -168,6 +168,7 @@ const openModalSupportMasiveFiles = () => {
                 <VListItem @click="() => { }">Subir XML masivo</VListItem>
                 <VListItem @click="() => { }">Descargar certificacion de radicación</VListItem>
                 <VListItem @click="() => { }">Descargar CSV de radicación</VListItem>
+                <VListItem @click="() => { }">Ver inconsistencias</VListItem>
               </VList>
             </VMenu>
           </VBtn>

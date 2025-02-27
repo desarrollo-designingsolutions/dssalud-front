@@ -12,17 +12,31 @@ const disabledFiledsView = ref<boolean>(false)
 const isLoading = ref<boolean>(false)
 const progress = ref(0);
 
+const form = ref({
+  id: '' as string,
+  invoice_number: '' as string,
+});
+
+const handleClearForm = () => {
+  for (const key in form.value) {
+    form.value[key] = null;
+  }
+};
+
 const handleDialogVisible = () => {
   isDialogVisible.value = !isDialogVisible.value;
 };
 
 const openModal = async (filing_invoice: any) => {
+  handleClearForm();
   handleDialogVisible();
 
   resetValues()
   progress.value = 0
 
   titleModal.value = `Cargar XML a la factura ${filing_invoice.invoice_number}`
+
+  form.value = filing_invoice;
 };
 
 const submitForm = async () => {
@@ -35,9 +49,10 @@ const submitForm = async () => {
     }
     formData.append("company_id", String(authenticationStore.company.id));
     formData.append("user_id", String(authenticationStore.user.id));
+    formData.append("filing_invoice_id", String(form.value.id));
 
     isLoading.value = true;
-    const { response, data } = await useApi(`/filingInvoice/uploadXml`).post(formData);
+    const { response, data } = await useApi(`/filingInvoice/uploadXML`).post(formData);
     isLoading.value = false;
 
     if (response.value?.ok && data.value) {
@@ -45,7 +60,7 @@ const submitForm = async () => {
       emits("execute");
       // handleDialogVisible(); // Cierra el modal después de una subida exitosa
 
-      refLoading.value.startLoading()
+      // refLoading.value.startLoading()
 
       echoChannel(data.value)
 

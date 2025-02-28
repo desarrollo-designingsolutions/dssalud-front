@@ -3,7 +3,7 @@ import CountAllDataInvoices from "@/pages/Filing/New/Components/CountAllDataInvo
 import ModalSupportFiles from "@/pages/Filing/New/Components/ModalSupportFiles.vue";
 import ModalSupportMasiveFiles from "@/pages/Filing/New/Components/ModalSupportMasiveFiles.vue";
 import ModalUploadFileXml from "@/pages/Filing/New/Components/ModalUploadFileXml.vue";
-import ModalXmlMasiveFiles from "@/pages/Filing/New/Components/ModalXMLMasiveFiles.vue";
+import ModalXmlMasiveFiles from "@/pages/Filing/New/Components/ModalXmlMasiveFiles.vue";
 import { router } from "@/plugins/1.router";
 import { useAuthenticationStore } from "@/stores/useAuthenticationStore";
 
@@ -197,10 +197,10 @@ const uploadMoreInvoices = () => {
 }
 
 //ModalUploadFileZip
-const refModalUploadFileZip2 = ref()
+const refModalUploadFileZip = ref()
 const openModalUploadFileZip = () => {
 
-  refModalUploadFileZip2.value.openModal(filingData.value)
+  refModalUploadFileZip.value.openModal(filingData.value)
 }
 
 
@@ -300,9 +300,9 @@ const openModalUploadFileJson = () => {
     <ModalShowFiles ref="refModalShowFiles" />
     <ModalSupportMasiveFiles ref="refModalSupportMasiveFiles" />
     <ModalUploadFileXml ref="refModalUploadFileXml" />
-    <ModalUploadFileZip ref="refModalUploadFileZip2" />
-    <ModalUploadFileJson ref="refModalUploadFileJson" />
     <ModalXmlMasiveFiles ref="refModalXmlMasiveFiles" />
+    <ModalUploadFileZip ref="refModalUploadFileZip" />
+    <ModalUploadFileJson ref="refModalUploadFileJson" />
 
 
   </div>

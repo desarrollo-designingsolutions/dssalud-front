@@ -29,6 +29,8 @@ declare module 'vue-router/auto-routes' {
     'filing-new-components-count-all-data-invoices': RouteRecordInfo<'filing-new-components-count-all-data-invoices', '/Filing/New/Components/CountAllDataInvoices', Record<never, never>, Record<never, never>>,
     'filing-new-components-modal-contract': RouteRecordInfo<'filing-new-components-modal-contract', '/Filing/New/Components/ModalContract', Record<never, never>, Record<never, never>>,
     'filing-new-components-modal-errors': RouteRecordInfo<'filing-new-components-modal-errors', '/Filing/New/Components/ModalErrors', Record<never, never>, Record<never, never>>,
+    'filing-new-components-modal-errors-filing': RouteRecordInfo<'filing-new-components-modal-errors-filing', '/Filing/New/Components/ModalErrorsFiling', Record<never, never>, Record<never, never>>,
+    'filing-new-components-modal-errors-filing-invoice': RouteRecordInfo<'filing-new-components-modal-errors-filing-invoice', '/Filing/New/Components/ModalErrorsFilingInvoice', Record<never, never>, Record<never, never>>,
     'filing-new-components-modal-support-files': RouteRecordInfo<'filing-new-components-modal-support-files', '/Filing/New/Components/ModalSupportFiles', Record<never, never>, Record<never, never>>,
     'filing-new-components-modal-support-masive-files': RouteRecordInfo<'filing-new-components-modal-support-masive-files', '/Filing/New/Components/ModalSupportMasiveFiles', Record<never, never>, Record<never, never>>,
     'filing-new-components-modal-upload-file-json': RouteRecordInfo<'filing-new-components-modal-upload-file-json', '/Filing/New/Components/ModalUploadFileJson', Record<never, never>, Record<never, never>>,

@@ -4,6 +4,8 @@ import ModalSupportFiles from "@/pages/Filing/New/Components/ModalSupportFiles.v
 import ModalSupportMasiveFiles from "@/pages/Filing/New/Components/ModalSupportMasiveFiles.vue";
 import ModalUploadFileXml from "@/pages/Filing/New/Components/ModalUploadFileXml.vue";
 import ModalXmlMasiveFiles from "@/pages/Filing/New/Components/ModalXmlMasiveFiles.vue";
+import ModalErrorsFiling from "@/pages/Filing/New/Components/ModalErrorsFiling.vue";
+import ModalErrorsFilingInvoice from "@/pages/Filing/New/Components/ModalErrorsFilingInvoice.vue";
 import { router } from "@/plugins/1.router";
 import { useAuthenticationStore } from "@/stores/useAuthenticationStore";
 
@@ -178,6 +180,20 @@ const openModalXmlMasiveFiles = () => {
   refModalXmlMasiveFiles.value.openModal(filing_id)
 }
 
+//ModalErrorsFiling
+const refModalErrorsFiling = ref()
+
+const openModalErrorsFiling = () => {
+  refModalErrorsFiling.value.openModal(filing_id)
+}
+
+//ModalErrorsFilingInvoice
+const refModalErrorsFilingInvoice = ref()
+
+const openModalErrorsFilingInvoice = (item) => {
+  refModalErrorsFilingInvoice.value.openModal(item)
+}
+
 //descarga de XML
 const downloadFileData = async (file: any) => {
   descargarArchivo(file, "prueba");
@@ -248,7 +264,7 @@ const reloadTable = () => {
                 <VListItem @click="openModalXmlMasiveFiles()">Subir XML masivo</VListItem>
                 <VListItem @click="() => { }">Descargar certificacion de radicación</VListItem>
                 <VListItem @click="() => { }">Descargar CSV de radicación</VListItem>
-                <VListItem @click="() => { }">Ver inconsistencias</VListItem>
+                <VListItem @click="openModalErrorsFiling()">Ver inconsistencias</VListItem>
               </VList>
             </VMenu>
           </VBtn>
@@ -277,7 +293,7 @@ const reloadTable = () => {
                     <VListItem v-if="item.status_xml == StatusFillingInvoiceEnum.VALIDATED"
                       @click="downloadFileData(item.path_xml)">Descargar XML</VListItem>
                     <VListItem @click="() => { }">Eliminar factura</VListItem>
-                    <VListItem @click="() => { }">Ver inconsistencias</VListItem>
+                    <VListItem @click="openModalErrorsFilingInvoice(item)">Ver inconsistencias</VListItem>
 
                   </VList>
                 </VMenu>
@@ -308,10 +324,12 @@ const reloadTable = () => {
     <ModalSupportMasiveFiles ref="refModalSupportMasiveFiles" />
     <ModalUploadFileXml ref="refModalUploadFileXml" />
     <ModalXmlMasiveFiles ref="refModalXmlMasiveFiles" />
-
+    
     <ModalUploadFileZip ref="refModalUploadFileZip" @reloadTable="reloadTable()" />
     <ModalUploadFileJson ref="refModalUploadFileJson" @reloadTable="reloadTable()" />
-
+    
+    <ModalErrorsFiling ref="refModalErrorsFiling" />
+    <ModalErrorsFilingInvoice ref="refModalErrorsFilingInvoice" />
 
   </div>
 </template>

@@ -68,7 +68,7 @@ const submitForm = async () => {
   formData.append('filing_id', form.value.filing_id);
 
   try {
-    const { data, response } = await useApi('/filing/saveDataModalXMLMasiveFiles').post(formData);
+    const { data, response } = await useApi('/filing/saveDataModalXmlMasiveFiles').post(formData);
     if (response.value?.ok && data.value) {
       uploadId.value = data.value.upload_id;
       countFilesRequest.value = fileData.value.length;
@@ -137,7 +137,7 @@ const validInvoiceNumbers = ref<string[]>([]);
 const loadValidData = async () => {
   try {
     isLoading.value = true;
-    const { response, data } = await useApi(`/filing/${form.value.filing_id}/getDataModalXMLMasiveFiles`).get();
+    const { response, data } = await useApi(`/filing/${form.value.filing_id}/getDataModalXmlMasiveFiles`).get();
     if (response.value?.ok && data.value) {
       validInvoiceNumbers.value = data.value.validInvoiceNumbers;
     }

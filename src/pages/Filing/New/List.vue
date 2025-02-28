@@ -3,9 +3,9 @@ import CountAllDataInvoices from "@/pages/Filing/New/Components/CountAllDataInvo
 import ModalSupportFiles from "@/pages/Filing/New/Components/ModalSupportFiles.vue";
 import ModalSupportMasiveFiles from "@/pages/Filing/New/Components/ModalSupportMasiveFiles.vue";
 import ModalUploadFileXml from "@/pages/Filing/New/Components/ModalUploadFileXml.vue";
+import ModalXmlMasiveFiles from "@/pages/Filing/New/Components/ModalXMLMasiveFiles.vue";
 import { router } from "@/plugins/1.router";
 import { useAuthenticationStore } from "@/stores/useAuthenticationStore";
-import ModalXMLMasiveFiles from "./Components/ModalXMLMasiveFiles.vue";
 
 import ModalUploadFileJson from "@/pages/Filing/New/Components/ModalUploadFileJson.vue";
 import ModalUploadFileZip from "@/pages/Filing/New/Components/ModalUploadFileZip.vue";
@@ -171,11 +171,11 @@ const openModalUploadFileXml = (item: any) => {
   refModalUploadFileXml.value.openModal(JSON.parse(JSON.stringify(item)))
 }
 
-//ModalXMLMasiveFiles
-const refModalXMLMasiveFiles = ref()
+//ModalXmlMasiveFiles
+const refModalXmlMasiveFiles = ref()
 
-const openModalXMLMasiveFiles = () => {
-  refModalXMLMasiveFiles.value.openModal(filing_id)
+const openModalXmlMasiveFiles = () => {
+  refModalXmlMasiveFiles.value.openModal(filing_id)
 }
 
 //descarga de XML
@@ -224,7 +224,7 @@ const openModalUploadFileJson = () => {
 
         <div class="d-flex justify-end gap-3 flex-wrap ">
           <ProgressCircularChannel :channel="'filingSupport.' + filing_id" tooltipText="Subiendo soportes masivos" />
-          <ProgressCircularChannel :channel="'filingXML.' + filing_id" tooltipText="Subiendo XML masivos" />
+          <ProgressCircularChannel :channel="'filingXml.' + filing_id" tooltipText="Subiendo XML masivos" />
 
           <VBtn :loading="loading.excel" :disabled="loading.excel" color="primary" @click="finishFilling">
             Finalizar radicación
@@ -238,7 +238,7 @@ const openModalUploadFileJson = () => {
               <VList>
                 <VListItem @click="uploadMoreInvoices()">Subir más facturas</VListItem>
                 <VListItem @click="openModalSupportMasiveFiles()">Subir soportes masivo</VListItem>
-                <VListItem @click="openModalXMLMasiveFiles()">Subir XML masivo</VListItem>
+                <VListItem @click="openModalXmlMasiveFiles()">Subir XML masivo</VListItem>
                 <VListItem @click="() => { }">Descargar certificacion de radicación</VListItem>
                 <VListItem @click="() => { }">Descargar CSV de radicación</VListItem>
                 <VListItem @click="() => { }">Ver inconsistencias</VListItem>
@@ -300,9 +300,9 @@ const openModalUploadFileJson = () => {
     <ModalShowFiles ref="refModalShowFiles" />
     <ModalSupportMasiveFiles ref="refModalSupportMasiveFiles" />
     <ModalUploadFileXml ref="refModalUploadFileXml" />
-    <ModalXMLMasiveFiles ref="refModalXMLMasiveFiles" />
     <ModalUploadFileZip ref="refModalUploadFileZip2" />
     <ModalUploadFileJson ref="refModalUploadFileJson" />
+    <ModalXmlMasiveFiles ref="refModalXmlMasiveFiles" />
 
 
   </div>

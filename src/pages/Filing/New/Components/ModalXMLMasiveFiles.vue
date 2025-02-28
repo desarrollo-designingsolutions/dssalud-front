@@ -4,7 +4,7 @@ import { useAuthenticationStore } from "@/stores/useAuthenticationStore";
 const authenticationStore = useAuthenticationStore();
 const emits = defineEmits(["execute"]);
 
-const titleModal = ref<string>("Cargar soportes");
+const titleModal = ref<string>("Cargar XML");
 const isDialogVisible = ref<boolean>(false);
 const disabledFiledsView = ref<boolean>(false);
 const isLoading = ref<boolean>(false);
@@ -64,11 +64,11 @@ const submitForm = async () => {
   });
 
   formData.append('company_id', authenticationStore.company.id);
-  formData.append('fileable_type', "Filing");
-  formData.append('fileable_id', form.value.filing_id);
+  formData.append('third_nit', authenticationStore.user.third.nit);
+  formData.append('filing_id', form.value.filing_id);
 
   try {
-    const { data, response } = await useApi('/filing/saveDataModalSupportMasiveFiles').post(formData);
+    const { data, response } = await useApi('/filing/saveDataModalXMLMasiveFiles').post(formData);
     if (response.value?.ok && data.value) {
       uploadId.value = data.value.upload_id;
       countFilesRequest.value = fileData.value.length;
@@ -115,7 +115,7 @@ const listenToProgress = (uploadId: string) => {
 defineExpose({ openModal, disabledFiledsView });
 
 const refModalQuestion = ref();
-const { dropZoneRef, fileData, open, error, resetValues } = useFileDrop(5, [], ['zip', 'rar']);
+const { dropZoneRef, fileData, open, error, resetValues } = useFileDrop(0, ['xml']);
 
 watch(error, (newError) => {
   if (newError) {
@@ -133,14 +133,12 @@ const openFileDialog = () => {
 
 // Lista de facturas y códigos de soporte válidos
 const validInvoiceNumbers = ref<string[]>([]);
-const validSupportCodes = ref<string[]>([]);
 
 const loadValidData = async () => {
   try {
     isLoading.value = true;
-    const { response, data } = await useApi(`/filing/${form.value.filing_id}/getDataModalSupportMasiveFiles`).get();
+    const { response, data } = await useApi(`/filing/${form.value.filing_id}/getDataModalXMLMasiveFiles`).get();
     if (response.value?.ok && data.value) {
-      validSupportCodes.value = data.value.validSupportCodes;
       validInvoiceNumbers.value = data.value.validInvoiceNumbers;
     }
     isLoading.value = false;
@@ -154,18 +152,18 @@ const loadValidData = async () => {
 const errorsFiles = computed(() => {
   const errors: { fileName: string; message: string }[] = [];
   const thirdNit = authenticationStore.user.third.nit;
-  const seenConsecutives = new Set<string>();
+  const seenNames = new Set<string>();
 
   fileData.value.forEach((item) => {
     const fileName = item.file.name;
     const [nameWithoutExt, extension] = fileName.split('.');
     const parts = nameWithoutExt.split('_');
-    const [nit, numFac, codeSupport, consecutive] = parts;
+    const [nit, numFac, name] = parts;
 
-    if (parts.length !== 4 || !extension) {
+    if (parts.length !== 3 || !extension) {
       errors.push({
         fileName,
-        message: 'Formato inválido. Debe ser NIT_NUMFAC_CODESUPPORT_CONSECUTIVE.EXT',
+        message: 'Formato inválido. Debe ser NIT_NUMFAC_NAME.XML',
       });
       return;
     }
@@ -186,30 +184,14 @@ const errorsFiles = computed(() => {
       return;
     }
 
-    if (!validSupportCodes.value.includes(codeSupport)) {
+    const key = `${nit}_${numFac}_${name}`;
+    if (seenNames.has(key)) {
       errors.push({
         fileName,
-        message: `El código de soporte (${codeSupport}) no es válido`,
-      });
-      return;
-    }
-
-    if (!/^\d+$/.test(consecutive)) {
-      errors.push({
-        fileName,
-        message: `El consecutivo (${consecutive}) debe ser un valor numérico`,
-      });
-      return;
-    }
-
-    const key = `${nit}_${numFac}_${codeSupport}_${consecutive}`;
-    if (seenConsecutives.has(key)) {
-      errors.push({
-        fileName,
-        message: `El consecutivo (${consecutive}) está duplicado para NIT_${numFac}_${codeSupport}`,
+        message: `El nombre (${name}) está duplicado para NIT_${numFac}_`,
       });
     } else {
-      seenConsecutives.add(key);
+      seenNames.add(key);
     }
   });
 

@@ -5,6 +5,7 @@ import ModalSupportMasiveFiles from "@/pages/Filing/New/Components/ModalSupportM
 import ModalUploadFileXml from "@/pages/Filing/New/Components/ModalUploadFileXml.vue";
 import { router } from "@/plugins/1.router";
 import { useAuthenticationStore } from "@/stores/useAuthenticationStore";
+import ModalXMLMasiveFiles from "./Components/ModalXMLMasiveFiles.vue";
 
 
 definePage({
@@ -152,6 +153,13 @@ const openModalUploadFileXml = (item: any) => {
   refModalUploadFileXml.value.openModal(JSON.parse(JSON.stringify(item)))
 }
 
+//ModalXMLMasiveFiles
+const refModalXMLMasiveFiles = ref()
+
+const openModalXMLMasiveFiles = () => {
+  refModalXMLMasiveFiles.value.openModal(filing_id)
+}
+
 
 //descarga de XML
 const downloadFileData = async (file: any) => {
@@ -170,7 +178,8 @@ const downloadFileData = async (file: any) => {
         </span>
 
         <div class="d-flex justify-end gap-3 flex-wrap ">
-          <ProgressCircularChannel :channel="'filing.' + filing_id" tooltipText="Subiendo soportes masivos" />
+          <ProgressCircularChannel :channel="'filingSupport.' + filing_id" tooltipText="Subiendo soportes masivos" />
+          <ProgressCircularChannel :channel="'filingXML.' + filing_id" tooltipText="Subiendo XML masivos" />
 
           <VBtn :loading="loading.excel" :disabled="loading.excel" color="primary" @click="finishFilling">
             Finalizar radicación
@@ -183,7 +192,7 @@ const downloadFileData = async (file: any) => {
             <VMenu activator="parent">
               <VList>
                 <VListItem @click="openModalSupportMasiveFiles()">Subir soportes masivo</VListItem>
-                <VListItem @click="() => { }">Subir XML masivo</VListItem>
+                <VListItem @click="openModalXMLMasiveFiles()">Subir XML masivo</VListItem>
                 <VListItem @click="() => { }">Descargar certificacion de radicación</VListItem>
                 <VListItem @click="() => { }">Descargar CSV de radicación</VListItem>
                 <VListItem @click="() => { }">Ver inconsistencias</VListItem>
@@ -245,6 +254,7 @@ const downloadFileData = async (file: any) => {
     <ModalShowFiles ref="refModalShowFiles" />
     <ModalSupportMasiveFiles ref="refModalSupportMasiveFiles" />
     <ModalUploadFileXml ref="refModalUploadFileXml" />
+    <ModalXMLMasiveFiles ref="refModalXMLMasiveFiles" />
 
 
   </div>

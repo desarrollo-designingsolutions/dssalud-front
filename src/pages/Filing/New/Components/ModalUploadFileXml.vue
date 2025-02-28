@@ -53,7 +53,7 @@ const submitForm = async () => {
     formData.append("filing_invoice_id", String(form.value.id));
 
     isLoading.value = true;
-    const { response, data } = await useApi(`/filingInvoice/uploadXML`).post(formData);
+    const { response, data } = await useApi(`/filingInvoice/uploadXml`).post(formData);
     isLoading.value = false;
 
     if (response.value?.ok && data.value) {

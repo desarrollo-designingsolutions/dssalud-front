@@ -158,7 +158,7 @@ const goBack = () => {
                 <VMenu activator="parent">
                   <VList>
 
-                    <VListItem @click="goViewServices(item)">Gestionar Servicios</VListItem>
+                    <VListItem @click="goViewServices(item)">Ver Servicios</VListItem>
 
                   </VList>
                 </VMenu>

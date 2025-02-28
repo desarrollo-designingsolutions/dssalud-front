@@ -1,5 +1,5 @@
 <script setup lang="ts">
-// import CountAllDataInvoices from "@/pages/Filing/New/Components/CountAllDataInvoices.vue";
+import CountAllDataInvoices from "@/pages/Filing/New/Components/CountAllDataInvoices.vue";
 import ModalSupportFiles from "@/pages/Filing/New/Components/ModalSupportFiles.vue";
 import ModalSupportMasiveFiles from "@/pages/Filing/New/Components/ModalSupportMasiveFiles.vue";
 import ModalUploadFileXml from "@/pages/Filing/New/Components/ModalUploadFileXml.vue";

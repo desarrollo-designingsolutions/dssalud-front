@@ -34,6 +34,7 @@ declare module 'vue-router/auto-routes' {
     'filing-new-components-modal-upload-file-json': RouteRecordInfo<'filing-new-components-modal-upload-file-json', '/Filing/New/Components/ModalUploadFileJson', Record<never, never>, Record<never, never>>,
     'filing-new-components-modal-upload-file-xml': RouteRecordInfo<'filing-new-components-modal-upload-file-xml', '/Filing/New/Components/ModalUploadFileXml', Record<never, never>, Record<never, never>>,
     'filing-new-components-modal-upload-file-zip': RouteRecordInfo<'filing-new-components-modal-upload-file-zip', '/Filing/New/Components/ModalUploadFileZip', Record<never, never>, Record<never, never>>,
+    'filing-new-components-modal-xmlmasive-files': RouteRecordInfo<'filing-new-components-modal-xmlmasive-files', '/Filing/New/Components/ModalXMLMasiveFiles', Record<never, never>, Record<never, never>>,
     'filing-new-components-services-view-emergencies': RouteRecordInfo<'filing-new-components-services-view-emergencies', '/Filing/New/Components/ServicesView/Emergencies', Record<never, never>, Record<never, never>>,
     'filing-new-components-services-view-hospitalization': RouteRecordInfo<'filing-new-components-services-view-hospitalization', '/Filing/New/Components/ServicesView/Hospitalization', Record<never, never>, Record<never, never>>,
     'filing-new-components-services-view-medicines': RouteRecordInfo<'filing-new-components-services-view-medicines', '/Filing/New/Components/ServicesView/Medicines', Record<never, never>, Record<never, never>>,

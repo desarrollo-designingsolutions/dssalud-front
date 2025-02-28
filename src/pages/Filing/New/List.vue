@@ -168,7 +168,7 @@ const openModalSupportMasiveFiles = () => {
 const refModalUploadFileXml = ref()
 
 const openModalUploadFileXml = (item: any) => {
-  refModalUploadFileXml.value.openModal(JSON.parse(JSON.stringify(item)))
+  refModalUploadFileXml.value.openModal(item)
 }
 
 //ModalXmlMasiveFiles
@@ -209,6 +209,13 @@ const refModalUploadFileJson = ref()
 
 const openModalUploadFileJson = () => {
   refModalUploadFileJson.value.openModal(filingData.value)
+}
+
+
+const reloadTable = () => {
+  console.log("reloadTable");
+
+  tableFull.value.executeFetchTable()
 }
 </script>
 
@@ -301,8 +308,9 @@ const openModalUploadFileJson = () => {
     <ModalSupportMasiveFiles ref="refModalSupportMasiveFiles" />
     <ModalUploadFileXml ref="refModalUploadFileXml" />
     <ModalXmlMasiveFiles ref="refModalXmlMasiveFiles" />
-    <ModalUploadFileZip ref="refModalUploadFileZip" />
-    <ModalUploadFileJson ref="refModalUploadFileJson" />
+
+    <ModalUploadFileZip ref="refModalUploadFileZip" @reloadTable="reloadTable()" />
+    <ModalUploadFileJson ref="refModalUploadFileJson" @reloadTable="reloadTable()" />
 
 
   </div>

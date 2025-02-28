@@ -36,7 +36,7 @@ const openModal = async (filing_invoice: any) => {
 
   titleModal.value = `Cargar XML a la factura ${filing_invoice.invoice_number}`
 
-  form.value = filing_invoice;
+  form.value = cloneObject(filing_invoice);
 };
 
 const submitForm = async () => {

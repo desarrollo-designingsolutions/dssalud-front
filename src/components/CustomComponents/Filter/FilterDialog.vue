@@ -115,7 +115,7 @@ const resetFilters = ref();
 
 const loadArrayFilter = () => {
   const newInputs = optionsFilter.dialog.inputs;
-  resetFilters.value = JSON.parse(JSON.stringify(newInputs));
+  resetFilters.value = cloneObject(newInputs);
   newInputs.forEach((element, index) => {
 
     let search = null;
@@ -174,7 +174,7 @@ const loadSelectsInfinites = () => {
 
     selectKey[element.key] = false;
 
-    const paramsFilter = element.paramsFilter ? JSON.parse(JSON.stringify(element.paramsFilter)) : {};
+    const paramsFilter = element.paramsFilter ? cloneObject(element.paramsFilter) : {};
 
     // Realizar la petición POST
     const { data, response } = await useApi(`/${element.api}`).post(paramsFilter);
@@ -186,7 +186,7 @@ const loadSelectsInfinites = () => {
       variablesDinamicas[element.key + "_countLinks"].value =
         data.value[element.key + "_countLinks"];
 
-      const paramsFilter2 = element.paramsFilter ? JSON.parse(JSON.stringify(element.paramsFilter)) : {};
+      const paramsFilter2 = element.paramsFilter ? cloneObject(element.paramsFilter) : {};
 
       // Ejemplo de uso de useSelect con los datos actualizados
       let newVariable = useSelect(

@@ -4,7 +4,7 @@ import ModalErrors from "@/pages/Filing/New/Components/ModalErrors.vue";
 import { useAuthenticationStore } from "@/stores/useAuthenticationStore";
 
 const authenticationStore = useAuthenticationStore();
-const emits = defineEmits(["execute"]);
+const emit = defineEmits(["reloadTable"]);
 
 // Referencias
 const refModalQuestion = ref()
@@ -17,7 +17,7 @@ const isDialogVisible = ref<boolean>(false)
 const disabledFiledsView = ref<boolean>(false)
 const isLoading = ref<boolean>(false)
 const progress = ref(0)
-const filingData = ref<any>({})
+const filingData = ref<any>({ id: null, contract_id: null, validationTxt: null })
 
 const handleDialogVisible = () => {
   isDialogVisible.value = !isDialogVisible.value;
@@ -27,7 +27,10 @@ const openModal = async (itemData: any) => {
   handleDialogVisible();
   resetValues();
   progress.value = 0;
-  filingData.value = JSON.parse(JSON.stringify(itemData));
+
+  if (itemData) {
+    filingData.value = cloneObject(itemData);
+  }
 };
 
 const submitForm = async () => {
@@ -47,7 +50,6 @@ const submitForm = async () => {
     if (response.value?.ok && data.value) {
       progress.value = 0;
       filingData.value = data.value;
-      emits("execute");
       refLoading.value.startLoading();
       startEchoChannel(data.value); // Inicia el canal aquí
     }
@@ -96,6 +98,9 @@ const openModalContract = async () => {
       contract_id: filingData.value.contract_id,
     });
     isLoading.value = false;
+    if (response.value?.ok && data.value) {
+      emit("reloadTable"); // Recarga la tabla
+    }
   }
   handleDialogVisible();
 };
@@ -127,6 +132,7 @@ const startEchoChannel = (data: any) => {
         refModalQuestion.value.componentData.subTitle = "Todo ha finalizado sin novedad...";
       }
       stopEchoChannel(); // Para de escuchar los eventos
+
     }
   }).listen('.FilingProgressEvent', (event: any) => {
     progress.value = event.progress;

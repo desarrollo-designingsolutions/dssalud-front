@@ -14,7 +14,7 @@ definePage({
 //ModalUploadFileZip
 const refModalUploadFileZip = ref()
 const openModalUploadFileZip = () => {
-  refModalUploadFileZip.value.openModal()
+  refModalUploadFileZip.value.openModal({ id: null, contract_id: null })
 }
 
 

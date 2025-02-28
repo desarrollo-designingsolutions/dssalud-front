@@ -4,148 +4,175 @@ import ModalErrors from "@/pages/Filing/New/Components/ModalErrors.vue";
 import { useAuthenticationStore } from "@/stores/useAuthenticationStore";
 
 const authenticationStore = useAuthenticationStore();
-
 const emits = defineEmits(["execute"]);
+
+// Referencias
+const refModalQuestion = ref()
+const refLoading = ref()
+const refModalErrors = ref()
+const refModalContract = ref()
 
 const titleModal = ref<string>("Cargar archivo Zip")
 const isDialogVisible = ref<boolean>(false)
 const disabledFiledsView = ref<boolean>(false)
 const isLoading = ref<boolean>(false)
-const progress = ref(0);
-const filingData = ref<{ id: string | null }>({ id: null })
+const progress = ref(0)
+const filingData = ref<any>({})
 
 const handleDialogVisible = () => {
   isDialogVisible.value = !isDialogVisible.value;
 };
 
-const openModal = async () => {
+const openModal = async (itemData: any) => {
   handleDialogVisible();
-
-  resetValues()
-  progress.value = 0
-
+  resetValues();
+  progress.value = 0;
+  filingData.value = JSON.parse(JSON.stringify(itemData));
 };
 
 const submitForm = async () => {
-
   if (fileData.value.length > 0) {
     let formData = new FormData();
-
-    // Asegúrate de que hay al menos un archivo en fileData antes de proceder
     if (fileData.value[0]) {
       formData.append("archiveZip", fileData.value[0].file);
     }
     formData.append("company_id", String(authenticationStore.company.id));
     formData.append("user_id", String(authenticationStore.user.id));
+    formData.append("id", String(filingData.value.id));
 
     isLoading.value = true;
     const { response, data } = await useApi(`/filing/uploadZip`).post(formData);
     isLoading.value = false;
 
     if (response.value?.ok && data.value) {
-      progress.value = 0
-      filingData.value = data.value
+      progress.value = 0;
+      filingData.value = data.value;
       emits("execute");
-      // handleDialogVisible(); // Cierra el modal después de una subida exitosa
-
-      refLoading.value.startLoading()
-
-      echoChannel(data.value)
-
+      refLoading.value.startLoading();
+      startEchoChannel(data.value); // Inicia el canal aquí
     }
-
   } else {
-    refModalQuestion.value.componentData.isDialogVisible = true
-    refModalQuestion.value.componentData.showBtnCancel = false
-    refModalQuestion.value.componentData.btnSuccessText = 'Ok'
-    refModalQuestion.value.componentData.title = 'Por favor, seleccione un archivo antes de continuar.'
+    if (refModalQuestion.value) {
+      refModalQuestion.value.componentData.isDialogVisible = true;
+      refModalQuestion.value.componentData.showBtnCancel = false;
+      refModalQuestion.value.componentData.btnSuccessText = 'Ok';
+      refModalQuestion.value.componentData.title = 'Por favor, seleccione un archivo antes de continuar.';
+    }
   }
 };
 
 defineExpose({
   openModal,
   disabledFiledsView,
-})
+});
 
-//ModalQuestion
-const refModalQuestion = ref()
-
-//dropZoneRef
+// DropZone
 const { dropZoneRef, fileData, open, error, resetValues } = useFileDrop(1, ['zip']);
 
-// Manejar errores
 watch(error, (newError) => {
-  if (newError) {
-    refModalQuestion.value.componentData.isDialogVisible = true
-    refModalQuestion.value.componentData.showBtnCancel = false
-    refModalQuestion.value.componentData.btnSuccessText = 'Ok'
-    refModalQuestion.value.componentData.title = newError
-
-
+  if (newError && refModalQuestion.value) {
+    refModalQuestion.value.componentData.isDialogVisible = true;
+    refModalQuestion.value.componentData.showBtnCancel = false;
+    refModalQuestion.value.componentData.btnSuccessText = 'Ok';
+    refModalQuestion.value.componentData.title = newError;
   }
 });
 
-const refLoading = ref()
-
-//ModalErrors
-const refModalErrors = ref()
 const openModalErrors = (item: any) => {
-  refModalErrors.value.openModal(item)
-}
+  if (refModalErrors.value) {
+    refModalErrors.value.openModal(item);
+  }
+};
 
-
-const echoChannel = (data: any) => {
-  window.Echo.channel(`filing.${data.id}`)
-    .listen('.FilingFinishProcessJob', (event: any) => {
-
-      console.log("event", event);
-
-
-      setTimeout(() => {
-        refLoading.value.stopLoading()
-      }, 1000);
-
-      if (event.status == StatusFilingEnum.ERROR_ZIP) {
-        openModalErrors(event)
-      }
-      if (event.status == StatusFilingEnum.ERROR_TXT) {
-        openModalErrors(event)
-      }
-      if (event.status == StatusFilingEnum.PROCESSED) {
-        refModalQuestion.value.componentData.isDialogVisible = true
-        refModalQuestion.value.componentData.title = "¿Deseas radicar los archivos?"
-        refModalQuestion.value.componentData.subTitle = "Todo ha finalizado sin novedad..."
-      }
-    })
-    .listen('.FilingProgressEvent', (event: any) => {
-      progress.value = event.progress; // Actualiza el estado de progreso       
+const openModalContract = async () => {
+  if (!error.value && filingData.value.contract_id == null) {
+    if (refModalContract.value) {
+      refModalContract.value.openModal(filingData.value.id);
+    }
+  } else {
+    isLoading.value = true;
+    const { response, data } = await useApi(`/filing/updateContract`).post({
+      filing_id: filingData.value.id,
+      contract_id: filingData.value.contract_id,
     });
-}
+    isLoading.value = false;
+  }
+  handleDialogVisible();
+};
+
+// Función para iniciar y manejar el canal dinámicamente
+let channel = null;
+const startEchoChannel = (data: any) => {
+  if (channel) {
+    stopEchoChannel(); // Limpia los eventos específicos antes de volver a suscribirse
+  }
+
+  channel = window.Echo.channel(`filing.${data.id}`);
+  channel.listen('.FilingFinishProcessJob', (event: any) => {
+    console.log(event);
+    setTimeout(() => {
+      if (refLoading.value) {
+        refLoading.value.stopLoading();
+      }
+    }, 1000);
+
+    if (event.status == StatusFilingEnum.ERROR_ZIP || event.status == StatusFilingEnum.ERROR_TXT) {
+      openModalErrors(event);
+    }
+
+    if (event.status == StatusFilingEnum.PROCESSED) {
+      if (refModalQuestion.value) {
+        refModalQuestion.value.componentData.isDialogVisible = true;
+        refModalQuestion.value.componentData.title = "¿Deseas radicar los archivos?";
+        refModalQuestion.value.componentData.subTitle = "Todo ha finalizado sin novedad...";
+      }
+      stopEchoChannel(); // Para de escuchar los eventos
+    }
+  }).listen('.FilingProgressEvent', (event: any) => {
+    progress.value = event.progress;
+  });
+};
+
+const stopEchoChannel = () => {
+  if (channel) {
+    // Deja de escuchar eventos específicos sin cerrar el canal
+    channel.stopListening('.FilingFinishProcessJob');
+    channel.stopListening('.FilingProgressEvent');
+    channel = null; // Limpia la referencia local
+  }
+  // NO usamos window.Echo.leave aquí para no afectar otras suscripciones
+};
+
+// Limpia el canal cuando el componente se desmonta
+onUnmounted(() => {
+  stopEchoChannel(); // Limpia solo los eventos de este componente
+});
+
+// Resto de las funciones
+const cancelOperation = async () => {
+  if (filingData.value.validationTxt) {
+    updateValidationTxt();
+  } else {
+    deleteFiling();
+  }
+};
 
 const deleteFiling = async () => {
-  handleDialogVisible();
-
   isLoading.value = true;
   const { response, data } = await useApi(`/filing/delete/${filingData.value.id}`).delete();
   isLoading.value = false;
+};
 
-  if (response.value?.ok && data.value) {
-  }
-}
+const updateValidationTxt = async () => {
+  isLoading.value = true;
+  const { response, data } = await useApi(`/filing/updateValidationTxt/${filingData.value.id}`).delete({
+    validationTxt: filingData.value.validationTxt,
+  });
+  isLoading.value = false;
+};
 
-
-//ModalContract
-const refModalContract = ref()
-const openModalContract = () => {
-  if (!error.value) {
-    refModalContract.value.openModal(filingData.value.id)
-    handleDialogVisible();
-  }
-}
-
-// Modificar el click handler del drop zone
 const openFileDialog = () => {
-  error.value = null; // Limpiar errores antes de abrir
+  error.value = null;
   open();
 };
 </script>
@@ -153,18 +180,14 @@ const openFileDialog = () => {
 <template>
   <div>
     <Loading ref="refLoading" :progress="progress" :is-loading="isLoading" />
-
     <VDialog v-model="isDialogVisible" :overlay="false" max-width="30rem" transition="dialog-transition" persistent>
       <DialogCloseBtn @click="handleDialogVisible" />
       <VCard :loading="isLoading" :disabled="isLoading" class="w-100">
-        <!-- Toolbar -->
-        <div>
-          <VToolbar color="primary">
-            <VToolbarTitle>{{ titleModal }}</VToolbarTitle>
-          </VToolbar>
-        </div>
-
+        <VToolbar color="primary">
+          <VToolbarTitle>{{ titleModal }}</VToolbarTitle>
+        </VToolbar>
         <VCardText>
+          <!-- DropZone y resto del contenido -->
           <div class="flex">
             <div class="w-full h-auto relative">
               <div ref="dropZoneRef" class="cursor-pointer" @click="openFileDialog">
@@ -179,7 +202,6 @@ const openFileDialog = () => {
                   <span class="text-disabled">o</span>
                   <VBtn variant="tonal">Explorar archivos</VBtn>
                 </div>
-
                 <div v-else class="d-flex justify-center align-center gap-3 pa-8 border-dashed drop-zone flex-wrap">
                   <VRow class="match-height w-100">
                     <template v-for="(item, index) in fileData" :key="index">
@@ -188,25 +210,10 @@ const openFileDialog = () => {
                           <VCardText @click.stop>
                             <VImg :src="item.url" />
                             <div class="mt-2">
-                              <span class="clamp-text text-wrap">
-                                {{ item.file.name }}
-                              </span>
-                              <span>
-                                {{ item.file.size / 1000 }} KB
-                              </span>
+                              <span class="clamp-text text-wrap">{{ item.file.name }}</span>
+                              <span>{{ item.file.size / 1000 }} KB</span>
                             </div>
-
-                            <div v-if="item.status === 'uploading'" class="mt-2">
-                              <VProgressCircular :size="24" :value="item.progress" color="primary" />
-                              <span>Cargando...</span>
-                            </div>
-                            <div v-if="item.status === 'completed'" class="mt-2 text-success">
-                              <span>¡Archivo cargado exitosamente!</span>
-                            </div>
-                            <div v-if="item.status === 'failed'" class="mt-2 text-danger">
-                              <span>Error al cargar el archivo</span>
-                            </div>
-
+                            <!-- Estado del archivo -->
                           </VCardText>
                           <VSpacer />
                           <VCardActions>
@@ -223,25 +230,15 @@ const openFileDialog = () => {
             </div>
           </div>
         </VCardText>
-
-
         <VCardText class="d-flex justify-end gap-3 flex-wrap">
-          <VBtn :loading="isLoading" color="secondary" variant="tonal" @click="handleDialogVisible()">
-            Cancelar
-          </VBtn>
-          <VBtn :disabled="isLoading" :loading="isLoading" @click="submitForm()" color="primary">
-            Continuar
-          </VBtn>
+          <VBtn :loading="isLoading" color="secondary" variant="tonal" @click="handleDialogVisible()">Cancelar</VBtn>
+          <VBtn :disabled="isLoading" :loading="isLoading" @click="submitForm()" color="primary">Continuar</VBtn>
         </VCardText>
-
       </VCard>
     </VDialog>
 
-    <ModalQuestion ref="refModalQuestion" @cancel="deleteFiling" @success="openModalContract" />
-
-    <ModalErrors ref="refModalErrors" @cancel="deleteFiling" @continue="openModalContract" />
-
+    <ModalQuestion ref="refModalQuestion" @cancel="cancelOperation" @success="openModalContract" />
+    <ModalErrors ref="refModalErrors" @cancel="cancelOperation" @continue="openModalContract" />
     <ModalContract ref="refModalContract" />
-
   </div>
 </template>

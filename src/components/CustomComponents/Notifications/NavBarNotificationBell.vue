@@ -22,7 +22,6 @@ const getNotifications = async (url = '/notification/getNotifications/' + authen
   //   url = nextPageUrl.value
   // }
 
-  // console.log("url", url);
 
 
   if (url) {
@@ -46,12 +45,9 @@ const getNotifications = async (url = '/notification/getNotifications/' + authen
 
 // Función que se llama cuando el usuario hace scroll
 async function load({ done }) {
-  // console.log("aaaaaaaaa");
 
   // // Validación adicional
   // if (!enableInfiniteScroll.value || !nextPageUrl.value) {
-  //   //   console.log("enableInfiniteScroll.value", enableInfiniteScroll.value);
-  //   //   console.log("nextPageUrl.value", nextPageUrl.value);
 
   //   done('empty');
   //   return;
@@ -146,7 +142,6 @@ const handleNotificationClick = (notification: Notification) => {
 
 window.Echo.channel('user.' + authenticationStore.user.id)
   .listen('.update-notification', (event) => {
-    // console.log("UpdateNotificationEvent", event); // Aquí se recibe y maneja la notificación
 
     unreadCount.value = event.activeNotificationsCount
 

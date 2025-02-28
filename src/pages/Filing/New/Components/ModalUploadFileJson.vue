@@ -18,12 +18,12 @@ const handleDialogVisible = () => {
   isDialogVisible.value = !isDialogVisible.value;
 };
 
-const openModal = async () => {
+const openModal = async (id: string | null = null) => {
   handleDialogVisible();
 
   resetValues()
   progress.value = 0
-
+  filingData.value = { id: id }
 };
 
 const submitForm = async () => {
@@ -47,6 +47,7 @@ const submitForm = async () => {
 
   formData.append("company_id", String(authenticationStore.company.id));
   formData.append("user_id", String(authenticationStore.user.id));
+  formData.append("id", String(filingData.value.id));
 
   isLoading.value = true;
   const { response, data } = await useApi(`/filing/uploadJson`).post(formData);
@@ -102,9 +103,6 @@ const echoChannel = (data: any) => {
   window.Echo.channel(`filing.${data.id}`)
     .listen('.FilingFinishProcessJob', (event: any) => {
 
-      console.log("event", event);
-
-
       setTimeout(() => {
         refLoading.value.stopLoading()
       }, 1000);
@@ -119,8 +117,6 @@ const echoChannel = (data: any) => {
       }
     })
     .listen('.FilingProgressEvent', (event: any) => {
-      console.log("event2", event);
-
       progress.value = event.progress; // Actualiza el estado de progreso       
     });
 }

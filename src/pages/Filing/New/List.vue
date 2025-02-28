@@ -7,6 +7,9 @@ import { router } from "@/plugins/1.router";
 import { useAuthenticationStore } from "@/stores/useAuthenticationStore";
 import ModalXmlMasiveFiles from "./Components/ModalXmlMasiveFiles.vue";
 
+import ModalUploadFileJson from "@/pages/Filing/New/Components/ModalUploadFileJson.vue";
+import ModalUploadFileZip from "@/pages/Filing/New/Components/ModalUploadFileZip.vue";
+
 
 definePage({
   path: "Filing/New/List/:id",
@@ -22,6 +25,9 @@ const route = useRoute()
 const authenticationStore = useAuthenticationStore();
 const filing_id = route.params.id;
 
+onMounted(async () => {
+  await getData()
+})
 //TABLE
 const tableFull = ref()
 
@@ -86,7 +92,7 @@ const returnFilter = (filter: any) => {
   filterTable.value = filter
 }
 
-const loading = reactive({ excel: false })
+const loading = reactive({ excel: false, getData: false })
 
 //ModalQuestion
 const refModalQuestion = ref()
@@ -102,7 +108,21 @@ const finishFilling = () => {
 //Visualizar usuarios
 const goViewUsers = (item: any) => {
   router.push({ name: "Filing-New-ListUsers", params: { id: filing_id, invoice_id: item.id } })
+}
 
+const filingData = ref({
+  id: "" as string,
+  type: "" as string,
+  contract_id: "" as string,
+})
+
+const getData = async () => {
+  loading.getData = true
+  const { data, response } = await useApi(`/filing/showData/${filing_id}`).get()
+  if (response.value?.ok && data.value) {
+    filingData.value = data.value
+  }
+  loading.getData = false
 }
 
 //ModalSupportFiles
@@ -121,13 +141,11 @@ const openModalShowFiles = (item: any) => {
   })
 }
 
-
 const echoChannel = () => {
 
   tableFull.value.optionsTable.tableData.forEach(element => {
     window.Echo.channel(`filing_invoice.${element.id}`)
       .listen('.FilingInvoiceRowUpdated', (event: any) => {
-        console.log("event", event);
 
         element.files_count = event.files_count
 
@@ -160,11 +178,38 @@ const openModalXmlMasiveFiles = () => {
   refModalXmlMasiveFiles.value.openModal(filing_id)
 }
 
-
 //descarga de XML
 const downloadFileData = async (file: any) => {
   descargarArchivo(file, "prueba");
 };
+
+//uploadMoreInvoices
+const uploadMoreInvoices = () => {
+  if (filingData.value.type == TypeFilingEnum.RADICATION_OLD) {
+
+    openModalUploadFileZip()
+
+  } else if (filingData.value.type == TypeFilingEnum.RADICATION_2275) {
+
+    openModalUploadFileJson()
+
+  }
+}
+
+//ModalUploadFileZip
+const refModalUploadFileZip2 = ref()
+const openModalUploadFileZip = () => {
+
+  refModalUploadFileZip2.value.openModal(filingData.value)
+}
+
+
+//ModalUploadFileJson
+const refModalUploadFileJson = ref()
+
+const openModalUploadFileJson = () => {
+  refModalUploadFileJson.value.openModal(filingData.value)
+}
 </script>
 
 <template>
@@ -191,6 +236,7 @@ const downloadFileData = async (file: any) => {
             Más opciones
             <VMenu activator="parent">
               <VList>
+                <VListItem @click="uploadMoreInvoices()">Subir más facturas</VListItem>
                 <VListItem @click="openModalSupportMasiveFiles()">Subir soportes masivo</VListItem>
                 <VListItem @click="openModalXmlMasiveFiles()">Subir XML masivo</VListItem>
                 <VListItem @click="() => { }">Descargar certificacion de radicación</VListItem>
@@ -255,6 +301,8 @@ const downloadFileData = async (file: any) => {
     <ModalSupportMasiveFiles ref="refModalSupportMasiveFiles" />
     <ModalUploadFileXml ref="refModalUploadFileXml" />
     <ModalXmlMasiveFiles ref="refModalXmlMasiveFiles" />
+    <ModalUploadFileZip ref="refModalUploadFileZip2" />
+    <ModalUploadFileJson ref="refModalUploadFileJson" />
 
 
   </div>

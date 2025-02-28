@@ -105,8 +105,6 @@ const openModalErrors = (item: any) => {
 const echoChannel = (data: any) => {
   window.Echo.channel(`filing_invoice.${data.id}`)
     .listen('.FilingInvoiceRowUpdated', (event: any) => {
-      console.log("event", event);
-
       if (event.status == StatusFillingInvoiceEnum.ERROR_XML) {
         openModalErrors(event)
       }

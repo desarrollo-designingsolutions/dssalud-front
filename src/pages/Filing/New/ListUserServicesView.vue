@@ -51,7 +51,7 @@ const goBack = () => {
     <VCard class="mt-5" v-if="dataUser">
       <VCardTitle class="d-flex justify-space-between">
         <span>
-          Lista de usuarios
+          Lista de servicios
         </span>
 
         <div class="d-flex justify-end gap-3 flex-wrap ">

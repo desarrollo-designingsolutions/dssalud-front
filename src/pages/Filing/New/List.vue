@@ -123,6 +123,7 @@ const responseFinishFiling = async () => {
     refModalQuestionResponseFinishFiling.value.componentData.title = 'Radicación finalizada de manera exitosa'
 
     reloadTable()
+    refreshCountAllDataInvoices()
   }
   loading.finishFiling = false
 }

@@ -125,7 +125,7 @@ const startEchoChannel = (data: any) => {
       openModalErrors(event);
     }
 
-    if (event.status == 'FILING_EST_002') {
+    if (event.status == 'FILING_EST_008') {
       if (refModalQuestion.value) {
         refModalQuestion.value.componentData.isDialogVisible = true;
         refModalQuestion.value.componentData.title = "¿Deseas radicar los archivos?";

@@ -37,7 +37,7 @@ const optionsTable = {
   url: "/filingInvoice/list",
   params: {
     company_id: authenticationStore.company.id,
-    type: TypeFilingEnum.RADICATION_OLD,
+    type: 'FILING_TYPE_001',
     filing_id: filing_id,
   },
   headers: [
@@ -52,11 +52,8 @@ const optionsTable = {
     { key: 'actions', title: 'Acciones' },
   ],
   actions: {
-    changeStatus: {
-      url: "/client/changeStatus"
-    },
     delete: {
-      url: "/client/delete"
+      url: "/filingInvoice/delete",
     },
   }
 }
@@ -76,16 +73,16 @@ const optionsFilter = ref({
       {
         input_type: "selectInfinite",
         title: "Estado",
-        key: "statusFillingInvoiceEnum",
-        api: "selectStatusFillingInvoiceEnum",
+        key: "statusFilingInvoiceEnum",
+        api: "selectStatusFilingInvoiceEnum",
         search_key: "status",
       },
       {
         input_type: "selectInfinite",
         title: "XML",
-        key: "statusXmlFillingInvoiceEnum",
+        key: "statusXmlFilingInvoiceEnum",
         search_key: "status_xml",
-        api: "selectStatusXmlFillingInvoiceEnum",
+        api: "selectStatusXmlFilingInvoiceEnum",
       },
     ],
   }
@@ -94,17 +91,40 @@ const returnFilter = (filter: any) => {
   filterTable.value = filter
 }
 
-const loading = reactive({ excel: false, getData: false })
+const loading = reactive({ excel: false, getData: false, finishFiling: false })
 
 //ModalQuestion
 const refModalQuestion = ref()
+const refModalQuestionResponseFinishFiling = ref()
 
-const finishFilling = () => {
-  refModalQuestion.value.componentData.isDialogVisible = true
-  refModalQuestion.value.componentData.showBtnCancel = false
-  refModalQuestion.value.componentData.principalIcon = 'tabler-circle-check'
-  refModalQuestion.value.componentData.btnSuccessText = 'Aceptar'
-  refModalQuestion.value.componentData.title = 'Radicación finalizada de manera exitosa'
+const finishFiling = async () => {
+  loading.finishFiling = true
+  const { data, response } = await useApi(`/filing/getCountFilingInvoicePreRadicated/${filing_id}`).get()
+  if (response.value?.ok && data.value) {
+    const countData = data.value.countData ?? 0
+    if (countData) {
+      refModalQuestion.value.componentData.isDialogVisible = true
+      refModalQuestion.value.componentData.principalIcon = 'tabler-help-hexagon'
+      refModalQuestion.value.componentData.btnSuccessText = 'Aceptar'
+      refModalQuestion.value.componentData.title = `Desea finalizar ${countData} cantidad de facturas en estado preradicado?`
+    }
+  }
+  loading.finishFiling = false
+
+}
+const responseFinishFiling = async () => {
+  loading.finishFiling = true
+  const { data, response } = await useApi(`/filing/changeStatusFilingInvoicePreRadicated/${filing_id}`).get()
+  if (response.value?.ok && data.value) {
+    refModalQuestionResponseFinishFiling.value.componentData.isDialogVisible = true
+    refModalQuestionResponseFinishFiling.value.componentData.showBtnCancel = false
+    refModalQuestionResponseFinishFiling.value.componentData.principalIcon = 'tabler-circle-check'
+    refModalQuestionResponseFinishFiling.value.componentData.btnSuccessText = 'Aceptar'
+    refModalQuestionResponseFinishFiling.value.componentData.title = 'Radicación finalizada de manera exitosa'
+
+    reloadTable()
+  }
+  loading.finishFiling = false
 }
 
 //Visualizar usuarios
@@ -201,11 +221,11 @@ const downloadFileData = async (file: any) => {
 
 //uploadMoreInvoices
 const uploadMoreInvoices = () => {
-  if (filingData.value.type == TypeFilingEnum.RADICATION_OLD) {
+  if (filingData.value.type == 'FILING_TYPE_001') {
 
     openModalUploadFileZip()
 
-  } else if (filingData.value.type == TypeFilingEnum.RADICATION_2275) {
+  } else if (filingData.value.type == 'FILING_TYPE_002') {
 
     openModalUploadFileJson()
 
@@ -229,15 +249,24 @@ const openModalUploadFileJson = () => {
 
 
 const reloadTable = () => {
-  console.log("reloadTable");
-
   tableFull.value.executeFetchTable()
 }
+
+const deleteFilingInvoice = (id: string) => {
+  tableFull.value.openModalQuestionDelete(id);
+}
+
+//CountAllDataInvoices
+const refCountAllDataInvoices = ref()
+const refreshCountAllDataInvoices = () => {
+  refCountAllDataInvoices.value.fetchCountData();
+}
+
 </script>
 
 <template>
   <div>
-    <CountAllDataInvoices :filing_id="filing_id" />
+    <CountAllDataInvoices ref="refCountAllDataInvoices" :filing_id="filing_id" />
 
     <VCard class="mt-5">
       <VCardTitle class="d-flex justify-space-between">
@@ -249,7 +278,7 @@ const reloadTable = () => {
           <ProgressCircularChannel :channel="'filingSupport.' + filing_id" tooltipText="Subiendo soportes masivos" />
           <ProgressCircularChannel :channel="'filingXml.' + filing_id" tooltipText="Subiendo XML masivos" />
 
-          <VBtn :loading="loading.excel" :disabled="loading.excel" color="primary" @click="finishFilling">
+          <VBtn :loading="loading.finishFiling" :disabled="loading.finishFiling" color="primary" @click="finishFiling">
             Finalizar radicación
           </VBtn>
           <VBtn color="primary">
@@ -273,7 +302,7 @@ const reloadTable = () => {
 
       <VCardText class=" mt-2">
         <TableFull ref="tableFull" :optionsTable="optionsTable" :optionsFilter="optionsFilter"
-          @dataFilter="returnFilter" @responseData="echoChannel">
+          @dataFilter="returnFilter" @responseData="echoChannel" @deleteSuccess="refreshCountAllDataInvoices()">
 
           <template #item.actions="{ item }">
             <div class="d-flex justify-end gap-3">
@@ -286,13 +315,28 @@ const reloadTable = () => {
                 <VMenu activator="parent">
                   <VList>
 
-                    <VListItem @click="openModalSupportFiles(item)">Subir soportes</VListItem>
+                    <VListItem v-if="item.status != 'FILINGINVOICE_EST_002'" @click="openModalSupportFiles(item)">Subir
+                      soportes</VListItem>
+
                     <VListItem v-if="item.files_count > 0" @click="openModalShowFiles(item)">Ver soportes</VListItem>
-                    <VListItem @click="openModalUploadFileXml(item)">Subir XML</VListItem>
+
+                    <VListItem
+                      v-if="item.status != 'FILINGINVOICE_EST_002' && item.status_xml != 'FILINGINVOICE_EST_003'"
+                      @click="openModalUploadFileXml(item)">
+                      Subir XML
+                    </VListItem>
+
                     <VListItem @click="goViewUsers(item)">Ver usuarios</VListItem>
-                    <VListItem v-if="item.status_xml == StatusFillingInvoiceEnum.VALIDATED"
-                      @click="downloadFileData(item.path_xml)">Descargar XML</VListItem>
-                    <VListItem @click="() => { }">Eliminar factura</VListItem>
+
+                    <VListItem v-if="item.status_xml == 'FILINGINVOICE_EST_003'"
+                      @click="downloadFileData(item.path_xml)">
+                      Descargar XML
+                    </VListItem>
+
+                    <VListItem v-if="item.status != 'FILINGINVOICE_EST_002'" @click="deleteFilingInvoice(item.id)">
+                      Eliminar factura
+                    </VListItem>
+
                     <VListItem @click="openModalErrorsFilingInvoice(item)">Ver inconsistencias</VListItem>
 
                   </VList>
@@ -317,17 +361,18 @@ const reloadTable = () => {
       </VCardText>
     </VCard>
 
-    <ModalQuestion ref="refModalQuestion" />
+    <ModalQuestion ref="refModalQuestion" @success="responseFinishFiling" />
+    <ModalQuestion ref="refModalQuestionResponseFinishFiling" />
 
     <ModalSupportFiles ref="refModalSupportFiles" />
     <ModalShowFiles ref="refModalShowFiles" />
     <ModalSupportMasiveFiles ref="refModalSupportMasiveFiles" />
     <ModalUploadFileXml ref="refModalUploadFileXml" />
     <ModalXmlMasiveFiles ref="refModalXmlMasiveFiles" />
-    
+
     <ModalUploadFileZip ref="refModalUploadFileZip" @reloadTable="reloadTable()" />
     <ModalUploadFileJson ref="refModalUploadFileJson" @reloadTable="reloadTable()" />
-    
+
     <ModalErrorsFiling ref="refModalErrorsFiling" />
     <ModalErrorsFilingInvoice ref="refModalErrorsFilingInvoice" />
 

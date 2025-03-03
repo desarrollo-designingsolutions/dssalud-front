@@ -20,7 +20,7 @@ interface CountData {
 const countData = ref<CountData[]>([]);
 const isLoading = ref<boolean>(true)
 
-onMounted(async () => {
+const fetchCountData = async () => {
   isLoading.value = true;
   const { data, response } = await useApi<any>(
     createUrl(`/filingInvoice/countAllDataFiling`, {
@@ -37,6 +37,14 @@ onMounted(async () => {
     countData.value = data.value.data
 
   }
+}
+
+onMounted(async () => {
+  fetchCountData();
+});
+
+defineExpose({
+  fetchCountData
 });
 
 </script>

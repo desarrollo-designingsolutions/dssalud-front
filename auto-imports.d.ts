@@ -13,6 +13,7 @@ declare global {
   const EffectScope: typeof import('vue')['EffectScope']
   const ROLE_SUPERADMIN_UUID: typeof import('./src/utils/constants')['ROLE_SUPERADMIN_UUID']
   const StatusFilingEnum: typeof import('./src/utils/constants')['StatusFilingEnum']
+  const StatusFilingInvoiceEnum: typeof import('./src/utils/constants')['StatusFilingInvoiceEnum']
   const StatusFillingInvoiceEnum: typeof import('./src/utils/constants')['StatusFillingInvoiceEnum']
   const StatusRipsEnum: typeof import('./src/utils/constants')['StatusRipsEnum']
   const TypeFilingEnum: typeof import('./src/utils/constants')['TypeFilingEnum']
@@ -400,10 +401,7 @@ declare module 'vue' {
     readonly COOKIE_MAX_AGE_1_YEAR: UnwrapRef<typeof import('./src/utils/constants')['COOKIE_MAX_AGE_1_YEAR']>
     readonly EffectScope: UnwrapRef<typeof import('vue')['EffectScope']>
     readonly ROLE_SUPERADMIN_UUID: UnwrapRef<typeof import('./src/utils/constants')['ROLE_SUPERADMIN_UUID']>
-    readonly StatusFilingEnum: UnwrapRef<typeof import('./src/utils/constants')['StatusFilingEnum']>
-    readonly StatusFillingInvoiceEnum: UnwrapRef<typeof import('./src/utils/constants')['StatusFillingInvoiceEnum']>
     readonly StatusRipsEnum: UnwrapRef<typeof import('./src/utils/constants')['StatusRipsEnum']>
-    readonly TypeFilingEnum: UnwrapRef<typeof import('./src/utils/constants')['TypeFilingEnum']>
     readonly acceptHMRUpdate: UnwrapRef<typeof import('pinia')['acceptHMRUpdate']>
     readonly alphaDashValidator: UnwrapRef<typeof import('./src/@core/utils/validators')['alphaDashValidator']>
     readonly alphaValidator: UnwrapRef<typeof import('./src/@core/utils/validators')['alphaValidator']>

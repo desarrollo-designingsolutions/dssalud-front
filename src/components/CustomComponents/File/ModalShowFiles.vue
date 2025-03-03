@@ -28,7 +28,7 @@ const openModal = async (fileable_id: string, fileable_type: string, dataExtra: 
   form.value.fileable_id = fileable_id
   form.value.fileable_type = fileable_type
 
-  if (dataExtra.status == StatusFillingInvoiceEnum.FILING) {
+  if (dataExtra.status == 'FILINGINVOICE_EST_002') {
     showBtnDelete.value = false;
   }
 

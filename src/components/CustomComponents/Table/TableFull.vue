@@ -3,7 +3,7 @@
 const { toast } = useToast();
 const props = defineProps(["optionsTable", "optionsFilter"]);
 
-const emit = defineEmits(["goView", "dataFilter", "responseData"]);
+const emit = defineEmits(["goView", "dataFilter", "responseData", "deleteSuccess"]);
 
 const loading = ref<boolean>(false);
 
@@ -195,7 +195,10 @@ const deleteData = async (id: number | string) => {
   const { data, response } = await useApi(`${optionsTable.actions.delete.url}/${id}`).delete();
   loading.value = false;
   //if (data.value.code === 200) toast("Éxito", data.value.message, "success");
-  if (response.value?.ok && data.value) await executeFetchTable();
+  if (response.value?.ok && data.value) {
+    emit("deleteSuccess")
+    await executeFetchTable()
+  };
 };
 
 // FUNCTION fetchDataTable

@@ -121,11 +121,11 @@ const startEchoChannel = (data: any) => {
       }
     }, 1000);
 
-    if (event.status == StatusFilingEnum.ERROR_ZIP || event.status == StatusFilingEnum.ERROR_TXT) {
+    if (event.status == 'FILING_EST_006' || event.status == 'FILING_EST_007') {
       openModalErrors(event);
     }
 
-    if (event.status == StatusFilingEnum.PROCESSED) {
+    if (event.status == 'FILING_EST_002') {
       if (refModalQuestion.value) {
         refModalQuestion.value.componentData.isDialogVisible = true;
         refModalQuestion.value.componentData.title = "¿Deseas radicar los archivos?";

@@ -73,7 +73,7 @@ const fetchDataForm = async () => {
     //formulario 
     if (data.value.form) {
       form.value = data.value.form
-      const formClone = JSON.parse(JSON.stringify(data.value.form))
+      const formClone = cloneObject(data.value.form)
 
       if (data.value.form.id) {
         await changeCountry(formClone.country_id)

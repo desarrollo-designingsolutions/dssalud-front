@@ -12,6 +12,11 @@ declare global {
   const CreateUrl: typeof import('./src/@core/composable/CreateUrl')['CreateUrl']
   const EffectScope: typeof import('vue')['EffectScope']
   const ROLE_SUPERADMIN_UUID: typeof import('./src/utils/constants')['ROLE_SUPERADMIN_UUID']
+  const StatusFilingEnum: typeof import('./src/utils/constants')['StatusFilingEnum']
+  const StatusFilingInvoiceEnum: typeof import('./src/utils/constants')['StatusFilingInvoiceEnum']
+  const StatusFillingInvoiceEnum: typeof import('./src/utils/constants')['StatusFillingInvoiceEnum']
+  const StatusRipsEnum: typeof import('./src/utils/constants')['StatusRipsEnum']
+  const TypeFilingEnum: typeof import('./src/utils/constants')['TypeFilingEnum']
   const VITE_API_BASE_BACK: typeof import('./src/utils/constants')['VITE_API_BASE_BACK']
   const acceptHMRUpdate: typeof import('pinia')['acceptHMRUpdate']
   const alphaDashValidator: typeof import('./src/@core/utils/validators')['alphaDashValidator']
@@ -20,6 +25,7 @@ declare global {
   const autoResetRef: typeof import('@vueuse/core')['autoResetRef']
   const avatarText: typeof import('./src/@core/utils/formatters')['avatarText']
   const betweenValidator: typeof import('./src/@core/utils/validators')['betweenValidator']
+  const cloneObject: typeof import('./src/@core/utils/helpers')['cloneObject']
   const computed: typeof import('vue')['computed']
   const computedAsync: typeof import('@vueuse/core')['computedAsync']
   const computedEager: typeof import('@vueuse/core')['computedEager']
@@ -238,6 +244,7 @@ declare global {
   const useFavicon: typeof import('@vueuse/core')['useFavicon']
   const useFetch: typeof import('@vueuse/core')['useFetch']
   const useFileDialog: typeof import('@vueuse/core')['useFileDialog']
+  const useFileDrop: typeof import('./src/composables/useFileDrop')['useFileDrop']
   const useFileSystemAccess: typeof import('@vueuse/core')['useFileSystemAccess']
   const useFileUpload: typeof import('./src/composables/useFileUpload')['useFileUpload']
   const useFloor: typeof import('@vueuse/math')['useFloor']
@@ -394,6 +401,7 @@ declare module 'vue' {
     readonly COOKIE_MAX_AGE_1_YEAR: UnwrapRef<typeof import('./src/utils/constants')['COOKIE_MAX_AGE_1_YEAR']>
     readonly EffectScope: UnwrapRef<typeof import('vue')['EffectScope']>
     readonly ROLE_SUPERADMIN_UUID: UnwrapRef<typeof import('./src/utils/constants')['ROLE_SUPERADMIN_UUID']>
+    readonly StatusRipsEnum: UnwrapRef<typeof import('./src/utils/constants')['StatusRipsEnum']>
     readonly acceptHMRUpdate: UnwrapRef<typeof import('pinia')['acceptHMRUpdate']>
     readonly alphaDashValidator: UnwrapRef<typeof import('./src/@core/utils/validators')['alphaDashValidator']>
     readonly alphaValidator: UnwrapRef<typeof import('./src/@core/utils/validators')['alphaValidator']>
@@ -401,6 +409,7 @@ declare module 'vue' {
     readonly autoResetRef: UnwrapRef<typeof import('@vueuse/core')['autoResetRef']>
     readonly avatarText: UnwrapRef<typeof import('./src/@core/utils/formatters')['avatarText']>
     readonly betweenValidator: UnwrapRef<typeof import('./src/@core/utils/validators')['betweenValidator']>
+    readonly cloneObject: UnwrapRef<typeof import('./src/@core/utils/helpers')['cloneObject']>
     readonly computed: UnwrapRef<typeof import('vue')['computed']>
     readonly computedAsync: UnwrapRef<typeof import('@vueuse/core')['computedAsync']>
     readonly computedEager: UnwrapRef<typeof import('@vueuse/core')['computedEager']>
@@ -614,6 +623,7 @@ declare module 'vue' {
     readonly useFavicon: UnwrapRef<typeof import('@vueuse/core')['useFavicon']>
     readonly useFetch: UnwrapRef<typeof import('@vueuse/core')['useFetch']>
     readonly useFileDialog: UnwrapRef<typeof import('@vueuse/core')['useFileDialog']>
+    readonly useFileDrop: UnwrapRef<typeof import('./src/composables/useFileDrop')['useFileDrop']>
     readonly useFileSystemAccess: UnwrapRef<typeof import('@vueuse/core')['useFileSystemAccess']>
     readonly useFileUpload: UnwrapRef<typeof import('./src/composables/useFileUpload')['useFileUpload']>
     readonly useFloor: UnwrapRef<typeof import('@vueuse/math')['useFloor']>

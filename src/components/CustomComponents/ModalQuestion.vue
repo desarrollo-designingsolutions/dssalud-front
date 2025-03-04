@@ -7,6 +7,7 @@ const componentData = reactive({
   principalIcon: "tabler-alert-circle",
   title: "¿Está seguro que desea proceder con esta acción?",
   subTitle: "",
+  html: null,
   btnSuccessText: "Si",
   btnSuccessIcon: "tabler-check",
   btnCancelText: "Cancelar",
@@ -49,6 +50,10 @@ defineExpose({
         <VIcon :icon="componentData.principalIcon" size="5rem" />
         <h2>{{ componentData.title }}</h2>
         <span>{{ componentData.subTitle }}</span>
+
+      </VCardText>
+      <VCardText class="text-center">
+        <div v-if="componentData.html" v-html="componentData.html"></div>
 
       </VCardText>
       <VCardText class="d-flex justify-center" v-if="componentData.showActions">

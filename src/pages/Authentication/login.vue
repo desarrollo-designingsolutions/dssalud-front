@@ -68,8 +68,8 @@ if (isAuthenticated) {
       <!-- 👉 Auth Card -->
       <VCard class="auth-card" max-width="460" :class="$vuetify.display.smAndUp ? 'pa-6' : 'pa-2'">
         <div class="d-flex justify-center">
-          <VImg max-width="260"
-            :src="$vuetify.theme.current.dark ? logo_designing_solutions_light : logo_designing_solutions_dark" />
+          <!-- <VImg max-width="260"
+            :src="$vuetify.theme.current.dark ? logo_designing_solutions_light : logo_designing_solutions_dark" /> -->
         </div>
         <VCardText class="d-flex justify-center">
           <h5 class="text-h5 ">

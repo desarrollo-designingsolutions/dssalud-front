@@ -25,6 +25,7 @@ const formComponent = ref({
   description: null,
   company_id: null,
   permissions: [] as Array<Number>,
+  type: [],
 });
 
 const handleIsDialogVisible = (isVisible: boolean = false) => {
@@ -35,7 +36,10 @@ const handleClearFormComponent = (): void => {
   formComponent.value.id = null;
   formComponent.value.description = null;
   formComponent.value.permissions = [];
+  formComponent.value.type = []
 };
+
+const roleTypeEnum_arrayInfo = ref([]);
 
 const handleCreate = async () => {
   useStore.clearPermissionsSelected();
@@ -51,6 +55,7 @@ const handleCreate = async () => {
   formComponent.value.company_id = company.value.id
   componentData.menus = data.value.menus;
   arrayFather.value = componentData.menus;
+  roleTypeEnum_arrayInfo.value = data.value.roleTypeEnum_arrayInfo;
 };
 
 const handleEdit = async ({ id }: any) => {
@@ -64,7 +69,6 @@ const handleEdit = async ({ id }: any) => {
 
   const { response, data, isFetching } = await useApi(`role/${id}/edit`).get();
 
-  componentData.isLoading = isFetching.value;
 
   if (response.value?.ok && data.value?.code == 200) {
 
@@ -72,11 +76,13 @@ const handleEdit = async ({ id }: any) => {
     formComponent.value.id = data.value.role.id;
     formComponent.value.description = data.value.role.description;
     formComponent.value.company_id = data.value.role.company_id;
+    formComponent.value.type = data.value.role.type;
 
     selectedElements.value = data.value.role.permissions;
     arrayFather.value = componentData.menus;
 
   }
+  componentData.isLoading = isFetching.value;
 };
 
 const handleSubmit = async () => {
@@ -126,6 +132,14 @@ defineExpose({
             </VCol>
           </VRow>
         </VForm>
+        <h5 class="text-h5 my-6">Funciones del rol</h5>
+        <VRow :loading="componentData.isLoading">
+          <VCol v-for="(item, index) in roleTypeEnum_arrayInfo" :key="index">
+            <VCard border>
+              <VCheckboxBtn v-model="formComponent.type" :value="item.value" :label="item.title"></VCheckboxBtn>
+            </VCard>
+          </VCol>
+        </VRow>
         <h5 class="text-h5 my-6">Permisos de rol</h5>
         <VSkeletonLoader type="list-item, list-item, list-item, list-item, list-item, list-item"
           :loading="componentData.isLoading">
@@ -133,10 +147,10 @@ defineExpose({
             <VCol>
               <VList border>
                 <template v-for="(
-                    father, key
+father, key
                   ) in componentData.menus" :key="key">
 
-                  <ListGroup :father="father" />
+                  <ListGroup :father="father" :type="formComponent.type" />
                 </template>
               </VList>
             </VCol>

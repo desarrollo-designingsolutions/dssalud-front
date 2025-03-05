@@ -1,16 +1,24 @@
 <script setup lang="ts">
-
 import { useRoleStore } from "@/pages/UserAccess/Role/stores/useRoleStore";
+import { toRef } from 'vue'; // Importa toRef
 
 const roleStore = useRoleStore();
-const { selectedElements, selectedFather } = storeToRefs(roleStore);
+const { selectedElements } = storeToRefs(roleStore);
 
-const { father } = defineProps({
+const props = defineProps({
   father: {
     required: true,
     type: Object,
   },
+  type: {
+    required: false,
+    type: Array,
+    default: [],
+  },
 });
+
+// Mantén la reactividad con toRef
+const type = toRef(props, 'type');
 
 // Verifica si todos los permisos DIRECTOS del grupo están seleccionados
 const areAllDirectPermissionsSelected = (father: any) => {
@@ -28,7 +36,26 @@ const toggleAllDirectPermissions = (father: any) => {
     roleStore.selectAllPermissions(father.id);
   }
 };
+
+// const operatorGroups = ["1", "3", "4", "7"]; // IDs de los grupos afectados
+// const mechanicGroups = ["1", "14", "18"]; // IDs de los grupos afectados
+
+// watch(type, (newVal) => {
+//   if (newVal.includes('ROLE_TYPE_001')) {
+//     roleStore.checkPermissionsSelected(operatorGroups);
+//   } else {
+//     roleStore.removePermission(operatorGroups);
+//   }
+
+//   if (newVal.includes('ROLE_TYPE_002')) {
+//     roleStore.checkPermissionsSelected(mechanicGroups);
+//   } else {
+//     roleStore.removePermission(mechanicGroups);
+//   }
+// });
+
 </script>
+
 <template>
   <VListGroup>
     <template #activator="{ props }">

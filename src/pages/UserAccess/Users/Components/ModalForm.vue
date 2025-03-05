@@ -25,6 +25,7 @@ const form = ref({
   confirmedPassword: null as null | string,
   role_id: null as null | string,
   company_id: null as null | string,
+  third_id: null as null | string,
 })
 
 const handleClearForm = () => {
@@ -42,6 +43,7 @@ const openModal = async (id: string | null = null, disabled: boolean = false) =>
 
   handleClearForm()
   handleDialogVisible();
+  loadSelectInfinite()
 
   titleModal.value = id ? "Editar usuario" : "Crear usuario"
 
@@ -80,8 +82,9 @@ const fetchDataForm = async () => {
 const submitForm = async () => {
   const validation = await refForm.value?.validate();
 
-  if (validation?.valid) {
 
+  if (validation?.valid) {
+    console.log(form.value);
     const url = form.value.id ? `/user/update/${form.value.id}` : `/user/store`
 
     isLoading.value = true
@@ -92,7 +95,7 @@ const submitForm = async () => {
       emit("execute")
       handleDialogVisible()
     }
-
+    if (data.value.code === 422) errorsBack.value = data.value.errors ?? {};
   }
 }
 
@@ -116,13 +119,47 @@ const rulesFieldConfirmedPassword = computed(() => {
   ]
 })
 
+const thirds = ref([])
 
+const third_arrayInfo = ref<Array<object>>([])
+const third_countLinks = ref<number>(1)
+const fetchSelectInfiniteThird = async (params: object) => {
+  const { data, response } = await useApi("/selectInfiniteThird").post(params)
 
+  if (response.value?.ok && data.value) {
+    third_arrayInfo.value = data.value.third_arrayInfo
+    third_countLinks.value = data.value.third_countLinks
+  }
+}
+const select_third = useSelect(
+  fetchSelectInfiniteThird,
+  third_arrayInfo,
+  third_countLinks,
+  {
+    company_id: authenticationStore.company.id
+  }
+);
 
 defineExpose({
   openModal
 })
 
+
+const loadSelectInfinite = async () => {
+  await fetchSelectInfiniteThird({
+    company_id: authenticationStore.company.id
+  })
+
+  select_third.dataNueva.value = third_arrayInfo.value
+  select_third.totalLinks.value = third_countLinks.value
+
+}
+
+const showThirdField = computed(() => {
+  const selectedRole = roles.value.find(role => role.value === form.value.role_id);
+  if (!selectedRole) return false;
+  return selectedRole.type.includes("ROLE_TYPE_001");
+});
 </script>
 
 <template>
@@ -152,8 +189,8 @@ defineExpose({
 
               <VCol cols="12">
                 <AppTextField :requiredField="true" clearable :disabled="disabledFiledsView" label="Correo" type="email"
-                  :rules="[requiredValidator, emailValidator]" v-model="form.email"
-                  :error-messages="errorsBack.email" />
+                  :rules="[requiredValidator, emailValidator]" v-model="form.email" :error-messages="errorsBack.email"
+                  @input="errorsBack.email = ''" />
               </VCol>
 
               <VCol cols="12">
@@ -168,8 +205,13 @@ defineExpose({
               </VCol>
               <VCol cols="12">
                 <AppSelect :requiredField="true" :items="roles" label="Rol" :rules="[requiredValidator]"
-                  v-model="form.role_id" :error-messages="errorsBack.role_id" clearable
+                  v-model="form.role_id" :error-messages="errorsBack.role_id" clearable @input="errorsBack.role_id = ''"
                   :disabled="disabledFiledsView" />
+              </VCol>
+              <VCol cols="12" v-if="showThirdField">
+                <SelectInfiniteThird :requiredField="true" :items="third_arrayInfo" label="Terceros"
+                  :rules="[showThirdField ? requiredValidator : null]" v-model="form.third_id"
+                  :error-messages="errorsBack.third_id" clearable :disabled="disabledFiledsView" />
               </VCol>
               <!-- <VCol cols="12" v-if="user.role_id == ROLE_SUPERADMIN_UUID">
                 <AppSelect :requiredField="true" :items="companies" label="Compañia" :rules="[requiredValidator]"

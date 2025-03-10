@@ -19,16 +19,16 @@ const { company, user } = storeToRefs(authenticationStore);
 const tableFull = ref()
 
 const optionsTable = {
-  url: "/user/list",
-  params: {
+  url: "/user/paginate",
+  paramsGlobal: {
     company_id: company.value.id
   },
   headers: [
     { key: 'full_name', title: 'Nombre Completo' },
     { key: 'email', title: 'Email' },
-    { key: 'role_name', title: 'Rol' },
+    { key: 'role_description', title: 'Rol' },
     { key: "is_active", title: 'Estado', },
-    { key: 'actions', title: 'Acciones' },
+    { key: 'actions', title: 'Acciones', sortable: false },
   ],
   actions: {
     changeStatus: {
@@ -45,22 +45,17 @@ const optionsTable = {
 
 //FILTER
 const optionsFilter = ref({
-  inputGeneral: {
-    relationsGeneral: {
-      all: ["name", "surname", "email", "phone"],
-      rol: ["name"],
-    },
-  },
   dialog: {
     width: 500,
     inputs: [
       {
-        input_type: "booleanActive",
-        title: "Estado",
-        key: "is_active",
+        type: "booleanActive",
+        label: "Estado",
+        name: "is_active",
       },
     ],
-  }
+  },
+  filterLabels: { inputGeneral: 'Buscar en todo'}
 })
 
 
@@ -71,7 +66,7 @@ const openModalForm = () => {
   refModalForm.value.openModal()
 }
 
-const goView = async (data: any = { action: 'created', id: null }) => {
+const goViewEdit = async (data: any) => {
   refModalForm.value.openModal(data.id)
 }
 
@@ -97,9 +92,14 @@ const reloadTable = () => {
         </div>
       </VCardTitle>
 
+      <VCardText>
+        <FilterDialogNew :options-filter="optionsFilter">
+        </FilterDialogNew>
+      </VCardText>
+
       <VCardText class="mt-2">
-        <TableFull ref="tableFull" :optionsTable="optionsTable" :optionsFilter="optionsFilter" @goView="goView">
-        </TableFull>
+        <TableFullNew ref="tableFull" :options="optionsTable" @edit="goViewEdit">
+        </TableFullNew>
       </VCardText>
     </VCard>
 

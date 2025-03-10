@@ -30,11 +30,11 @@ const openModalUploadFileJson = () => {
 }
 
 //TABLE
-const tableFull = ref()
+const refTableFull = ref()
 
 const optionsTable = {
-  url: "/filing/list",
-  params: {
+  url: "/filing/paginate",
+  paramsGlobal: {
     company_id: authenticationStore.company.id,
   },
   headers: [
@@ -50,24 +50,23 @@ const optionsTable = {
 
 //FILTER
 const optionsFilter = ref({
-  inputGeneral: {
-    relationsGeneral: {
-      all: ["type", "sumVr"],
-      contract: ["name"],
-    },
-  },
   dialog: {
     width: 500,
     inputs: [
       {
-        input_type: "selectInfinite",
-        title: "Estado",
-        key: "statusFilingEnumOpenAndClosed",
-        api: "selectStatusFilingEnumOpenAndClosed",
-        search_key: "status",
+        type: "selectApi",
+        label: "Estado",
+        arrayInfo: "statusFilingEnumOpenAndClosed",
+        url: "selectStatusFilingEnumOpenAndClosed",
+        name: "status",
       }
     ],
-  }
+  },
+  extraFilters: {
+    filing_invoice_pre_radicated_count: { value: '' },
+  },
+  filterLabels: { inputGeneral: 'Buscar en todo', filing_invoice_pre_radicated_count: 'Facturas preradicadas' }
+
 })
 
 const goView = (id: number) => {
@@ -78,28 +77,46 @@ const goView = (id: number) => {
 <template>
   <div>
 
-    <VCard>
-      <VCardTitle class="d-flex justify-center">
-        <h2>
-          Nueva Radicación
-        </h2>
-      </VCardTitle>
-
-      <VCardText class="d-flex justify-space-around">
-        <VBtn size="x-large" @click="openModalUploadFileZip()">Radicación antigua</VBtn>
-        <VBtn size="x-large" @click="openModalUploadFileJson()">Radicación 2275</VBtn>
-      </VCardText>
-    </VCard>
-
     <VCard class="mt-5">
       <VCardTitle class="d-flex justify-space-between">
         <span>
           Lista de radicaciones
         </span>
+        <div class="d-flex justify-end gap-3 flex-wrap ">
+          <VMenu location="bottom">
+            <template #activator="{ props }">
+              <VBtn v-bind="props">
+                Agregar radicación
+                <VIcon icon="tabler-circle-chevrons-down"></VIcon>
+              </VBtn>
+            </template>
+
+            <VList>
+              <VListItem @click="openModalUploadFileZip()">
+                Radicación antigua
+              </VListItem>
+              <VListItem @click="openModalUploadFileJson()">
+                Radicación 2275
+              </VListItem>
+            </VList>
+          </VMenu>
+        </div>
       </VCardTitle>
 
+      <VCardText>
+        <FilterDialogNew :options-filter="optionsFilter">
+          <template #default="{ extraFilters }">
+            <VCol cols="3">
+              <AppTextField prepend-inner-icon="tabler-search"
+                v-model="extraFilters.filing_invoice_pre_radicated_count.value" label="Facturar preradicadas"
+                placeholder="Filtrar por facturar preradicadas" type="text" name="filing_invoice_pre_radicated_count" />
+            </VCol>
+          </template>
+        </FilterDialogNew>
+      </VCardText>
+
       <VCardText class=" mt-2">
-        <TableFull ref="tableFull" :optionsTable="optionsTable" :optionsFilter="optionsFilter">
+        <TableFullNew ref="refTableFull" :options="optionsTable">
           <template #item.status="{ item }">
             <div>
               <VChip :color="item.status_backgroundColor">{{ item.status_description }}</VChip>
@@ -120,7 +137,7 @@ const goView = (id: number) => {
               </VBtn>
             </div>
           </template>
-        </TableFull>
+        </TableFullNew>
       </VCardText>
     </VCard>
 

@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import CountAllDataInvoices from "@/pages/Filing/New/Components/CountAllDataInvoices.vue";
+import ModalErrorsFiling from "@/pages/Filing/New/Components/ModalErrorsFiling.vue";
+import ModalErrorsFilingInvoice from "@/pages/Filing/New/Components/ModalErrorsFilingInvoice.vue";
 import ModalSupportFiles from "@/pages/Filing/New/Components/ModalSupportFiles.vue";
 import ModalSupportMasiveFiles from "@/pages/Filing/New/Components/ModalSupportMasiveFiles.vue";
 import ModalUploadFileXml from "@/pages/Filing/New/Components/ModalUploadFileXml.vue";
 import ModalXmlMasiveFiles from "@/pages/Filing/New/Components/ModalXmlMasiveFiles.vue";
-import ModalErrorsFiling from "@/pages/Filing/New/Components/ModalErrorsFiling.vue";
-import ModalErrorsFilingInvoice from "@/pages/Filing/New/Components/ModalErrorsFilingInvoice.vue";
 import { router } from "@/plugins/1.router";
 import { useAuthenticationStore } from "@/stores/useAuthenticationStore";
 

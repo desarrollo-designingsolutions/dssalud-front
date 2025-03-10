@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { TableOptions } from '@/components/TableNew/TableOptions'; // Ajusta la ruta según tu proyecto 
+import { TableOptions } from '@/components/CustomComponents/TableNew/TableOptions'; // Ajusta la ruta según tu proyecto 
 import { defineEmits, defineProps, onMounted, reactive, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
@@ -38,7 +38,7 @@ const isFetching = ref(false);
 const options = reactive<TableOptions>({
   url: props.options.url,
   headers: props.options.headers || [],
-  params: props.options.params || {},
+  paramsGlobal: props.options.paramsGlobal || {},
   showSelect: props.options.showSelect || false,
   multiSort: props.options.multiSort || true,
   sortBy: props.options.sortBy || [],
@@ -107,6 +107,7 @@ const fetchTableData = async (page: number | null = null, fromWatch = false) => 
     perPage: options.pagination.rowsPerPage.toString(),
     ...(sortQuery && { sort: sortQuery }),
     ...options.params,
+    ...options.paramsGlobal,
   };
 
   if (!fromWatch) {

@@ -51,7 +51,7 @@ const optionsTable = {
 //FILTER
 const optionsFilter = ref({
   dialog: {
-    width: 500,
+    width: 800,
     inputs: [
       {
         type: "selectApi",

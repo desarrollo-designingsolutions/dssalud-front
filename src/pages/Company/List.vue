@@ -62,7 +62,7 @@ const optionsFilter = ref({
       },
     ],
   },
-  filterLabels: { inputGeneral: 'Buscar en todo', is_active: 'Estado' }
+  filterLabels: { inputGeneral: 'Buscar en todo' }
 })
 
 

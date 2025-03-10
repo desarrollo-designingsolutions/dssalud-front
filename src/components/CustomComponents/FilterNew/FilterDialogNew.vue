@@ -343,7 +343,7 @@ const booleanActive = [
     </div>
 
     <!-- Diálogo de filtros avanzados -->
-    <VDialog v-model="isDialogOpen" :max-width="filters.dialog?.width">
+    <VDialog v-model="isDialogOpen" :max-width="filters.dialog?.width" persistent>
       <DialogCloseBtn @click="closeDialog" />
       <div>
         <VToolbar color="primary">
@@ -388,6 +388,8 @@ const booleanActive = [
               </AppSelect>
               <AppDateTimePicker v-if="field.type === 'date'" v-model="field.value" :label="field.label"
                 :config="{ dateFormat: 'Y-m-d' }" clearable />
+              <AppDateTimePicker v-if="field.type === 'dateRange'" v-model="field.value" :label="field.label"
+                :config="{ mode: 'range' }" clearable />
             </VCol>
           </VRow>
         </VCardText>

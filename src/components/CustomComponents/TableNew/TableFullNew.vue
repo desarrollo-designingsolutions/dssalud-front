@@ -22,9 +22,9 @@ const props = defineProps<{
 const emit = defineEmits<{
   (e: 'view', item: any): void;
   (e: 'edit', item: any): void;
-  (e: 'delete', id: string | number): void;
+  (e: 'deleteSuccess', id: string | number): void;
   (e: 'dataFetched', data: any): void;
-  (e: 'update:selected', value: any[]): void; // Emit para v-model
+  (e: 'update:selected', value: any[]): void; // Emit para v-model  
 }>();
 
 const loading = ref<boolean>(false);
@@ -196,7 +196,7 @@ const deleteItem = async (id: string | number) => {
 
 
   if (data.value && (data.value.code === 200 || !data.value.code)) {
-    emit('delete', id);
+    emit('deleteSuccess', id);
     await fetchTableData();
   }
 };

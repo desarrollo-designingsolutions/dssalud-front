@@ -31,10 +31,10 @@ onMounted(async () => {
   await getData()
 })
 //TABLE
-const tableFull = ref()
+const refTableFull = ref()
 
 const optionsTable = {
-  url: "/filingInvoice/list",
+  url: "/filingInvoice/paginate",
   params: {
     company_id: authenticationStore.company.id,
     type: 'FILING_TYPE_001',
@@ -62,30 +62,36 @@ const optionsTable = {
 //FILTER
 const filterTable = ref()
 const optionsFilter = ref({
-  inputGeneral: {
-    relationsGeneral: {
-      all: ["invoice_number", "status|custom", "status_xml|custom"],
-    },
-  },
   dialog: {
-    width: 500,
+    width: 800,
+    cols: '4',
     inputs: [
       {
-        input_type: "selectInfinite",
-        title: "Estado",
-        key: "statusFilingInvoiceEnum",
-        api: "selectStatusFilingInvoiceEnum",
-        search_key: "status",
+        type: "selectApi",
+        label: "Estado",
+        arrayInfo: "statusFilingInvoiceTypeEnum",
+        url: "selectStatusFilingInvoiceTypeEnum",
+        name: "status",
       },
       {
-        input_type: "selectInfinite",
-        title: "XML",
-        key: "statusXmlFilingInvoiceEnum",
-        search_key: "status_xml",
-        api: "selectStatusXmlFilingInvoiceEnum",
+        type: "selectApi",
+        label: "XML",
+        arrayInfo: "statusXmlFilingInvoiceEnum",
+        name: "status_xml",
+        url: "selectStatusXmlFilingInvoiceEnum",
+      },
+      {
+        type: "dateRange",
+        label: "Fecha",
+        name: "date",
       },
     ],
-  }
+  },
+  extraFilters: {
+    files_count: { value: '' },
+  },
+  filterLabels: { inputGeneral: 'Buscar en todo' }
+
 })
 const returnFilter = (filter: any) => {
   filterTable.value = filter
@@ -166,7 +172,7 @@ const openModalShowFiles = (item: any) => {
 
 const echoChannel = () => {
 
-  tableFull.value.optionsTable.tableData.forEach(element => {
+  refTableFull.value.optionsTable.tableData.forEach(element => {
     window.Echo.channel(`filing_invoice.${element.id}`)
       .listen('.FilingInvoiceRowUpdated', (event: any) => {
 
@@ -250,11 +256,11 @@ const openModalUploadFileJson = () => {
 
 
 const reloadTable = () => {
-  tableFull.value.executeFetchTable()
+  refTableFull.value.executeFetchTable()
 }
 
 const deleteFilingInvoice = (id: string) => {
-  tableFull.value.openModalQuestionDelete(id);
+  refTableFull.value.openModalQuestionDelete(id);
 }
 
 //CountAllDataInvoices
@@ -301,9 +307,22 @@ const refreshCountAllDataInvoices = () => {
         </div>
       </VCardTitle>
 
+      <VCardText>
+        <FilterDialogNew :options-filter="optionsFilter">
+          <template #default="{ extraFilters }">
+            <VCol cols="3">
+              <AppTextField prepend-inner-icon="tabler-search" v-model="extraFilters.files_count.value"
+                label="Soportes cargados" placeholder="Filtrar por soportes cargados" type="text" name="files_count" />
+            </VCol>
+          </template>
+        </FilterDialogNew>
+      </VCardText>
+
+      <!-- @dataFilter="returnFilter" -->
+
       <VCardText class=" mt-2">
-        <TableFull ref="tableFull" :optionsTable="optionsTable" :optionsFilter="optionsFilter"
-          @dataFilter="returnFilter" @responseData="echoChannel" @deleteSuccess="refreshCountAllDataInvoices()">
+        <TableFullNew ref="refTableFull" :options="optionsTable" @dataFetched="echoChannel"
+          @deleteSuccess="refreshCountAllDataInvoices()">
 
           <template #item.actions="{ item }">
             <div class="d-flex justify-end gap-3">
@@ -358,7 +377,7 @@ const refreshCountAllDataInvoices = () => {
             </div>
           </template>
 
-        </TableFull>
+        </TableFullNew>
       </VCardText>
     </VCard>
 

@@ -134,7 +134,9 @@ const startEchoChannel = (data: any) => {
       stopEchoChannel(); // Para de escuchar los eventos
 
     }
-  }).listen('.FilingProgressEvent', (event: any) => {
+  }).listen('ProgressCircular', (event: any) => {
+    console.log(event);
+
     progress.value = event.progress;
   });
 };
@@ -143,7 +145,7 @@ const stopEchoChannel = () => {
   if (channel) {
     // Deja de escuchar eventos específicos sin cerrar el canal
     channel.stopListening('.FilingFinishProcessJob');
-    channel.stopListening('.FilingProgressEvent');
+    channel.stopListening('.ProgressCircular');
     channel = null; // Limpia la referencia local
   }
   // NO usamos window.Echo.leave aquí para no afectar otras suscripciones

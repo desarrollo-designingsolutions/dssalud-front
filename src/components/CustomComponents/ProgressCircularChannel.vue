@@ -1,5 +1,5 @@
 <script setup lang="ts">
-
+const emit = defineEmits(["execute"])
 const props = defineProps({
   channel: {
     type: String,
@@ -26,6 +26,7 @@ const echoChannel = () => {
       progressValue.value = event.progress
 
       if (event.progress === 100) {
+        emit("execute")
         setTimeout(() => {
           progressValue.value = 0
         }, 1000);
@@ -33,9 +34,6 @@ const echoChannel = () => {
 
     });
 }
-
-const sizeText = computed(() => useAttrs().sizeText as string | undefined)
-
 
 </script>
 <template>

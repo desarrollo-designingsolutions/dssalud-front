@@ -55,7 +55,7 @@ const optionsFilter = ref({
       },
     ],
   },
-  filterLabels: { inputGeneral: 'Buscar en todo'}
+  filterLabels: { inputGeneral: 'Buscar en todo' }
 })
 
 

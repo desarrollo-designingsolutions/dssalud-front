@@ -15,7 +15,7 @@ const objData = ref()
 const openModal = async (element: any) => {
   handleDialogVisible();
 
-  objData.value = {id: element}
+  objData.value = { id: element }
 
 
   init()
@@ -74,7 +74,7 @@ const downloadExcel = async () => {
   <div>
     <VDialog v-model="isDialogVisible" :overlay="false" transition="dialog-transition" persistent>
       <DialogCloseBtn @click="handleDialogVisible" />
-      
+
       <VCard :loading="loading.getData" :disabled="loading.getData" class="w-100">
         <!-- Toolbar -->
         <div>

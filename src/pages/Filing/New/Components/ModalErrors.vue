@@ -148,12 +148,12 @@ const openModalQuestion = () => {
             Cancelar
           </VBtn>
 
-          <template v-if="!validationZip.infoValidationZip">
+          <!-- <template v-if="!validationZip.infoValidationZip">
             <VBtn v-if="validationTxt.totalSuccessfulInvoices > 0" :disabled="loading.getData"
               :loading="loading.getData" @click="openModalQuestion()" color="primary">
               Continuar
             </VBtn>
-          </template>
+          </template> -->
         </VCardText>
       </VCard>
     </VDialog>

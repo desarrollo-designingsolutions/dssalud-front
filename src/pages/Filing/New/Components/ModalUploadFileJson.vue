@@ -174,9 +174,7 @@ const deleteFiling = async () => {
 
 const updateValidationTxt = async () => {
   isLoading.value = true;
-  const { response, data } = await useApi(`/filing/updateValidationTxt/${filingData.value.id}`).delete({
-    validationTxt: filingData.value.validationTxt,
-  });
+  const { response, data } = await useApi(`/filing/updateValidationTxt/${filingData.value.id}`).get();
   isLoading.value = false;
 };
 

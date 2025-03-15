@@ -43,6 +43,7 @@ const options = reactive<TableOptions>({
   multiSort: props.options.multiSort || true,
   sortBy: props.options.sortBy || [],
   selected: props.options.selected || [],
+  tableData: props.options.tableData || [],
   pagination: {
     show: props.options.pagination?.show ?? true,
     rowsPerPage: props.options.pagination?.rowsPerPage || 10,
@@ -131,6 +132,7 @@ const fetchTableData = async (page: number | null = null, fromWatch = false) => 
       options.pagination.currentPage = data.value.currentPage;
     }
     options.pagination.rowsPerPage = data.value.totalPage || options.pagination.rowsPerPage;
+    options.tableData = data.value.tableData || [];
     emit('dataFetched', data.value);
   }
 };
@@ -252,6 +254,7 @@ onMounted(() => {
 });
 
 defineExpose({
+  openDeleteModal,
   fetchTableData,
   options,
 });

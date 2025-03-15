@@ -35,7 +35,7 @@ const refTableFull = ref()
 
 const optionsTable = {
   url: "/filingInvoice/paginate",
-  params: {
+  paramsGlobal: {
     company_id: authenticationStore.company.id,
     type: 'FILING_TYPE_001',
     filing_id: filing_id,
@@ -90,7 +90,7 @@ const optionsFilter = ref({
   extraFilters: {
     files_count: { value: '' },
   },
-  filterLabels: { inputGeneral: 'Buscar en todo' }
+  filterLabels: { inputGeneral: 'Buscar en todo', files_count: "Soportes cargados" }
 
 })
 const returnFilter = (filter: any) => {
@@ -172,9 +172,12 @@ const openModalShowFiles = (item: any) => {
 
 const echoChannel = () => {
 
-  refTableFull.value.optionsTable.tableData.forEach(element => {
+  refTableFull.value.options.tableData.forEach(element => {
     window.Echo.channel(`filing_invoice.${element.id}`)
       .listen('.FilingInvoiceRowUpdated', (event: any) => {
+
+        console.log("event", event);
+
 
         element.files_count = event.files_count
 
@@ -256,11 +259,11 @@ const openModalUploadFileJson = () => {
 
 
 const reloadTable = () => {
-  refTableFull.value.executeFetchTable()
+  refTableFull.value.fetchTableData()
 }
 
 const deleteFilingInvoice = (id: string) => {
-  refTableFull.value.openModalQuestionDelete(id);
+  refTableFull.value.openDeleteModal(id);
 }
 
 //CountAllDataInvoices

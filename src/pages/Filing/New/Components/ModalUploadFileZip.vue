@@ -28,6 +28,9 @@ const openModal = async (itemData: any) => {
   resetValues();
   progress.value = 0;
 
+  console.log("itemData", itemData);
+
+
   if (itemData) {
     filingData.value = cloneObject(itemData);
   }
@@ -158,7 +161,8 @@ onUnmounted(() => {
 
 // Resto de las funciones
 const cancelOperation = async () => {
-  if (filingData.value.validationTxt) {
+
+  if (filingData.value.id) {
     updateValidationTxt();
   } else {
     deleteFiling();
@@ -173,9 +177,7 @@ const deleteFiling = async () => {
 
 const updateValidationTxt = async () => {
   isLoading.value = true;
-  const { response, data } = await useApi(`/filing/updateValidationTxt/${filingData.value.id}`).delete({
-    validationTxt: filingData.value.validationTxt,
-  });
+  const { response, data } = await useApi(`/filing/updateValidationTxt/${filingData.value.id}`).get();
   isLoading.value = false;
 };
 

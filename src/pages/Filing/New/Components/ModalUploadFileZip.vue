@@ -51,6 +51,8 @@ const submitForm = async () => {
     isLoading.value = false;
 
     if (response.value?.ok && data.value) {
+      console.log(data.value, 'data.valueRevisar');
+      
       progress.value = 0;
       filingData.value = data.value;
       refLoading.value.startLoading();
@@ -92,7 +94,9 @@ const openModalErrors = (item: any) => {
 const openModalContract = async () => {
   if (!error.value && filingData.value.contract_id == null) {
     if (refModalContract.value) {
-      refModalContract.value.openModal(filingData.value.id);
+      console.log(filingData.value, 'filingDataaasas');
+      
+      refModalContract.value.openModal(filingData.value.id, filingData.value.type);
     }
   } else {
     isLoading.value = true;

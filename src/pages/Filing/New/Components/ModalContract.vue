@@ -17,6 +17,7 @@ const isLoading = ref<boolean>(false)
 
 const form = ref({
   filing_id: null as null | string,
+  type: null as null | string,
   contract_id: null as null | string,
 })
 
@@ -30,11 +31,12 @@ const handleDialogVisible = () => {
   isDialogVisible.value = !isDialogVisible.value;
 };
 
-const openModal = async (id: string) => {
+const openModal = async (id: string, type: string) => {
   handleClearForm()
   handleDialogVisible();
 
   form.value.filing_id = id
+  form.value.type = type
 };
 
 const submitForm = async () => {
@@ -50,7 +52,7 @@ const submitForm = async () => {
     if (response.value?.ok && data.value) {
       emits("execute")
       handleDialogVisible()
-      router.push({ name: "Filing-New-List", params: { id: form.value.filing_id } })
+      router.push({ name: "Filing-New-List", params: { type: form.value.type, id: form.value.filing_id } })
     }
     if ((data.value as any).code == 422) {
       errorsBack.value = (data.value as any).errors ?? {}

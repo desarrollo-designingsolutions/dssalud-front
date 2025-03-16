@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import CountAllDataInvoices from "@/pages/Filing/New/Components/CountAllDataInvoices.vue";
+import { useFilingInvoiceUserStore } from "@/pages/Filing/New/Components/useFilingInvoiceUserStore";
 import { router } from "@/plugins/1.router";
 import { useRoute } from 'vue-router';
-import { useFilingInvoiceUserStore } from "./Components/ServicesView/useFilingInvoiceUserStore";
 
 definePage({
   path: "Filing/New/ListUsers/:id/:invoice_id",
@@ -179,42 +179,54 @@ const goBack = () => {
 
 <style scoped>
 .info-box {
-  background-color: #f5f5f5;
-  /* Fondo gris claro */
-  border: 1px solid #e0e0e0;
-  /* Borde sutil */
-  border-radius: 8px;
   /* Bordes redondeados */
   padding: 10px;
+
+  /* Fondo gris claro */
+  border: 1px solid #e0e0e0;
+
+  /* Borde sutil */
+  border-radius: 8px;
+  background-color: #f5f5f5;
+
   /* Espacio interno */
-  min-width: 200px;
+  min-inline-size: 200px;
+
   /* Ancho mínimo */
 }
 
 .info-row {
   display: flex;
-  justify-content: space-between;
+
   /* Título a la izquierda, valor a la derecha */
   align-items: center;
-  padding: 5px 0;
+  justify-content: space-between;
+
   /* Espacio vertical entre filas */
   gap: 20px;
+  padding-block: 5px;
+  padding-inline: 0;
+
   /* Separación adicional entre título y valor */
 }
 
 .info-title {
-  font-weight: bold;
-  /* Título en negrita */
-  color: #333;
   /* Color del texto */
   flex-shrink: 0;
+
+  /* Título en negrita */
+  color: #333;
+  font-weight: bold;
+
   /* Evita que el título se encoja demasiado */
 }
 
 .info-value {
   color: #007bff;
+
   /* Color del valor */
-  text-align: right;
+  text-align: end;
+
   /* Alinea el valor a la derecha */
 }
 </style>

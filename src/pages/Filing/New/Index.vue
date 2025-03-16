@@ -39,7 +39,7 @@ const optionsTable = {
   },
   headers: [
     { key: 'contract_name', title: 'Contrato' },
-    { key: 'type', title: 'Tipo' },
+    { key: 'type_description', title: 'Tipo' },
     { key: 'status', title: 'Estado' },
     { key: 'sumVr', title: 'Valor' },
     { key: 'filing_invoice_pre_radicated_count', title: 'Facturas preradicadas' },
@@ -69,8 +69,10 @@ const optionsFilter = ref({
 
 })
 
-const goView = (id: number) => {
-  router.push({ name: "Filing-New-List", params: { id: id } })
+const goView = (item: any) => {
+  console.log(item, 'asasasas');
+
+  router.push({ name: "Filing-New-List", params: { type: item.type, id: item.id } })
 }
 </script>
 
@@ -125,11 +127,11 @@ const goView = (id: number) => {
 
           <template #item.actions="{ item }">
             <div>
-              <VBtn icon color="primary" v-if="item.status == 'FILING_EST_008'">
+              <VBtn icon color="primary">
                 <VIcon icon="tabler-square-rounded-chevron-down"></VIcon>
                 <VMenu activator="parent">
                   <VList>
-                    <VListItem @click="goView(item.id)">
+                    <VListItem @click="goView(item)">
                       Ingresar
                     </VListItem>
                   </VList>

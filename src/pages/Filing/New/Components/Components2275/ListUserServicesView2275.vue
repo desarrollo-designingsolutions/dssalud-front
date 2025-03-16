@@ -1,18 +1,18 @@
 <script setup lang="ts">
+import Emergencies from "@/pages/Filing/New/Components/Components2275/ServicesView/Emergencies.vue";
+import Hospitalization from "@/pages/Filing/New/Components/Components2275/ServicesView/Hospitalization.vue";
+import Medicines from "@/pages/Filing/New/Components/Components2275/ServicesView/Medicines.vue";
+import NewlyBorn from "@/pages/Filing/New/Components/Components2275/ServicesView/NewlyBorn.vue";
+import OtherServices from "@/pages/Filing/New/Components/Components2275/ServicesView/OtherServices.vue";
+import Procedure from "@/pages/Filing/New/Components/Components2275/ServicesView/Procedure.vue";
+import Queries from "@/pages/Filing/New/Components/Components2275/ServicesView/Queries.vue";
 import CountAllDataInvoices from "@/pages/Filing/New/Components/CountAllDataInvoices.vue";
-import Emergencies from "@/pages/Filing/New/Components/ServicesView/Emergencies.vue";
-import Hospitalization from "@/pages/Filing/New/Components/ServicesView/Hospitalization.vue";
-import Medicines from "@/pages/Filing/New/Components/ServicesView/Medicines.vue";
-import NewlyBorn from "@/pages/Filing/New/Components/ServicesView/NewlyBorn.vue";
-import OtherServices from "@/pages/Filing/New/Components/ServicesView/OtherServices.vue";
-import Procedure from "@/pages/Filing/New/Components/ServicesView/Procedure.vue";
-import Queries from "@/pages/Filing/New/Components/ServicesView/Queries.vue";
-import { useFilingInvoiceUserStore } from "@/pages/Filing/New/Components/ServicesView/useFilingInvoiceUserStore";
+import { useFilingInvoiceUserStore } from "@/pages/Filing/New/Components/useFilingInvoiceUserStore";
 import { router } from "@/plugins/1.router";
 
 definePage({
-  path: "Filing/New/ListUserServicesView/:id/:numFactura/:numDocumentoIdentificacion",
-  name: "Filing-New-ListUserServicesView",
+  path: "Filing/New/ListUserServicesView2275/:id/:numFactura/:numDocumentoIdentificacion",
+  name: "Filing-New-ListUserServicesView2275",
   meta: {
     redirectIfLoggedIn: true,
     requiresAuth: true,

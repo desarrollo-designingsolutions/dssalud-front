@@ -28,9 +28,6 @@ const openModal = async (itemData: any) => {
   resetValues();
   progress.value = 0;
 
-  console.log("itemData", itemData);
-
-
   if (itemData) {
     filingData.value = cloneObject(itemData);
   }
@@ -51,8 +48,7 @@ const submitForm = async () => {
     isLoading.value = false;
 
     if (response.value?.ok && data.value) {
-      console.log(data.value, 'data.valueRevisar');
-      
+
       progress.value = 0;
       filingData.value = data.value;
       refLoading.value.startLoading();
@@ -94,8 +90,7 @@ const openModalErrors = (item: any) => {
 const openModalContract = async () => {
   if (!error.value && filingData.value.contract_id == null) {
     if (refModalContract.value) {
-      console.log(filingData.value, 'filingDataaasas');
-      
+
       refModalContract.value.openModal(filingData.value.id, filingData.value.type);
     }
   } else {
@@ -121,7 +116,6 @@ const startEchoChannel = (data: any) => {
 
   channel = window.Echo.channel(`filing.${data.id}`);
   channel.listen('.FilingFinishProcessJob', (event: any) => {
-    console.log(event);
     setTimeout(() => {
       if (refLoading.value) {
         refLoading.value.stopLoading();
@@ -142,8 +136,6 @@ const startEchoChannel = (data: any) => {
 
     }
   }).listen('ProgressCircular', (event: any) => {
-    console.log(event);
-
     progress.value = event.progress;
   });
 };

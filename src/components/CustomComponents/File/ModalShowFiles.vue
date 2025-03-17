@@ -21,7 +21,7 @@ const handleDialogVisible = () => {
   isDialogVisible.value = !isDialogVisible.value;
 };
 
-const openModal = async (fileable_id: string, fileable_type: string, dataExtra: any={}) => {
+const openModal = async (fileable_id: string, fileable_type: string, dataExtra: any = {}) => {
   handleClearForm();
   handleDialogVisible();
 
@@ -31,10 +31,6 @@ const openModal = async (fileable_id: string, fileable_type: string, dataExtra: 
   if (dataExtra.status == 'FILINGINVOICE_EST_002') {
     showBtnDelete.value = false;
   }
-
-  console.log(dataExtra, 'dataExtra');
-  console.log(showBtnDelete.value, 'showBtnDelete');
-  
 
   // Update optionsTable after form is filled
   updateTableParams();

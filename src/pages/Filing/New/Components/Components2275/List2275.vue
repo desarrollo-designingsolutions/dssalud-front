@@ -26,7 +26,7 @@ const optionsTable = {
   url: "/filingInvoice/paginate",
   paramsGlobal: {
     company_id: authenticationStore.company.id,
-    type: 'FILING_TYPE_001',
+    type: 'FILING_TYPE_002',
     filing_id: filing_id,
   },
   headers: [
@@ -38,7 +38,7 @@ const optionsTable = {
     { key: "status", title: 'Estado' },
     { key: "date", title: 'Fecha' },
     { key: "status_xml", title: 'XML' },
-    { key: 'actions', title: 'Acciones' },
+    { key: 'actions', title: 'Acciones', sortable: false },
   ],
   actions: {
     delete: {
@@ -165,14 +165,13 @@ const echoChannel = () => {
     window.Echo.channel(`filing_invoice.${element.id}`)
       .listen('.FilingInvoiceRowUpdated', (event: any) => {
 
-        console.log("event", event);
-
-
         element.files_count = event.files_count
 
         element.status_xml = event.status_xml
         element.status_xml_backgroundColor = event.status_xml_backgroundColor
         element.status_xml_description = event.status_xml_description
+
+        element.path_xml = event.path_xml
 
       });
   });
@@ -215,7 +214,8 @@ const openModalErrorsFilingInvoice = (item) => {
 
 //descarga de XML
 const downloadFileData = async (file: any) => {
-  descargarArchivo(file, "prueba");
+  const filePath = storageBack(file);
+  descargarArchivo(filePath);
 };
 
 //uploadMoreInvoices
@@ -383,7 +383,8 @@ const refreshCountAllDataInvoices = () => {
     <ModalXmlMasiveFiles ref="refModalXmlMasiveFiles" />
 
     <ModalUploadFileZip ref="refModalUploadFileZip" @reloadTable="reloadTable()" />
-    <ModalUploadFileJson ref="refModalUploadFileJson" @reloadTable="reloadTable()" />
+    <ModalUploadFileJson ref="refModalUploadFileJson" @reloadTable="reloadTable()"
+      @refreshCountAllDataInvoices="refreshCountAllDataInvoices()" />
 
     <ModalErrorsFiling ref="refModalErrorsFiling" />
     <ModalErrorsFilingInvoice ref="refModalErrorsFilingInvoice" />

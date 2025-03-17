@@ -70,8 +70,6 @@ const optionsFilter = ref({
 })
 
 const goView = (item: any) => {
-  console.log(item, 'asasasas');
-
   router.push({ name: "Filing-New-List", params: { type: item.type, id: item.id } })
 }
 </script>

@@ -97,7 +97,7 @@ const goViewServices = (obj: any) => {
 
   const numDocumentoIdentificacion = obj.numDocumentoIdentificacion;
   router.push({
-    name: "Filing-New-ListUserServicesView",
+    name: "Filing-New-ListUserServicesView2275",
     params: {
       id: route.params.id,
       numFactura: filingInvoice.value.invoice_number,

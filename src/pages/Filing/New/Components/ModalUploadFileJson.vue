@@ -4,7 +4,7 @@ import ModalErrors from "@/pages/Filing/New/Components/ModalErrors.vue";
 import { useAuthenticationStore } from "@/stores/useAuthenticationStore";
 
 const authenticationStore = useAuthenticationStore();
-const emit = defineEmits(["reloadTable"]);
+const emit = defineEmits(["reloadTable", "refreshCountAllDataInvoices"]);
 
 // Referencias
 const refModalQuestion = ref();
@@ -36,8 +36,8 @@ const submitForm = async () => {
   if (fileData.value.length === 0) {
     if (refModalQuestion.value) {
       refModalQuestion.value.componentData.isDialogVisible = true;
-      refModalQuestion.value.componentData.showBtnCancel = false;
-      refModalQuestion.value.componentData.btnSuccessText = "Ok";
+      refModalQuestion.value.componentData.showBtnSuccess = false;
+      refModalQuestion.value.componentData.btnCancelText = "Ok";
       refModalQuestion.value.componentData.title = "Por favor, seleccione un archivo antes de continuar.";
     }
     return;
@@ -79,8 +79,8 @@ const { dropZoneRef, fileData, open, error, resetValues } = useFileDrop(0, ["jso
 watch(error, (newError) => {
   if (newError && refModalQuestion.value) {
     refModalQuestion.value.componentData.isDialogVisible = true;
-    refModalQuestion.value.componentData.showBtnCancel = false;
-    refModalQuestion.value.componentData.btnSuccessText = "Ok";
+    refModalQuestion.value.componentData.showBtnSuccess = false;
+    refModalQuestion.value.componentData.btnCancelText = "Ok";
     refModalQuestion.value.componentData.title = newError;
   }
 });
@@ -92,10 +92,9 @@ const openModalErrors = (item: any) => {
 };
 
 const openModalContract = async () => {
-  console.log("filingData", filingData.value);
   if (!error.value && filingData.value.contract_id == null) {
     if (refModalContract.value) {
-      refModalContract.value.openModal(filingData.value.id);
+      refModalContract.value.openModal(filingData.value.id, filingData.value.type);
     }
   } else {
     isLoading.value = true;
@@ -107,6 +106,7 @@ const openModalContract = async () => {
 
     if (response.value?.ok && data.value) {
       emit("reloadTable"); // Recarga la tabla
+      emit("refreshCountAllDataInvoices"); // Recarga Contadores
     }
   }
   handleDialogVisible();
@@ -129,10 +129,10 @@ const startEchoChannel = (data: any) => {
       }
     }, 1000);
 
-    if (event.status == "ERROR_TXT") {
+    if (event.status == "FILING_EST_007") {
       openModalErrors(event);
     }
-    if (event.status == "PROCESSED") {
+    if (event.status == "FILING_EST_008") {
       if (refModalQuestion.value) {
         refModalQuestion.value.componentData.isDialogVisible = true;
         refModalQuestion.value.componentData.title = "¿Deseas radicar los archivos?";
@@ -159,10 +159,12 @@ onUnmounted(() => {
 
 // Resto de las funciones
 const cancelOperation = async () => {
-  if (filingData.value.validationTxt) {
-    updateValidationTxt();
-  } else {
-    deleteFiling();
+  if (error.value?.length == 0) {
+    if (filingData.value.validationTxt) {
+      updateValidationTxt();
+    } else {
+      deleteFiling();
+    }
   }
 };
 

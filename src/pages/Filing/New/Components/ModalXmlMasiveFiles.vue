@@ -91,12 +91,8 @@ const listenToProgress = (uploadId: string) => {
     .listen('.file-progress', (event: any) => {
       progress.value = event.progress;
 
-      console.log("validInvoiceNumbers.value", validInvoiceNumbers.value);
-      console.log("event", event);
-      console.log("fileData.value", fileData.value);
 
       const fileItem = fileData.value.find((item) => item.file.name === event.fileName);
-      console.log("fileItem", fileItem);
       if (fileItem) {
         fileItem.status = 'completed';
         fileItem.path = event.filePath;

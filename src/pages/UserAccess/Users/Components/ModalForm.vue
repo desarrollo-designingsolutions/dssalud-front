@@ -84,7 +84,6 @@ const submitForm = async () => {
 
 
   if (validation?.valid) {
-    console.log(form.value);
     const url = form.value.id ? `/user/update/${form.value.id}` : `/user/store`
 
     isLoading.value = true

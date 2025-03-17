@@ -38,7 +38,6 @@ const optionsFilter = ref({
 const refModalShowFiles = ref()
 
 const openModalShowFiles = (item: any) => {
-  console.log(item)
   refModalShowFiles.value.openModal(item.id, "InvoiceAudit")
 }
 

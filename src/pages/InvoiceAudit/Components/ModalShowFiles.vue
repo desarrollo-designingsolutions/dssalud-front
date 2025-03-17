@@ -21,9 +21,6 @@ const handleDialogVisible = () => {
 const openModal = async (fileable_id: string, fileable_type: string, dataExtra: any = {}) => {
   handleClearForm();
   handleDialogVisible();
-  console.log(fileable_id)
-  console.log(fileable_type)
-
 
   form.value.fileable_id = fileable_id
   form.value.fileable_type = fileable_type
@@ -59,7 +56,6 @@ const executeFetchTable = (page: number | null = null) => {
 
 const getFiles = async () => {
   isLoading.value = true;
-  console.log(form.value)
   const { data, response } = await useApi<any>(
     createUrl(`file/listTableV2`, {
       query: searchQuery.value,
@@ -94,7 +90,6 @@ const esImagen = computed(() => {
 
 // Función para seleccionar archivo
 const seleccionarArchivo = (item) => {
-  console.log(item)
   fileSelected.value = item
 }
 
@@ -183,7 +178,8 @@ const paginationData = (tableItems: number) => {
             <v-col cols="8">
               <v-card v-if="fileSelected">
                 <!-- Previsualización de PDF -->
-                <iframe v-if="esPDF" :src="storageBack(fileSelected.pathname)" width="100%" style="height: 100vh;"></iframe>
+                <iframe v-if="esPDF" :src="storageBack(fileSelected.pathname)" width="100%"
+                  style="block-size: 100vh;"></iframe>
 
                 <!-- Previsualización de Imagen -->
                 <v-img v-else-if="esImagen" :src="storageBack(fileSelected.pathname)" max-height="500" contain></v-img>

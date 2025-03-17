@@ -153,9 +153,6 @@ const echoChannel = () => {
     window.Echo.channel(`filing_invoice.${element.id}`)
       .listen('.FilingInvoiceRowUpdated', (event: any) => {
 
-        console.log("event", event);
-
-
         element.files_count = event.files_count
 
         element.status_xml = event.status_xml
@@ -199,7 +196,8 @@ const refreshCountAllDataInvoices = () => {
           <ProgressCircularChannel :channel="'filingSupport.' + filing_id" tooltipText="Subiendo soportes masivos" />
           <ProgressCircularChannel :channel="'filingXml.' + filing_id" tooltipText="Subiendo XML masivos" />
 
-          <VBtn :loading="loading.finishFiling" :disabled="loading.finishFiling" color="primary" @click="finishFiling" v-if="filingData.status == 'FILING_EST_008'">
+          <VBtn :loading="loading.finishFiling" :disabled="loading.finishFiling" color="primary" @click="finishFiling"
+            v-if="filingData.status == 'FILING_EST_008'">
             Finalizar radicación
           </VBtn>
           <VBtn color="primary">
@@ -209,7 +207,9 @@ const refreshCountAllDataInvoices = () => {
             Más opciones
             <VMenu activator="parent">
               <VList>
-                <VListItem @click="openModalSupportMasiveFiles()" v-if="filingData.status == 'FILING_EST_008'">Subir soportes masivo</VListItem>
+                <VListItem @click="openModalSupportMasiveFiles()" v-if="filingData.status == 'FILING_EST_008'">Subir
+                  soportes masivo
+                </VListItem>
                 <VListItem @click="() => { }">Descargar certificacion de radicación</VListItem>
                 <VListItem @click="() => { }">Descargar CSV de radicación</VListItem>
               </VList>

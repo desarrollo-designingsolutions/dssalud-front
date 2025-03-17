@@ -167,8 +167,6 @@ window.Echo.channel('user.' + authenticationStore.user.id)
 
   })
   .listen('.task-notification', (event) => {
-    // console.log('task-notification', event); // Aquí se recibe y maneja la notificación
-    // toast(event.title, event.subtitle, 'info', "top-right")
     notifications.value.unshift(event)
 
     unreadCount.value = event.activeNotificationsCount

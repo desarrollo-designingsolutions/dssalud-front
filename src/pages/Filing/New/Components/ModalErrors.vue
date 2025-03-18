@@ -29,6 +29,7 @@ defineExpose({
   openModal,
 })
 
+const has_invoices = ref(false);
 const errorMessages = ref([]);
 const validationZip = ref<{
   infoValidationZip: boolean
@@ -49,6 +50,7 @@ const init = async () => {
   })
   if (response.value?.ok && data.value) {
     errorMessages.value = data.value.errorMessages
+    has_invoices.value = data.value.has_invoices
 
     data.value.validationTxt ? validationTxt.value = data.value.validationTxt : null
     data.value.validationZip ? validationZip.value = data.value.validationZip : null
@@ -94,7 +96,10 @@ const submitConfirm = async () => {
   handleDialogVisible()
 }
 const cancel = async () => {
-  emit('cancel')
+  emit('cancel', {
+    validationTxt: errorMessages.value.length > 0,
+    has_invoices: has_invoices.value,
+  })
   handleDialogVisible()
 }
 
@@ -148,12 +153,12 @@ const openModalQuestion = () => {
             Cancelar
           </VBtn>
 
-          <!-- <template v-if="!validationZip.infoValidationZip">
+          <template v-if="objData.error_status?.has_n_errors">
             <VBtn v-if="validationTxt.totalSuccessfulInvoices > 0" :disabled="loading.getData"
               :loading="loading.getData" @click="openModalQuestion()" color="primary">
               Continuar
             </VBtn>
-          </template> -->
+          </template>
         </VCardText>
       </VCard>
     </VDialog>

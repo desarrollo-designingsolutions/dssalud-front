@@ -156,19 +156,16 @@ onUnmounted(() => {
 });
 
 // Resto de las funciones
-const cancelOperation = async () => {
-
-  if (filingData.value.id) {
-    updateValidationTxt();
-  } else {
-    deleteFiling();
-  }
+const cancelOperation = async (data: any) => {
+  deleteFiling();
 };
 
 const deleteFiling = async () => {
   isLoading.value = true;
   const { response, data } = await useApi(`/filing/delete/${filingData.value.id}`).delete();
   isLoading.value = false;
+  filingData.value.id = null
+
 };
 
 const updateValidationTxt = async () => {

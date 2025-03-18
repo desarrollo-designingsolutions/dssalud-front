@@ -60,7 +60,7 @@ const submitForm = async () => {
 
   if (response.value?.ok && data.value) {
     progress.value = 0;
-    filingData.value = data.value;
+    filingData.value = cloneObject(data.value);
     if (refLoading.value) {
       refLoading.value.startLoading();
     }
@@ -129,10 +129,9 @@ const startEchoChannel = (data: any) => {
       }
     }, 1000);
 
-    if (event.status == "FILING_EST_007") {
+    if (event.error_status.has_errors) {
       openModalErrors(event);
-    }
-    if (event.status == "FILING_EST_008") {
+    } else {
       if (refModalQuestion.value) {
         refModalQuestion.value.componentData.isDialogVisible = true;
         refModalQuestion.value.componentData.title = "¿Deseas radicar los archivos?";
@@ -158,20 +157,23 @@ onUnmounted(() => {
 });
 
 // Resto de las funciones
-const cancelOperation = async () => {
-  if (error.value?.length == 0) {
-    if (filingData.value.validationTxt) {
-      updateValidationTxt();
-    } else {
-      deleteFiling();
-    }
+const cancelOperation = async (data: any) => {
+  // if (error.value?.length == 0) {
+  console.log(data)
+  if (data.has_invoices) {
+    updateValidationTxt();
+  } else {
+    deleteFiling();
   }
+  // }
 };
 
 const deleteFiling = async () => {
   isLoading.value = true;
   const { response, data } = await useApi(`/filing/delete/${filingData.value.id}`).delete();
   isLoading.value = false;
+  filingData.value.id = null
+
 };
 
 const updateValidationTxt = async () => {

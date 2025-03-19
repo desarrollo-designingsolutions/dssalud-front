@@ -98,7 +98,7 @@ const reloadTable = () => {
       </VCardText>
 
       <VCardText class="mt-2">
-        <TableFullNew ref="tableFull" :options="optionsTable" @edit="goViewEdit">
+        <TableFullNew ref="tableFull" :options="optionsTable" @edit="goViewEdit" @view="goViewEdit">
         </TableFullNew>
       </VCardText>
     </VCard>

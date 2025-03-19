@@ -19,6 +19,11 @@ declare module 'vue-router/auto-routes' {
    */
   export interface RouteNamedMap {
     '$error': RouteRecordInfo<'$error', '/:error(.*)', { error: ParamValue<true> }, { error: ParamValue<false> }>,
+    'Assignment-List': RouteRecordInfo<'Assignment-List', 'assignment/:id?', Record<never, never>, Record<never, never>>,
+    'AssignmentBatche-Form': RouteRecordInfo<'AssignmentBatche-Form', 'assignmentBatche/:action/:id?', Record<never, never>, Record<never, never>>,
+    'assignment-batche-components-modal-form': RouteRecordInfo<'assignment-batche-components-modal-form', '/AssignmentBatche/Components/ModalForm', Record<never, never>, Record<never, never>>,
+    'assignment-batche-components-modal-upload-file-csv': RouteRecordInfo<'assignment-batche-components-modal-upload-file-csv', '/AssignmentBatche/Components/ModalUploadFileCsv', Record<never, never>, Record<never, never>>,
+    'AssignmentBatche-List': RouteRecordInfo<'AssignmentBatche-List', '/AssignmentBatche/List', Record<never, never>, Record<never, never>>,
     'Login': RouteRecordInfo<'Login', '/', Record<never, never>, Record<never, never>>,
     'ForgotPassword': RouteRecordInfo<'ForgotPassword', '/ForgotPassword', Record<never, never>, Record<never, never>>,
     'LoginV2': RouteRecordInfo<'LoginV2', '/loginV2', Record<never, never>, Record<never, never>>,

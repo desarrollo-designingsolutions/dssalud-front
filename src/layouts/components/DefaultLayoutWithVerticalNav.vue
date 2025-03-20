@@ -10,6 +10,10 @@ import NavBarI18n from '@core/components/I18n.vue'
 
 // @layouts plugin
 import { VerticalNavLayout } from '@layouts'
+
+import { useAuthenticationStore } from "@/stores/useAuthenticationStore"
+const authenticationStore = useAuthenticationStore();
+
 </script>
 
 <template>
@@ -24,7 +28,8 @@ import { VerticalNavLayout } from '@layouts'
         <NavbarThemeSwitcher />
 
         <VSpacer />
-
+        <ProgressCircularChannel :channel="'assignment.' + authenticationStore.user.id"
+          tooltipText="Cargando asignaciones" />
         <NavBarI18n v-if="themeConfig.app.i18n.enable && themeConfig.app.i18n.langConfig?.length"
           :languages="themeConfig.app.i18n.langConfig" />
         <NavBarNotificationBell class="me-1" />

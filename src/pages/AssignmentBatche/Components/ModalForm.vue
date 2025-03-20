@@ -21,6 +21,7 @@ const form = ref({
   description: null as null | string,
   status: null as null | string,
   due_date: null as null | string,
+  company_id: null as null | string,
 })
 
 const handleClearForm = () => {
@@ -74,6 +75,9 @@ const submitForm = async () => {
 
 
   if (validation?.valid) {
+
+    form.value.company_id = authenticationStore.company.id;
+
     const url = form.value.id ? `/assignmentBatche/update/${form.value.id}` : `/assignmentBatche/store`
 
     isLoading.value = true

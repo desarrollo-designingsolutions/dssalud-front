@@ -1,11 +1,9 @@
 <script setup lang="ts">
-import ModalForm from '@/pages/AssignmentBatche/Components/ModalForm.vue';
-import ModalUploadFileCsv from "@/pages/AssignmentBatche/Components/ModalUploadFileCsv.vue";
 import { useAuthenticationStore } from "@/stores/useAuthenticationStore";
 import { useRouter } from 'vue-router';
 
 definePage({
-  path: "assignment/:id?",
+  path: "assignmentList/:assignment_batche_id?",
   name: "Assignment-List",
   meta: {
     redirectIfLoggedIn: true,
@@ -24,18 +22,21 @@ const route = useRoute();
 const refTableFull = ref()
 
 const optionsTable = {
-  url: "/assignment/paginate/"+route.params.id,
+  url: "/assignment/paginateThirds/" + route.params.assignment_batche_id,
   headers: [
     { key: 'nit', title: 'Nit' },
     { key: 'name', title: 'Razón Social' },
     { key: 'count_invoice_assignment', title: 'Cant Fact Asignadas' },
     { key: 'count_invoice_pending', title: 'Cant Fact Pendientes' },
-    { key: 'finish', title: 'Finalizar' },
+    { key: 'count_invoice_finish', title: 'Finalizar' },
     { key: 'values', title: 'Valores' },
     // { key: 'actions', title: 'Acciones', sortable: false, width: 100 },
   ],
   actions: {
     delete: { url: '/assignment/delete' }
+  },
+  paramsGlobal: {
+    assignment_batche_id: route.params.assignment_batche_id,
   }
 }
 
@@ -45,99 +46,82 @@ const optionsFilter = ref({
   filterLabels: { inputGeneral: 'Buscar en todo' }
 })
 
-//ModalForm
-const refModalForm = ref()
+const goViewInvoiceAudit = (data: any = { id: null }) => {
 
-const openModalForm = () => {
-  refModalForm.value.openModal()
-}
-
-const goViewEdit = async (data: any) => {
-  refModalForm.value.openModal(data.id)
-}
-
-const goViewView = async (data: any) => {
-  refModalForm.value.openModal(data.id, true)
-}
-
-const reloadTable = () => {
-  refTableFull.value.fetchTableData()
+  router.push({ name: "AssignmentInvoiceAudit-List", params: { assignment_batche_id: route.params.assignment_batche_id, third_id: data.id } })
 
 }
 
-//ModalUploadFileCsv
-const refModalUploadFileCsv = ref()
-const openModalUploadFileCsv = () => {
-  refModalUploadFileCsv.value.openModal()
-}
+const goViewAssignmentBatchesList = () => {
 
-const goViewThirds = (data: { id: number | null } = { id: null }) => {
-
-router.push({ name: "Assignment-List", params: { id: data.id } })
+  router.push({ name: "AssignmentBatche-List" })
 
 }
 
 </script>
 
 <template>
-<div>
+  <div>
 
-  <VCard>
-    <VCardTitle class="d-flex justify-space-between">
-      <span>
-        Prestadores
-      </span>
+    <VCard>
+      <VCardTitle class="d-flex justify-space-between">
+        <span>
+          Prestadores
+        </span>
 
-      <div class="d-flex justify-end gap-3 flex-wrap ">
-        <ProgressCircularChannel :channel="'assignment.' + authenticationStore.user.id"
-          tooltipText="Cargando asignaciones" />
-        <VBtn @click="openModalUploadFileCsv()">
-          Importar Csv
-        </VBtn>
-        <VBtn @click="openModalForm()">
-          Crear Paquete
-        </VBtn>
-      </div>
-    </VCardTitle>
+        <div class="d-flex justify-end gap-3 flex-wrap ">
+          <VBtn @click="goViewAssignmentBatchesList">
+            Regresar
+          </VBtn>
+        </div>
+      </VCardTitle>
 
-    <VCardText>
-      <FilterDialogNew :options-filter="optionsFilter">
-      </FilterDialogNew>
-    </VCardText>
+      <VCardText>
+        <FilterDialogNew :options-filter="optionsFilter">
+        </FilterDialogNew>
+      </VCardText>
 
-    <VCardText class="mt-2">
-      <TableFullNew ref="refTableFull" :options="optionsTable" @edit="goViewEdit" @view="goViewView">
+      <VCardText class="mt-2">
+        <TableFullNew ref="refTableFull" :options="optionsTable">
 
-        <template #item.description="{ item }">
-          <div style="cursor: pointer;" @click="goViewThirds({ id: item.id })">
-            {{ item.description }}
-          </div>
-        </template>
+          <template #item.nit="{ item }">
+            <div style="cursor: pointer;" @click="goViewInvoiceAudit({ id: item.id })">
+              {{ item.nit }}
+            </div>
+          </template>
 
-        <template #item.assignment_date="{ item }">
-          <div style="cursor: pointer;" @click="goViewThirds({ id: item.id })">
-            {{ item.assignment_date }}
-          </div>
-        </template>
+          <template #item.name="{ item }">
+            <div style="cursor: pointer;" @click="goViewInvoiceAudit({ id: item.id })">
+              {{ item.name }}
+            </div>
+          </template>
 
-        <template #item.pending_date="{ item }">
-          <div style="cursor: pointer;" @click="goViewThirds({ id: item.id })">
-            {{ item.pending_date }}
-          </div>
-        </template>
+          <template #item.count_invoice_assignment="{ item }">
+            <div style="cursor: pointer;" @click="goViewInvoiceAudit({ id: item.id })">
+              {{ item.count_invoice_assignment }}
+            </div>
+          </template>
 
-        <template #item.completed_date="{ item }">
-          <div style="cursor: pointer;" @click="goViewThirds({ id: item.id })">
-            {{ item.completed_date }}
-          </div>
-        </template>
+          <template #item.count_invoice_pending="{ item }">
+            <div style="cursor: pointer;" @click="goViewInvoiceAudit({ id: item.id })">
+              {{ item.count_invoice_pending }}
+            </div>
+          </template>
 
-      </TableFullNew>
-    </VCardText>
-  </VCard>
+          <template #item.count_invoice_finish="{ item }">
+            <div style="cursor: pointer;" @click="goViewInvoiceAudit({ id: item.id })">
+              {{ item.count_invoice_finish }}
+            </div>
+          </template>
 
-  <ModalUploadFileCsv ref="refModalUploadFileCsv" />
+          <template #item.values="{ item }">
+            <div style="cursor: pointer;" @click="goViewInvoiceAudit({ id: item.id })">
+              {{ item.values }}
+            </div>
+          </template>
 
-  <ModalForm ref="refModalForm" @execute="reloadTable" />
-</div>
+        </TableFullNew>
+      </VCardText>
+    </VCard>
+  </div>
 </template>

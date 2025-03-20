@@ -19,7 +19,9 @@ declare module 'vue-router/auto-routes' {
    */
   export interface RouteNamedMap {
     '$error': RouteRecordInfo<'$error', '/:error(.*)', { error: ParamValue<true> }, { error: ParamValue<false> }>,
-    'Assignment-List': RouteRecordInfo<'Assignment-List', 'assignment/:id?', Record<never, never>, Record<never, never>>,
+    'AssignmentInvoiceAudit-List': RouteRecordInfo<'AssignmentInvoiceAudit-List', 'assignment/invoice-audit/:assignment_batche_id/:third_id?', Record<never, never>, Record<never, never>>,
+    'AssignmentPatient-List': RouteRecordInfo<'AssignmentPatient-List', 'assignment/invoice-audit/:assignment_batche_id/:third_id/:invoice_audit_id?', Record<never, never>, Record<never, never>>,
+    'Assignment-List': RouteRecordInfo<'Assignment-List', 'assignmentList/:assignment_batche_id?', Record<never, never>, Record<never, never>>,
     'AssignmentBatche-Form': RouteRecordInfo<'AssignmentBatche-Form', 'assignmentBatche/:action/:id?', Record<never, never>, Record<never, never>>,
     'assignment-batche-components-modal-form': RouteRecordInfo<'assignment-batche-components-modal-form', '/AssignmentBatche/Components/ModalForm', Record<never, never>, Record<never, never>>,
     'assignment-batche-components-modal-upload-file-csv': RouteRecordInfo<'assignment-batche-components-modal-upload-file-csv', '/AssignmentBatche/Components/ModalUploadFileCsv', Record<never, never>, Record<never, never>>,

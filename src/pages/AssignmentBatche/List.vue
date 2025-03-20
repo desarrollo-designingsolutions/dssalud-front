@@ -24,9 +24,9 @@ const optionsTable = {
   url: "/assignmentBatche/paginate",
   headers: [
     { key: 'description', title: 'Descripcion' },
-    { key: 'assignment_date', title: 'Facturas Asignadas' },
-    { key: 'pending_date', title: 'Facturas Pendientes' },
-    { key: 'completed_date', title: 'Facturas Completadas' },
+    { key: 'count_invoice_assignment', title: 'Facturas Asignadas' },
+    { key: 'count_invoice_pending', title: 'Facturas Pendientes' },
+    { key: 'count_invoice_completed', title: 'Facturas Completadas' },
     // { key: 'actions', title: 'Acciones', sortable: false, width: 100 },
   ],
   actions: {
@@ -68,7 +68,7 @@ const openModalUploadFileCsv = () => {
 
 const goViewThirds = (data: { id: number | null } = { id: null }) => {
 
-  router.push({ name: "Assignment-List", params: { id: data.id } })
+  router.push({ name: "Assignment-List", params: { assignment_batche_id: data.id } })
 
 }
 
@@ -109,21 +109,21 @@ const goViewThirds = (data: { id: number | null } = { id: null }) => {
             </div>
           </template>
 
-          <template #item.assignment_date="{ item }">
+          <template #item.count_invoice_assignment="{ item }">
             <div style="cursor: pointer;" @click="goViewThirds({ id: item.id })">
-              {{ item.assignment_date }}
+              {{ item.count_invoice_assignment }}
             </div>
           </template>
 
-          <template #item.pending_date="{ item }">
+          <template #item.count_invoice_pending="{ item }">
             <div style="cursor: pointer;" @click="goViewThirds({ id: item.id })">
-              {{ item.pending_date }}
+              {{ item.count_invoice_pending }}
             </div>
           </template>
 
-          <template #item.completed_date="{ item }">
+          <template #item.count_invoice_completed="{ item }">
             <div style="cursor: pointer;" @click="goViewThirds({ id: item.id })">
-              {{ item.completed_date }}
+              {{ item.count_invoice_completed }}
             </div>
           </template>
 

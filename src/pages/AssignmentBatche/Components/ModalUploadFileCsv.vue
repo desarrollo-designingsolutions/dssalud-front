@@ -36,7 +36,7 @@ const submitForm = async () => {
     formData.append("user_id", String(authenticationStore.user.id));
 
     isLoading.value = true;
-    const { response, data } = await useApi(`/assignmentBatche/uploadCsv`).post(formData);
+    const { response, data } = await useApi(`/assignment/uploadCsv`).post(formData);
     isLoading.value = false;
 
     if (response.value?.ok && data.value) {

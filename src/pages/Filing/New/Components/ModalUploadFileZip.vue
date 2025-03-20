@@ -57,8 +57,8 @@ const submitForm = async () => {
   } else {
     if (refModalQuestion.value) {
       refModalQuestion.value.componentData.isDialogVisible = true;
-      refModalQuestion.value.componentData.showBtnCancel = false;
-      refModalQuestion.value.componentData.btnSuccessText = 'Ok';
+      refModalQuestion.value.componentData.showBtnSuccess = false;
+      refModalQuestion.value.componentData.btnCancelText = 'Ok';
       refModalQuestion.value.componentData.title = 'Por favor, seleccione un archivo antes de continuar.';
     }
   }
@@ -75,8 +75,8 @@ const { dropZoneRef, fileData, open, error, resetValues } = useFileDrop(1, ['zip
 watch(error, (newError) => {
   if (newError && refModalQuestion.value) {
     refModalQuestion.value.componentData.isDialogVisible = true;
-    refModalQuestion.value.componentData.showBtnCancel = false;
-    refModalQuestion.value.componentData.btnSuccessText = 'Ok';
+    refModalQuestion.value.componentData.showBtnSuccess = false;
+    refModalQuestion.value.componentData.btnCancelText = 'Ok';
     refModalQuestion.value.componentData.title = newError;
   }
 });
@@ -157,7 +157,9 @@ onUnmounted(() => {
 
 // Resto de las funciones
 const cancelOperation = async (data: any) => {
-  deleteFiling();
+  if (!isNullOrUndefined(filingData.value.id)) {
+    deleteFiling();
+  }
 };
 
 const deleteFiling = async () => {

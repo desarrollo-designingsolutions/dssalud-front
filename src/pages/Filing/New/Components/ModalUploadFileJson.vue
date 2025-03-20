@@ -158,14 +158,11 @@ onUnmounted(() => {
 
 // Resto de las funciones
 const cancelOperation = async (data: any) => {
-  // if (error.value?.length == 0) {
-  console.log(data)
   if (data.has_invoices) {
     updateValidationTxt();
   } else {
     deleteFiling();
   }
-  // }
 };
 
 const deleteFiling = async () => {

@@ -82,7 +82,7 @@ const filterTable = ref()
 const optionsFilter = ref({
   inputGeneral: {
     relationsGeneral: {
-      all: ['filename', 'created_at|custom'],
+      all: ['filename'],
       supportType: ['name'],
     },
   },

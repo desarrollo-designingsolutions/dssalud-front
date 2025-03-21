@@ -24,9 +24,9 @@ const optionsTable = {
   url: "/assignmentBatche/paginate",
   headers: [
     { key: 'description', title: 'Descripcion' },
-    { key: 'count_invoice_assignment', title: 'Facturas Asignadas' },
-    { key: 'count_invoice_pending', title: 'Facturas Pendientes' },
-    { key: 'count_invoice_completed', title: 'Facturas Completadas' },
+    { key: 'count_invoice', title: 'Cantidad de Facturas', sortable: false },
+    { key: 'count_invoice_pending', title: 'Facturas Pendientes', sortable: false },
+    { key: 'count_invoice_completed', title: 'Facturas Completadas', sortable: false },
     // { key: 'actions', title: 'Acciones', sortable: false, width: 100 },
   ],
   actions: {

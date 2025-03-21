@@ -3,12 +3,12 @@ import { useAuthenticationStore } from "@/stores/useAuthenticationStore";
 import { useRouter } from 'vue-router';
 
 definePage({
-  path: "assignment/invoice-audit/:assignment_batche_id/:third_id/:invoice_audit_id?",
-  name: "AssignmentPatient-List",
+  path: "invoiceAuditAssignmentList/invoice-audit/:assignment_batche_id/:third_id/:invoice_audit_id?",
+  name: "InvoiceAuditPatient-List",
   meta: {
     redirectIfLoggedIn: true,
     requiresAuth: true,
-    requiredPermission: "assignmentBatche.list",
+    requiredPermission: "invoiceAuditAssignmentBatche.list",
   },
 });
 
@@ -25,7 +25,7 @@ const invoice_audit_id = route.params.invoice_audit_id;
 const refTableFull = ref()
 
 const optionsTable = {
-  url: `/assignment/paginatePatient/${assignment_batche_id}/${third_id}/${invoice_audit_id}`,
+  url: `/invoiceAudit/paginatePatient/${assignment_batche_id}/${third_id}/${invoice_audit_id}`,
   headers: [
     { key: 'identification_number', title: 'Documento' },
     { key: 'full_name', title: 'Nombre' },
@@ -38,7 +38,7 @@ const optionsTable = {
     // { key: 'actions', title: 'Acciones', sortable: false, width: 100 },
   ],
   actions: {
-    delete: { url: '/assignment/delete' }
+    delete: { url: '/invoiceAudit/delete' }
   },
   paramsGlobal: {
     company_id: authenticationStore.company.id,
@@ -52,7 +52,7 @@ const optionsFilter = ref({
 })
 
 const goViewInvoiceAuditList = () => {
-  router.push({ name: "AssignmentInvoiceAudit-List", params: { assignment_batche_id: assignment_batche_id, third_id: third_id } })
+  router.push({ name: "InvoiceAuditInvoiceAudit-List", params: { assignment_batche_id: assignment_batche_id, third_id: third_id } })
 }
 
 </script>

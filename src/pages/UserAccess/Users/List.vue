@@ -71,8 +71,7 @@ const goViewEdit = async (data: any) => {
 }
 
 const reloadTable = () => {
-  tableFull.value.executeFetchTable()
-
+  tableFull.value.fetchTableData()
 }
 </script>
 

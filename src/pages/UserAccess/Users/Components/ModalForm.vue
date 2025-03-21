@@ -43,7 +43,6 @@ const openModal = async (id: string | null = null, disabled: boolean = false) =>
 
   handleClearForm()
   handleDialogVisible();
-  loadSelectInfinite()
 
   titleModal.value = id ? "Editar usuario" : "Crear usuario"
 
@@ -118,41 +117,9 @@ const rulesFieldConfirmedPassword = computed(() => {
   ]
 })
 
-const thirds = ref([])
-
-const third_arrayInfo = ref<Array<object>>([])
-const third_countLinks = ref<number>(1)
-const fetchSelectInfiniteThird = async (params: object) => {
-  const { data, response } = await useApi("/selectInfiniteThird").post(params)
-
-  if (response.value?.ok && data.value) {
-    third_arrayInfo.value = data.value.third_arrayInfo
-    third_countLinks.value = data.value.third_countLinks
-  }
-}
-const select_third = useSelect(
-  fetchSelectInfiniteThird,
-  third_arrayInfo,
-  third_countLinks,
-  {
-    company_id: authenticationStore.company.id
-  }
-);
-
 defineExpose({
   openModal
 })
-
-
-const loadSelectInfinite = async () => {
-  await fetchSelectInfiniteThird({
-    company_id: authenticationStore.company.id
-  })
-
-  select_third.dataNueva.value = third_arrayInfo.value
-  select_third.totalLinks.value = third_countLinks.value
-
-}
 
 const showThirdField = computed(() => {
   const selectedRole = roles.value.find(role => role.value === form.value.role_id);
@@ -208,9 +175,10 @@ const showThirdField = computed(() => {
                   :disabled="disabledFiledsView" />
               </VCol>
               <VCol cols="12" v-if="showThirdField">
-                <SelectInfiniteThird :requiredField="true" :items="third_arrayInfo" label="Terceros"
-                  :rules="[showThirdField ? requiredValidator : null]" v-model="form.third_id"
-                  :error-messages="errorsBack.third_id" clearable :disabled="disabledFiledsView" />
+                <AppSelectRemote v-model="form.third_id" url="selectInfiniteThird" arrayInfo="third" label="Terceros"
+                  :params="{ company_id: company?.id }" :requiredField="true"
+                  :rules="[showThirdField ? requiredValidator : null]" :error-messages="errorsBack.third_id" clearable
+                  :disabled="disabledFiledsView" />
               </VCol>
               <!-- <VCol cols="12" v-if="user.role_id == ROLE_SUPERADMIN_UUID">
                 <AppSelect :requiredField="true" :items="companies" label="Compañia" :rules="[requiredValidator]"
@@ -230,12 +198,7 @@ const showThirdField = computed(() => {
             Guardar
           </VBtn>
         </VCardText>
-
-
       </VCard>
     </VDialog>
-
-
-
   </div>
 </template>

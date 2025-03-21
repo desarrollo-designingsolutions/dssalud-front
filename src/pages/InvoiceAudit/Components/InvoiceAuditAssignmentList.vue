@@ -28,9 +28,9 @@ const optionsTable = {
   headers: [
     { key: 'nit', title: 'Nit' },
     { key: 'name', title: 'Razón Social' },
-    { key: 'count_invoice_assignment', title: 'Cant Fact Asignadas' },
+    { key: 'count_invoice_assignment', title: 'Cant Fact Totales' },
     { key: 'count_invoice_pending', title: 'Cant Fact Pendientes' },
-    { key: 'count_invoice_finish', title: 'Finalizar' },
+    { key: 'count_invoice_finish', title: 'Cant Fact Finalizadas' },
     { key: 'values', title: 'Valores' },
     // { key: 'actions', title: 'Acciones', sortable: false, width: 100 },
   ],

@@ -24,7 +24,7 @@ const optionsTable = {
   url: "/assignmentBatche/paginate",
   headers: [
     { key: 'description', title: 'Descripcion' },
-    { key: 'count_invoice_assignment', title: 'Facturas Asignadas' },
+    { key: 'count_invoice', title: 'Facturas Asignadas' },
     { key: 'count_invoice_pending', title: 'Facturas Pendientes' },
     { key: 'count_invoice_completed', title: 'Facturas Completadas' },
     // { key: 'actions', title: 'Acciones', sortable: false, width: 100 },
@@ -113,9 +113,9 @@ const goViewThirds = (data: { id: number | null } = { id: null }) => {
               </div>
             </template>
 
-            <template #item.count_invoice_assignment="{ item }">
+            <template #item.count_invoice="{ item }">
               <div style="cursor: pointer;" @click="goViewThirds({ id: item.id })">
-                {{ item.count_invoice_assignment }}
+                {{ item.count_invoice }}
               </div>
             </template>
 

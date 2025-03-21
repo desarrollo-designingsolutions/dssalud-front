@@ -51,6 +51,12 @@ const optionsFilter = ref({
   filterLabels: { inputGeneral: 'Buscar en todo' }
 })
 
+const goViewInformationSheet = (data: any = { id: null }) => {
+
+  router.push({ name: "InvoiceAuditInformationSheet-Info", params: { assignment_batche_id: assignment_batche_id, third_id: third_id, invoice_audit_id: invoice_audit_id, patient_id: data.id } })
+
+}
+
 const goViewInvoiceAuditList = () => {
   router.push({ name: "InvoiceAuditInvoiceAudit-List", params: { assignment_batche_id: assignment_batche_id, third_id: third_id } })
 }
@@ -83,6 +89,56 @@ const goViewInvoiceAuditList = () => {
 
         <VCardText class="mt-2">
           <TableFullNew ref="refTableFull" :options="optionsTable">
+
+            <template #item.identification_number="{ item }">
+              <div style="cursor: pointer;" @click="goViewInformationSheet({ id: item.id })">
+                {{ item.identification_number }}
+              </div>
+            </template>
+
+            <template #item.full_name="{ item }">
+              <div style="cursor: pointer;" @click="goViewInformationSheet({ id: item.id })">
+                {{ item.full_name }}
+              </div>
+            </template>
+
+            <template #item.gender="{ item }">
+              <div style="cursor: pointer;" @click="goViewInformationSheet({ id: item.id })">
+                {{ item.gender }}
+              </div>
+            </template>
+
+            <template #item.glosas="{ item }">
+              <div style="cursor: pointer;" @click="goViewInformationSheet({ id: item.id })">
+                {{ item.glosas }}
+              </div>
+            </template>
+
+            <template #item.value_glosa="{ item }">
+              <div style="cursor: pointer;" @click="goViewInformationSheet({ id: item.id })">
+                {{ item.value_glosa }}
+              </div>
+            </template>
+
+            <template #item.value_borrowed="{ item }">
+              <div style="cursor: pointer;" @click="goViewInformationSheet({ id: item.id })">
+                {{ item.value_borrowed }}
+              </div>
+            </template>
+
+            <template #item.total_value="{ item }">
+              <div style="cursor: pointer;" @click="goViewInformationSheet({ id: item.id })">
+                {{ item.total_value }}
+              </div>
+            </template>
+
+            <template #item.status="{ item }">
+              <div style="cursor: pointer;" @click="goViewInformationSheet({ id: item.id })">
+                {{ item.status }}
+              </div>
+            </template>
+
+
           </TableFullNew>
         </VCardText>
       </VCard>

@@ -58,6 +58,14 @@ const goViewAssignmentBatchesList = () => {
 
 }
 
+const tableLoading = ref(false); // Estado de carga de la tabla
+
+// Método para refrescar los datos
+const refreshTable = () => {
+  if (refTableFull.value) {
+    refTableFull.value.fetchTableData(null, false, true); // Forzamos la búsqueda
+  }
+};
 </script>
 
 <template>
@@ -77,12 +85,12 @@ const goViewAssignmentBatchesList = () => {
       </VCardTitle>
 
       <VCardText>
-        <FilterDialogNew :options-filter="optionsFilter">
+        <FilterDialogNew :options-filter="optionsFilter" @force-search="refreshTable" :table-loading="tableLoading">
         </FilterDialogNew>
       </VCardText>
 
       <VCardText class="mt-2">
-        <TableFullNew ref="refTableFull" :options="optionsTable">
+        <TableFullNew ref="refTableFull" :options="optionsTable" @update:loading="tableLoading = $event">
 
           <template #item.nit="{ item }">
             <div style="cursor: pointer;" @click="goViewInvoiceAudit({ id: item.id })">

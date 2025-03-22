@@ -180,6 +180,15 @@ const refreshCountAllDataInvoices = () => {
   refCountAllDataInvoices.value.fetchCountData();
 }
 
+
+const tableLoading = ref(false); // Estado de carga de la tabla
+
+// Método para refrescar los datos
+const refreshTable = () => {
+  if (refTableFull.value) {
+    refTableFull.value.fetchTableData(null, false, true); // Forzamos la búsqueda
+  }
+};
 </script>
 
 <template>
@@ -219,7 +228,7 @@ const refreshCountAllDataInvoices = () => {
       </VCardTitle>
 
       <VCardText>
-        <FilterDialogNew :options-filter="optionsFilter">
+        <FilterDialogNew :options-filter="optionsFilter" @force-search="refreshTable" :table-loading="tableLoading">
           <template #default="{ extraFilters }">
             <VCol cols="3">
               <AppTextField prepend-inner-icon="tabler-search" v-model="extraFilters.files_count.value"
@@ -233,7 +242,7 @@ const refreshCountAllDataInvoices = () => {
 
       <VCardText class=" mt-2">
         <TableFullNew ref="refTableFull" :options="optionsTable" @dataFetched="echoChannel"
-          @deleteSuccess="refreshCountAllDataInvoices()">
+          @deleteSuccess="refreshCountAllDataInvoices()" @update:loading="tableLoading = $event">
 
           <template #item.actions="{ item }">
             <div class="d-flex justify-end gap-3">

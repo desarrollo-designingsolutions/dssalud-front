@@ -199,7 +199,7 @@ const deleteItem = async (id: string | number) => {
 
 
 
-  if (data.value && (data.value.code === 200 || !data.value.code)) {
+  if (data && (data.code === 200 || !data.code)) {
     emit('deleteSuccess', id);
     await fetchTableData();
   }

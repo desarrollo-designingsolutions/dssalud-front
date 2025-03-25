@@ -68,6 +68,38 @@ onMounted(() => {
   fetchData();
 })
 
+
+//TABLE
+const refTableFull = ref()
+
+const optionsTable = {
+  url: "/filingInvoice/paginate",
+  paramsGlobal: {},
+  headers: [
+    { key: 'invoice_number', title: 'Número de factura' },
+    { key: 'users_count', title: 'Cant. Usuarios' },
+    { key: 'files_count', title: 'Soportes Cargados' },
+    { key: 'case_number', title: 'N° Radicado' },
+    { key: 'sumVr', title: 'Valor' },
+    { key: "status", title: 'Estado' },
+    { key: "date", title: 'Fecha' },
+    { key: 'actions', title: 'Acciones', sortable: false },
+  ],
+  actions: {
+    delete: {
+      url: "/filingInvoice/delete",
+    },
+  }
+}
+
+const tableLoading = ref(false); // Estado de carga de la tabla
+
+// Método para refrescar los datos
+const refreshTable = () => {
+  if (refTableFull.value) {
+    refTableFull.value.fetchTableData(null, false, true); // Forzamos la búsqueda
+  }
+};
 </script>
 
 <template>
@@ -174,6 +206,18 @@ onMounted(() => {
             </VExpansionPanelText>
           </VExpansionPanel>
         </VExpansionPanels>
+      </VCardText>
+
+
+      <VCardText>
+        <FilterDialogNew :options-filter="optionsFilter" @force-search="refreshTable" :table-loading="tableLoading">
+        </FilterDialogNew>
+      </VCardText>
+
+
+      <VCardText>
+        <TableFullNew ref="refTableFull" :options="optionsTable" @update:loading="tableLoading = $event">
+        </TableFullNew>
       </VCardText>
     </VCard>
   </div>

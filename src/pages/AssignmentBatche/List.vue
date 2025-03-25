@@ -72,6 +72,14 @@ const goViewThirds = (data: { id: number | null } = { id: null }) => {
 
 }
 
+const tableLoading = ref(false); // Estado de carga de la tabla
+
+// Método para refrescar los datos
+const refreshTable = () => {
+  if (refTableFull.value) {
+    refTableFull.value.fetchTableData(null, false, true); // Forzamos la búsqueda
+  }
+};
 </script>
 
 <template>
@@ -100,12 +108,13 @@ const goViewThirds = (data: { id: number | null } = { id: null }) => {
         </VCardTitle>
 
         <VCardText>
-          <FilterDialogNew :options-filter="optionsFilter">
+          <FilterDialogNew :options-filter="optionsFilter" @force-search="refreshTable" :table-loading="tableLoading">
           </FilterDialogNew>
         </VCardText>
 
         <VCardText class="mt-2">
-          <TableFullNew ref="refTableFull" :options="optionsTable" @edit="goViewEdit" @view="goViewView">
+          <TableFullNew ref="refTableFull" :options="optionsTable" @edit="goViewEdit" @view="goViewView"
+            @update:loading="tableLoading = $event">
 
             <template #item.description="{ item }">
               <div style="cursor: pointer;" @click="goViewThirds({ id: item.id })">

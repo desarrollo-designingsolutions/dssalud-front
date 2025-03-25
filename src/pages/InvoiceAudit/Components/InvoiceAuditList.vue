@@ -3,12 +3,12 @@ import { useAuthenticationStore } from "@/stores/useAuthenticationStore";
 import { useRouter } from 'vue-router';
 
 definePage({
-  path: "assignment/invoice-audit/:assignment_batche_id/:third_id?",
-  name: "AssignmentInvoiceAudit-List",
+  path: "invoiceAuditAssignmentList/invoice-audit/:assignment_batche_id/:third_id?",
+  name: "InvoiceAuditInvoiceAudit-List",
   meta: {
     redirectIfLoggedIn: true,
     requiresAuth: true,
-    requiredPermission: "assignmentBatche.list",
+    requiredPermission: "invoiceAuditAssignmentBatche.list",
   },
 });
 
@@ -18,11 +18,14 @@ const router = useRouter();
 
 const route = useRoute();
 
+const assignment_batche_id = route.params.assignment_batche_id;
+const third_id = route.params.third_id;
+
 //TABLE
 const refTableFull = ref()
 
 const optionsTable = {
-  url: `/assignment/paginateInvoiceAudit/${route.params.assignment_batche_id}/${route.params.third_id}`,
+  url: `/invoiceAudit/paginateInvoiceAudit/${assignment_batche_id}/${third_id}`,
   headers: [
     { key: 'invoice_number', title: 'Factura' },
     { key: 'count_patients', title: 'Cantidad Usuarios' },
@@ -34,7 +37,7 @@ const optionsTable = {
     // { key: 'actions', title: 'Acciones', sortable: false, width: 100 },
   ],
   actions: {
-    delete: { url: '/assignment/delete' }
+    delete: { url: '/invoiceAudit/delete' }
   },
   paramsGlobal: {
     company_id: authenticationStore.company.id,
@@ -48,22 +51,13 @@ const optionsFilter = ref({
 })
 
 const goViewPatients = (data: any = { id: null }) => {
-  router.push({ name: "AssignmentPatient-List", params: { assignment_batche_id: route.params.assignment_batche_id, third_id: route.params.third_id, invoice_audit_id: data.id } })
+  router.push({ name: "InvoiceAuditPatient-List", params: { assignment_batche_id: assignment_batche_id, third_id: third_id, invoice_audit_id: data.id } })
 }
 
 const goViewAssignmentList = () => {
-  router.push({ name: "Assignment-List", params: { assignment_batche_id: route.params.assignment_batche_id } })
+  router.push({ name: "InvoiceAuditAssignment-List", params: { assignment_batche_id: assignment_batche_id } })
 }
 
-
-const tableLoading = ref(false); // Estado de carga de la tabla
-
-// Método para refrescar los datos
-const refreshTable = () => {
-  if (refTableFull.value) {
-    refTableFull.value.fetchTableData(null, false, true); // Forzamos la búsqueda
-  }
-};
 </script>
 
 <template>
@@ -86,12 +80,12 @@ const refreshTable = () => {
         </VCardTitle>
 
         <VCardText>
-          <FilterDialogNew :options-filter="optionsFilter" @force-search="refreshTable" :table-loading="tableLoading">
+          <FilterDialogNew :options-filter="optionsFilter">
           </FilterDialogNew>
         </VCardText>
 
         <VCardText class="mt-2">
-          <TableFullNew ref="refTableFull" :options="optionsTable" @update:loading="tableLoading = $event">
+          <TableFullNew ref="refTableFull" :options="optionsTable" @edit="goViewEdit" @view="goViewView">
 
             <template #item.invoice_number="{ item }">
               <div style="cursor: pointer;" @click="goViewPatients({ id: item.id })">

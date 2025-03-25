@@ -3,12 +3,12 @@ import { useAuthenticationStore } from "@/stores/useAuthenticationStore";
 import { useRouter } from 'vue-router';
 
 definePage({
-  path: "assignmentList/:assignment_batche_id?",
-  name: "Assignment-List",
+  path: "invoiceAuditAssignmentList/:assignment_batche_id?",
+  name: "InvoiceAuditAssignment-List",
   meta: {
     redirectIfLoggedIn: true,
     requiresAuth: true,
-    requiredPermission: "assignmentBatche.list",
+    requiredPermission: "invoiceAuditAssignmentBatche.list",
   },
 });
 
@@ -18,25 +18,28 @@ const router = useRouter();
 
 const route = useRoute();
 
+const assignment_batche_id = route.params.assignment_batche_id;
+
 //TABLE
 const refTableFull = ref()
 
 const optionsTable = {
-  url: "/assignment/paginateThirds/" + route.params.assignment_batche_id,
+  url: "/invoiceAudit/paginateThirds/" + assignment_batche_id,
   headers: [
     { key: 'nit', title: 'Nit' },
     { key: 'name', title: 'Razón Social' },
-    { key: 'count_invoice_assignment', title: 'Cant Fact Asignadas' },
+    { key: 'count_invoice_assignment', title: 'Cant Fact Totales' },
     { key: 'count_invoice_pending', title: 'Cant Fact Pendientes' },
-    { key: 'count_invoice_finish', title: 'Finalizar' },
+    { key: 'count_invoice_finish', title: 'Cant Fact Finalizadas' },
     { key: 'values', title: 'Valores' },
     // { key: 'actions', title: 'Acciones', sortable: false, width: 100 },
   ],
   actions: {
-    delete: { url: '/assignment/delete' }
+    delete: { url: '/invoiceAudit/delete' }
   },
   paramsGlobal: {
-    assignment_batche_id: route.params.assignment_batche_id,
+    user_id: authenticationStore.user.id,
+    assignment_batche_id: assignment_batche_id,
   }
 }
 
@@ -48,24 +51,16 @@ const optionsFilter = ref({
 
 const goViewInvoiceAudit = (data: any = { id: null }) => {
 
-  router.push({ name: "AssignmentInvoiceAudit-List", params: { assignment_batche_id: route.params.assignment_batche_id, third_id: data.id } })
+  router.push({ name: "InvoiceAuditInvoiceAudit-List", params: { assignment_batche_id: assignment_batche_id, third_id: data.id } })
 
 }
 
 const goViewAssignmentBatchesList = () => {
 
-  router.push({ name: "AssignmentBatche-List" })
+  router.push({ name: "InvoiceAuditAssignmentBatche-List" })
 
 }
 
-const tableLoading = ref(false); // Estado de carga de la tabla
-
-// Método para refrescar los datos
-const refreshTable = () => {
-  if (refTableFull.value) {
-    refTableFull.value.fetchTableData(null, false, true); // Forzamos la búsqueda
-  }
-};
 </script>
 
 <template>
@@ -88,12 +83,12 @@ const refreshTable = () => {
         </VCardTitle>
 
         <VCardText>
-          <FilterDialogNew :options-filter="optionsFilter" @force-search="refreshTable" :table-loading="tableLoading">
+          <FilterDialogNew :options-filter="optionsFilter">
           </FilterDialogNew>
         </VCardText>
 
         <VCardText class="mt-2">
-          <TableFullNew ref="refTableFull" :options="optionsTable" @update:loading="tableLoading = $event">
+          <TableFullNew ref="refTableFull" :options="optionsTable">
 
             <template #item.nit="{ item }">
               <div style="cursor: pointer;" @click="goViewInvoiceAudit({ id: item.id })">

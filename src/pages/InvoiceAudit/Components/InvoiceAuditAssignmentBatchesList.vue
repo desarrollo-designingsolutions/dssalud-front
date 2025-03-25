@@ -1,15 +1,13 @@
 <script setup lang="ts">
-import ModalForm from '@/pages/AssignmentBatche/Components/ModalForm.vue';
-import ModalUploadFileCsv from "@/pages/AssignmentBatche/Components/ModalUploadFileCsv.vue";
 import { useAuthenticationStore } from "@/stores/useAuthenticationStore";
 import { useRouter } from 'vue-router';
 
 definePage({
-  name: "AssignmentBatche-List",
+  name: "InvoiceAuditAssignmentBatche-List",
   meta: {
     redirectIfLoggedIn: true,
     requiresAuth: true,
-    requiredPermission: "assignmentBatche.list",
+    requiredPermission: "invoiceAuditAssignmentBatche.list",
   },
 });
 
@@ -21,16 +19,19 @@ const router = useRouter();
 const refTableFull = ref()
 
 const optionsTable = {
-  url: "/assignmentBatche/paginate",
+  url: "/invoiceAudit/paginateBatche",
   headers: [
     { key: 'description', title: 'Descripcion' },
-    { key: 'count_invoice', title: 'Facturas Asignadas' },
+    { key: 'count_invoice', title: 'Facturas Totales' },
     { key: 'count_invoice_pending', title: 'Facturas Pendientes' },
     { key: 'count_invoice_completed', title: 'Facturas Completadas' },
     // { key: 'actions', title: 'Acciones', sortable: false, width: 100 },
   ],
   actions: {
     delete: { url: '/assignmentBatche/delete' }
+  },
+  paramsGlobal: {
+    user_id: authenticationStore.user.id,
   }
 }
 
@@ -40,46 +41,12 @@ const optionsFilter = ref({
   filterLabels: { inputGeneral: 'Buscar en todo' }
 })
 
-//ModalForm
-const refModalForm = ref()
-
-const openModalForm = () => {
-  refModalForm.value.openModal()
-}
-
-const goViewEdit = async (data: any) => {
-  refModalForm.value.openModal(data.id)
-}
-
-const goViewView = async (data: any) => {
-  refModalForm.value.openModal(data.id, true)
-}
-
-const reloadTable = () => {
-  refTableFull.value.fetchTableData()
-
-}
-
-//ModalUploadFileCsv
-const refModalUploadFileCsv = ref()
-const openModalUploadFileCsv = () => {
-  refModalUploadFileCsv.value.openModal()
-}
-
 const goViewThirds = (data: { id: number | null } = { id: null }) => {
 
-  router.push({ name: "Assignment-List", params: { assignment_batche_id: data.id } })
+  router.push({ name: "InvoiceAuditAssignment-List", params: { assignment_batche_id: data.id } })
 
 }
 
-const tableLoading = ref(false); // Estado de carga de la tabla
-
-// Método para refrescar los datos
-const refreshTable = () => {
-  if (refTableFull.value) {
-    refTableFull.value.fetchTableData(null, false, true); // Forzamos la búsqueda
-  }
-};
 </script>
 
 <template>
@@ -94,27 +61,15 @@ const refreshTable = () => {
           <span>
             Auditorias
           </span>
-
-          <div class="d-flex justify-end gap-3 flex-wrap ">
-            <ProgressCircularChannel :channel="'assignment.' + authenticationStore.user.id"
-              tooltipText="Cargando asignaciones" />
-            <VBtn @click="openModalUploadFileCsv()">
-              Importar Csv
-            </VBtn>
-            <VBtn @click="openModalForm()">
-              Crear Paquete
-            </VBtn>
-          </div>
         </VCardTitle>
 
         <VCardText>
-          <FilterDialogNew :options-filter="optionsFilter" @force-search="refreshTable" :table-loading="tableLoading">
+          <FilterDialogNew :options-filter="optionsFilter">
           </FilterDialogNew>
         </VCardText>
 
         <VCardText class="mt-2">
-          <TableFullNew ref="refTableFull" :options="optionsTable" @edit="goViewEdit" @view="goViewView"
-            @update:loading="tableLoading = $event">
+          <TableFullNew ref="refTableFull" :options="optionsTable">
 
             <template #item.description="{ item }">
               <div style="cursor: pointer;" @click="goViewThirds({ id: item.id })">
@@ -145,9 +100,4 @@ const refreshTable = () => {
       </VCard>
     </VCol>
   </VRow>
-
-
-  <ModalUploadFileCsv ref="refModalUploadFileCsv" />
-
-  <ModalForm ref="refModalForm" @execute="reloadTable" />
 </template>

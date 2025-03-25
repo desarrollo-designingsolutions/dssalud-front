@@ -71,8 +71,7 @@ const goViewEdit = async (data: any) => {
 }
 
 const reloadTable = () => {
-  refTableFull.value.executeFetchTable()
-
+  refTableFull.value.fetchTableData()
 }
 
 const tableLoading = ref(false); // Estado de carga de la tabla

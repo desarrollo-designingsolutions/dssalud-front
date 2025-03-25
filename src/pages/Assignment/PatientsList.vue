@@ -67,29 +67,35 @@ const refreshTable = () => {
 
 <template>
   <div>
+    <CountAllData />
 
-    <VCard>
-      <VCardTitle class="d-flex justify-space-between">
-        <span>
-          Usuarios
-        </span>
+    <VRow>
+      <VCol>
+        <VCard>
+          <VCardTitle class="d-flex justify-space-between">
+            <span>
+              Usuarios
+            </span>
 
-        <div class="d-flex justify-end gap-3 flex-wrap ">
-          <VBtn @click="goViewInvoiceAuditList">
-            Regresar
-          </VBtn>
-        </div>
-      </VCardTitle>
+            <div class="d-flex justify-end gap-3 flex-wrap ">
+              <VBtn @click="goViewInvoiceAuditList">
+                Regresar
+              </VBtn>
+            </div>
+          </VCardTitle>
 
-      <VCardText>
-        <FilterDialogNew :options-filter="optionsFilter" @force-search="refreshTable" :table-loading="tableLoading">
-        </FilterDialogNew>
-      </VCardText>
+          <VCardText>
+            <FilterDialogNew :options-filter="optionsFilter" @force-search="refreshTable" :table-loading="tableLoading">
+            </FilterDialogNew>
+          </VCardText>
 
-      <VCardText class="mt-2">
-        <TableFullNew ref="refTableFull" :options="optionsTable" @update:loading="tableLoading = $event">
-        </TableFullNew>
-      </VCardText>
-    </VCard>
+          <VCardText class="mt-2">
+            <TableFullNew ref="refTableFull" :options="optionsTable" @update:loading="tableLoading = $event">
+            </TableFullNew>
+          </VCardText>
+        </VCard>
+      </VCol>
+    </VRow>
+
   </div>
 </template>

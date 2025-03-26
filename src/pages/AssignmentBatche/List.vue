@@ -72,67 +72,82 @@ const goViewThirds = (data: { id: number | null } = { id: null }) => {
 
 }
 
+const tableLoading = ref(false); // Estado de carga de la tabla
+
+// Método para refrescar los datos
+const refreshTable = () => {
+  if (refTableFull.value) {
+    refTableFull.value.fetchTableData(null, false, true); // Forzamos la búsqueda
+  }
+};
 </script>
 
 <template>
-  <div>
 
-    <VCard>
-      <VCardTitle class="d-flex justify-space-between">
-        <span>
-          Auditorias
-        </span>
+  <CountAllData />
 
-        <div class="d-flex justify-end gap-3 flex-wrap ">
-          <ProgressCircularChannel :channel="'assignment.' + authenticationStore.user.id"
-            tooltipText="Cargando asignaciones" />
-          <VBtn @click="openModalUploadFileCsv()">
-            Importar Csv
-          </VBtn>
-          <VBtn @click="openModalForm()">
-            Crear Paquete
-          </VBtn>
-        </div>
-      </VCardTitle>
+  <VRow>
+    <VCol>
 
-      <VCardText>
-        <FilterDialogNew :options-filter="optionsFilter">
-        </FilterDialogNew>
-      </VCardText>
+      <VCard>
+        <VCardTitle class="d-flex justify-space-between">
+          <span>
+            Auditorias
+          </span>
 
-      <VCardText class="mt-2">
-        <TableFullNew ref="refTableFull" :options="optionsTable" @edit="goViewEdit" @view="goViewView">
+          <div class="d-flex justify-end gap-3 flex-wrap ">
+            <ProgressCircularChannel :channel="'assignment.' + authenticationStore.user.id"
+              tooltipText="Cargando asignaciones" />
+            <VBtn @click="openModalUploadFileCsv()">
+              Importar Csv
+            </VBtn>
+            <VBtn @click="openModalForm()">
+              Crear Paquete
+            </VBtn>
+          </div>
+        </VCardTitle>
 
-          <template #item.description="{ item }">
-            <div style="cursor: pointer;" @click="goViewThirds({ id: item.id })">
-              {{ item.description }}
-            </div>
-          </template>
+        <VCardText>
+          <FilterDialogNew :options-filter="optionsFilter" @force-search="refreshTable" :table-loading="tableLoading">
+          </FilterDialogNew>
+        </VCardText>
 
-          <template #item.count_invoice_assignment="{ item }">
-            <div style="cursor: pointer;" @click="goViewThirds({ id: item.id })">
-              {{ item.count_invoice_assignment }}
-            </div>
-          </template>
+        <VCardText class="mt-2">
+          <TableFullNew ref="refTableFull" :options="optionsTable" @edit="goViewEdit" @view="goViewView"
+            @update:loading="tableLoading = $event">
 
-          <template #item.count_invoice_pending="{ item }">
-            <div style="cursor: pointer;" @click="goViewThirds({ id: item.id })">
-              {{ item.count_invoice_pending }}
-            </div>
-          </template>
+            <template #item.description="{ item }">
+              <div style="cursor: pointer;" @click="goViewThirds({ id: item.id })">
+                {{ item.description }}
+              </div>
+            </template>
 
-          <template #item.count_invoice_completed="{ item }">
-            <div style="cursor: pointer;" @click="goViewThirds({ id: item.id })">
-              {{ item.count_invoice_completed }}
-            </div>
-          </template>
+            <template #item.count_invoice="{ item }">
+              <div style="cursor: pointer;" @click="goViewThirds({ id: item.id })">
+                {{ item.count_invoice }}
+              </div>
+            </template>
 
-        </TableFullNew>
-      </VCardText>
-    </VCard>
+            <template #item.count_invoice_pending="{ item }">
+              <div style="cursor: pointer;" @click="goViewThirds({ id: item.id })">
+                {{ item.count_invoice_pending }}
+              </div>
+            </template>
 
-    <ModalUploadFileCsv ref="refModalUploadFileCsv" />
+            <template #item.count_invoice_completed="{ item }">
+              <div style="cursor: pointer;" @click="goViewThirds({ id: item.id })">
+                {{ item.count_invoice_completed }}
+              </div>
+            </template>
 
-    <ModalForm ref="refModalForm" @execute="reloadTable" />
-  </div>
+          </TableFullNew>
+        </VCardText>
+      </VCard>
+    </VCol>
+  </VRow>
+
+
+  <ModalUploadFileCsv ref="refModalUploadFileCsv" />
+
+  <ModalForm ref="refModalForm" @execute="reloadTable" />
 </template>

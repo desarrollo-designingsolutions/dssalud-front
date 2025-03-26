@@ -72,6 +72,15 @@ const optionsFilter = ref({
 const goView = (item: any) => {
   router.push({ name: "Filing-New-List", params: { type: item.type, id: item.id } })
 }
+
+const tableLoading = ref(false); // Estado de carga de la tabla
+
+// Método para refrescar los datos
+const refreshTable = () => {
+  if (refTableFull.value) {
+    refTableFull.value.fetchTableData(null, false, true); // Forzamos la búsqueda
+  }
+};
 </script>
 
 <template>
@@ -104,7 +113,7 @@ const goView = (item: any) => {
       </VCardTitle>
 
       <VCardText>
-        <FilterDialogNew :options-filter="optionsFilter">
+        <FilterDialogNew :options-filter="optionsFilter" @force-search="refreshTable" :table-loading="tableLoading">
           <template #default="{ extraFilters }">
             <VCol cols="3">
               <AppTextField prepend-inner-icon="tabler-search"
@@ -116,7 +125,7 @@ const goView = (item: any) => {
       </VCardText>
 
       <VCardText class=" mt-2">
-        <TableFullNew ref="refTableFull" :options="optionsTable">
+        <TableFullNew ref="refTableFull" :options="optionsTable" @update:loading="tableLoading = $event">
           <template #item.status="{ item }">
             <div>
               <VChip :color="item.status_backgroundColor">{{ item.status_description }}</VChip>

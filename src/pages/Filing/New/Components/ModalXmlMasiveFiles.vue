@@ -82,8 +82,8 @@ const submitForm = async () => {
       fileItem.progress = undefined;
     });
     alert('Error al enviar los archivos');
-    isLoading.value = false;
   }
+  isLoading.value = false;
 };
 
 const listenToProgress = (uploadId: string) => {

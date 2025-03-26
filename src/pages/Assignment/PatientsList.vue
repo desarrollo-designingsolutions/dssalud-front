@@ -55,33 +55,47 @@ const goViewInvoiceAuditList = () => {
   router.push({ name: "AssignmentInvoiceAudit-List", params: { assignment_batche_id: assignment_batche_id, third_id: third_id } })
 }
 
+const tableLoading = ref(false); // Estado de carga de la tabla
+
+// Método para refrescar los datos
+const refreshTable = () => {
+  if (refTableFull.value) {
+    refTableFull.value.fetchTableData(null, false, true); // Forzamos la búsqueda
+  }
+};
 </script>
 
 <template>
   <div>
+    <CountAllData />
 
-    <VCard>
-      <VCardTitle class="d-flex justify-space-between">
-        <span>
-          Usuarios
-        </span>
+    <VRow>
+      <VCol>
+        <VCard>
+          <VCardTitle class="d-flex justify-space-between">
+            <span>
+              Usuarios
+            </span>
 
-        <div class="d-flex justify-end gap-3 flex-wrap ">
-          <VBtn @click="goViewInvoiceAuditList">
-            Regresar
-          </VBtn>
-        </div>
-      </VCardTitle>
+            <div class="d-flex justify-end gap-3 flex-wrap ">
+              <VBtn @click="goViewInvoiceAuditList">
+                Regresar
+              </VBtn>
+            </div>
+          </VCardTitle>
 
-      <VCardText>
-        <FilterDialogNew :options-filter="optionsFilter">
-        </FilterDialogNew>
-      </VCardText>
+          <VCardText>
+            <FilterDialogNew :options-filter="optionsFilter" @force-search="refreshTable" :table-loading="tableLoading">
+            </FilterDialogNew>
+          </VCardText>
 
-      <VCardText class="mt-2">
-        <TableFullNew ref="refTableFull" :options="optionsTable">
-        </TableFullNew>
-      </VCardText>
-    </VCard>
+          <VCardText class="mt-2">
+            <TableFullNew ref="refTableFull" :options="optionsTable" @update:loading="tableLoading = $event">
+            </TableFullNew>
+          </VCardText>
+        </VCard>
+      </VCol>
+    </VRow>
+
   </div>
 </template>

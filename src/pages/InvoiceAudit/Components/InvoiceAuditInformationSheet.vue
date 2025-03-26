@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import ModalShowFiles from "@/pages/InvoiceAudit/Components/ModalShowFiles.vue";
+import ModalFormGlosa from "@/pages/Glosa/Components/ModalForm.vue";
 import { useAuthenticationStore } from "@/stores/useAuthenticationStore";
 import { useRouter } from 'vue-router';
 import ModalUploadGlosaFileCsv from "@/pages/InvoiceAudit/Components/ModalUploadGlosaFileCsv.vue";
@@ -82,6 +83,7 @@ const optionsTable = {
     { key: "total_value", title: 'VL Total' },
     { key: 'actions', title: 'Acciones', sortable: false },
   ],
+  showSelect: true,
   actions: {
     delete: {
       url: "/invoiceAudit/delete",
@@ -110,6 +112,15 @@ const refModalUploadGlosaFileCsv = ref()
 const openModalUploadGlosaFileCsv = () => {
   refModalUploadGlosaFileCsv.value.openModal()
 }
+//ModalFormGlosa
+const refModalFormGlosa = ref()
+
+const openModalFormGlosa = () => {
+  refModalFormGlosa.value.openModal(invoice_audit_id, "InvoiceAudit")
+}
+
+const servicesIds = ref<Array<string>>([]);
+
 </script>
 
 <template>
@@ -225,13 +236,14 @@ const openModalUploadGlosaFileCsv = () => {
         </span>
 
         <div class="d-flex justify-end gap-3 flex-wrap ">
+          <ProgressCircularChannel :channel="'glosa.' + authenticationStore.user.id" tooltipText="Cargando glosas" />
           <VBtn @click="openModalShowFiles">
             Soportes
           </VBtn>
-          <VBtn @click="openModalUploadGlosaFileCsv()">
+          <VBtn @click="openModalFormGlosa">
             Glosa Masiva
           </VBtn>
-          <VBtn @click="">
+          <VBtn @click="openModalUploadGlosaFileCsv()">
             Importar
           </VBtn>
           <VBtn @click="">
@@ -252,7 +264,8 @@ const openModalUploadGlosaFileCsv = () => {
 
 
       <VCardText>
-        <TableFullNew ref="refTableFull" :options="optionsTable" @update:loading="tableLoading = $event">
+        <TableFullNew v-model:selected="servicesIds" ref="refTableFull" :options="optionsTable"
+          @update:loading="tableLoading = $event">
         </TableFullNew>
       </VCardText>
     </VCard>
@@ -262,4 +275,5 @@ const openModalUploadGlosaFileCsv = () => {
 
   <ModalUploadGlosaFileCsv ref="refModalUploadGlosaFileCsv" />
 
+  <ModalFormGlosa ref="refModalFormGlosa" :servicesIds="servicesIds"></ModalFormGlosa>
 </template>

@@ -76,6 +76,7 @@ declare module 'vue' {
     RouterView: typeof import('vue-router')['RouterView']
     ScrollToTop: typeof import('./src/@core/components/ScrollToTop.vue')['default']
     SelectInfinite: typeof import('./src/components/CustomComponents/SelectInfinite.vue')['default']
+    SelectInfiniteCodeGlosa: typeof import('./src/components/CustomComponents/SelectInfinites/SelectInfiniteCodeGlosa.vue')['default']
     SelectInfiniteContract: typeof import('./src/components/CustomComponents/SelectInfinites/SelectInfiniteContract.vue')['default']
     SelectInfiniteSupportType: typeof import('./src/components/CustomComponents/SelectInfinites/SelectInfiniteSupportType.vue')['default']
     SelectInfiniteThird: typeof import('./src/components/CustomComponents/SelectInfinites/SelectInfiniteThird.vue')['default']

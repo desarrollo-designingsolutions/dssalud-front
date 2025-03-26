@@ -66,6 +66,8 @@ declare module 'vue-router/auto-routes' {
     'filing-new-components-modal-xml-masive-files': RouteRecordInfo<'filing-new-components-modal-xml-masive-files', '/Filing/New/Components/ModalXmlMasiveFiles', Record<never, never>, Record<never, never>>,
     'Filing-New-List': RouteRecordInfo<'Filing-New-List', 'Filing/New/List/:type/:id', Record<never, never>, Record<never, never>>,
     'Filing-New-Index': RouteRecordInfo<'Filing-New-Index', '/Filing/New/Index', Record<never, never>, Record<never, never>>,
+    'glosa-components-modal-form': RouteRecordInfo<'glosa-components-modal-form', '/Glosa/Components/ModalForm', Record<never, never>, Record<never, never>>,
+    'InvoiceAudit-List': RouteRecordInfo<'InvoiceAudit-List', '/Glosa/List', Record<never, never>, Record<never, never>>,
     'Home': RouteRecordInfo<'Home', '/home', Record<never, never>, Record<never, never>>,
     'InvoiceAuditAssignmentBatche-List': RouteRecordInfo<'InvoiceAuditAssignmentBatche-List', '/InvoiceAudit/Components/InvoiceAuditAssignmentBatchesList', Record<never, never>, Record<never, never>>,
     'InvoiceAuditAssignment-List': RouteRecordInfo<'InvoiceAuditAssignment-List', 'invoiceAuditAssignmentList/:assignment_batche_id?', Record<never, never>, Record<never, never>>,

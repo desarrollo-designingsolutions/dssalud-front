@@ -71,9 +71,7 @@ const getDataSaved = (data: any) => {
 <template>
   <div>
 
-    <AppSelectRemote v-model="valueSelectInfinite" :url="props.url" :array-info="props.arrayInfo" :params="{
-    company_id: authenticationStore.company.id
-  }" clearable v-bind="{
+    <AppSelectRemote v-model="valueSelectInfinite" :url="props.url" :array-info="props.arrayInfo" clearable v-bind="{
       ...$attrs,
       id: elementId,
     }">

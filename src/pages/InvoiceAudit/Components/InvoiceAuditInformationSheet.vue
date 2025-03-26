@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import ModalShowFiles from "@/pages/InvoiceAudit/Components/ModalShowFiles.vue";
+import ModalFormGlosa from "@/pages/Glosa/Components/ModalForm.vue";
 import { useAuthenticationStore } from "@/stores/useAuthenticationStore";
 import { useRouter } from 'vue-router';
 
@@ -81,6 +82,7 @@ const optionsTable = {
     { key: "total_value", title: 'VL Total' },
     { key: 'actions', title: 'Acciones', sortable: false },
   ],
+  showSelect: true,
   actions: {
     delete: {
       url: "/invoiceAudit/delete",
@@ -103,6 +105,16 @@ const refModalShowFiles = ref()
 const openModalShowFiles = () => {
   refModalShowFiles.value.openModal(invoice_audit_id, "InvoiceAudit")
 }
+
+//ModalFormGlosa
+const refModalFormGlosa = ref()
+
+const openModalFormGlosa = () => {
+  refModalFormGlosa.value.openModal(invoice_audit_id, "InvoiceAudit")
+}
+
+const servicesIds = ref<Array<string>>([]);
+
 </script>
 
 <template>
@@ -221,7 +233,7 @@ const openModalShowFiles = () => {
           <VBtn @click="openModalShowFiles">
             Soportes
           </VBtn>
-          <VBtn @click="">
+          <VBtn @click="openModalFormGlosa">
             Glosa Masiva
           </VBtn>
           <VBtn @click="">
@@ -245,11 +257,13 @@ const openModalShowFiles = () => {
 
 
       <VCardText>
-        <TableFullNew ref="refTableFull" :options="optionsTable" @update:loading="tableLoading = $event">
+        <TableFullNew v-model:selected="servicesIds" ref="refTableFull" :options="optionsTable"
+          @update:loading="tableLoading = $event">
         </TableFullNew>
       </VCardText>
     </VCard>
   </div>
 
   <ModalShowFiles ref="refModalShowFiles"></ModalShowFiles>
+  <ModalFormGlosa ref="refModalFormGlosa" :servicesIds="servicesIds"></ModalFormGlosa>
 </template>

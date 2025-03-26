@@ -49,13 +49,14 @@ const handleClearForm = () => {
 
 const handleDialogVisible = () => {
   isDialogVisible.value = !isDialogVisible.value;
+  handleClearForm()
 };
 
 const openModal = async (id: string | null = null, disabled: boolean = false) => {
   disabledFiledsView.value = disabled
 
-  handleClearForm()
   handleDialogVisible();
+  addDataArray();
 
   await fetchDataForm();
 };
@@ -91,7 +92,7 @@ const submitForm = async (isCreateAndNew: boolean = false) => {
     const { data, response } = await useApi(url).post(form);
 
     if (response.value?.ok && data.value) {
-      // handleClearForm();
+      handleDialogVisible();
     }
     if (data.value.code === 422) errorsBack.value = data.value.errors ?? {};
 
@@ -148,7 +149,7 @@ const shouldShowDeleteButton = () => {
         </div>
 
         <VCardText>
-          <VForm ref="refForm" @submit.prevent="() => { }">
+          <VForm ref="refForm" @submit.prevent="() => { }" v-if="!isLoading">
             <VRow>
               <VCol cols="12">
                 <VBtn class="ml-3" icon color="success" @click="addDataArray()">
@@ -181,11 +182,11 @@ const shouldShowDeleteButton = () => {
                   </VRadioGroup>
                 </VCol>
 
-                <VCol v-if="item.typeGlosa === 'parcial'" cols="12" md="4">
+                <VCol cols="12" md="4">
                   <span>Valor glosa</span>
                 </VCol>
 
-                <VCol v-if="item.typeGlosa === 'parcial'" cols="12" md="8">
+                <VCol cols="12" md="8">
                   <VTextField label="Valor glosa" v-model="item.partialValue" outlined></VTextField>
                 </VCol>
 

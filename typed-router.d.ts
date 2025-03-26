@@ -73,6 +73,7 @@ declare module 'vue-router/auto-routes' {
     'InvoiceAuditPatient-List': RouteRecordInfo<'InvoiceAuditPatient-List', 'invoiceAuditAssignmentList/invoice-audit/:assignment_batche_id/:third_id/:invoice_audit_id?', Record<never, never>, Record<never, never>>,
     'InvoiceAuditInformationSheet-Info': RouteRecordInfo<'InvoiceAuditInformationSheet-Info', 'InvoiceAuditInformationSheet/invoice-audit/:assignment_batche_id/:third_id/:invoice_audit_id/:patient_id', Record<never, never>, Record<never, never>>,
     'invoice-audit-components-modal-show-files': RouteRecordInfo<'invoice-audit-components-modal-show-files', '/InvoiceAudit/Components/ModalShowFiles', Record<never, never>, Record<never, never>>,
+    'invoice-audit-components-modal-upload-glosa-file-csv': RouteRecordInfo<'invoice-audit-components-modal-upload-glosa-file-csv', '/InvoiceAudit/Components/ModalUploadGlosaFileCsv', Record<never, never>, Record<never, never>>,
     'InvoiceAudit-List': RouteRecordInfo<'InvoiceAudit-List', '/InvoiceAudit/List', Record<never, never>, Record<never, never>>,
     'second-page': RouteRecordInfo<'second-page', '/second-page', Record<never, never>, Record<never, never>>,
     'user-access-role-components-modal-form': RouteRecordInfo<'user-access-role-components-modal-form', '/UserAccess/Role/Components/ModalForm', Record<never, never>, Record<never, never>>,

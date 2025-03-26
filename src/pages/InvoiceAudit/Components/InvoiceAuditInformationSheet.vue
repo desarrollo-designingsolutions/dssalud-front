@@ -2,6 +2,7 @@
 import ModalShowFiles from "@/pages/InvoiceAudit/Components/ModalShowFiles.vue";
 import { useAuthenticationStore } from "@/stores/useAuthenticationStore";
 import { useRouter } from 'vue-router';
+import ModalUploadGlosaFileCsv from "@/pages/InvoiceAudit/Components/ModalUploadGlosaFileCsv.vue";
 
 definePage({
   path: "InvoiceAuditInformationSheet/invoice-audit/:assignment_batche_id/:third_id/:invoice_audit_id/:patient_id",
@@ -102,6 +103,12 @@ const refModalShowFiles = ref()
 
 const openModalShowFiles = () => {
   refModalShowFiles.value.openModal(invoice_audit_id, "InvoiceAudit")
+}
+
+//ModalUploadGlosaFileCsv
+const refModalUploadGlosaFileCsv = ref()
+const openModalUploadGlosaFileCsv = () => {
+  refModalUploadGlosaFileCsv.value.openModal()
 }
 </script>
 
@@ -221,7 +228,7 @@ const openModalShowFiles = () => {
           <VBtn @click="openModalShowFiles">
             Soportes
           </VBtn>
-          <VBtn @click="">
+          <VBtn @click="openModalUploadGlosaFileCsv()">
             Glosa Masiva
           </VBtn>
           <VBtn @click="">
@@ -252,4 +259,7 @@ const openModalShowFiles = () => {
   </div>
 
   <ModalShowFiles ref="refModalShowFiles"></ModalShowFiles>
+
+  <ModalUploadGlosaFileCsv ref="refModalUploadGlosaFileCsv" />
+
 </template>

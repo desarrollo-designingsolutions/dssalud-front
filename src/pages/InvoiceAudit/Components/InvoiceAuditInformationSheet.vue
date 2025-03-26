@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import ModalShowFiles from "@/pages/InvoiceAudit/Components/ModalShowFiles.vue";
 import { useAuthenticationStore } from "@/stores/useAuthenticationStore";
 import { useRouter } from 'vue-router';
 
@@ -42,12 +43,6 @@ const goViewPatient = (data: any = { id: null }) => {
 
 }
 
-const goViewAssignmentBatchesList = () => {
-
-  router.push({ name: "InvoiceAuditAssignmentBatche-List" })
-
-}
-
 const fetchData = async () => {
 
   const url = `/invoiceAudit/getInformationSheet/${third_id}/${invoice_audit_id}/${patient_id}`
@@ -73,21 +68,22 @@ onMounted(() => {
 const refTableFull = ref()
 
 const optionsTable = {
-  url: "/filingInvoice/paginate",
-  paramsGlobal: {},
+  url: `/invoiceAudit/getServices/${invoice_audit_id}/${patient_id}`,
   headers: [
-    { key: 'invoice_number', title: 'Número de factura' },
-    { key: 'users_count', title: 'Cant. Usuarios' },
-    { key: 'files_count', title: 'Soportes Cargados' },
-    { key: 'case_number', title: 'N° Radicado' },
-    { key: 'sumVr', title: 'Valor' },
-    { key: "status", title: 'Estado' },
-    { key: "date", title: 'Fecha' },
+    { key: 'id', title: 'ID' },
+    { key: 'type', title: 'Tipo' },
+    { key: 'nap', title: 'Nap' },
+    { key: 'detail_code', title: 'Código' },
+    { key: 'description', title: 'Descripcion' },
+    { key: 'quantity', title: 'Cantidad' },
+    { key: "unit_value", title: 'VL Unitario' },
+    { key: "moderator_value", title: 'VL Moderadora' },
+    { key: "total_value", title: 'VL Total' },
     { key: 'actions', title: 'Acciones', sortable: false },
   ],
   actions: {
     delete: {
-      url: "/filingInvoice/delete",
+      url: "/invoiceAudit/delete",
     },
   }
 }
@@ -100,6 +96,13 @@ const refreshTable = () => {
     refTableFull.value.fetchTableData(null, false, true); // Forzamos la búsqueda
   }
 };
+
+//ModalShowFiles
+const refModalShowFiles = ref()
+
+const openModalShowFiles = () => {
+  refModalShowFiles.value.openModal(invoice_audit_id, "InvoiceAudit")
+}
 </script>
 
 <template>
@@ -185,7 +188,7 @@ const refreshTable = () => {
             <VExpansionPanelText>
               <VRow>
                 <VCol cols="12" md="2">
-                  <p><strong>Nombre</strong> <br> {{ patient.first_name }} </p>
+                  <p><strong>Nombre</strong> <br> {{ patient.full_name }} </p>
                 </VCol>
                 <VCol cols="12" md="2">
                   <p><strong>Documento</strong> <br> {{ patient.identification_number }} </p>
@@ -209,6 +212,32 @@ const refreshTable = () => {
       </VCardText>
 
 
+      <VCardTitle class="d-flex justify-space-between">
+        <span>
+          Gestión Cuenta
+        </span>
+
+        <div class="d-flex justify-end gap-3 flex-wrap ">
+          <VBtn @click="openModalShowFiles">
+            Soportes
+          </VBtn>
+          <VBtn @click="">
+            Glosa Masiva
+          </VBtn>
+          <VBtn @click="">
+            Importar
+          </VBtn>
+          <VBtn @click="">
+            Exportar
+          </VBtn>
+          <VBtn size="38" color="primary" icon @click="">
+            <VIcon icon="tabler-download"></VIcon>
+            <VTooltip location="top" transition="scale-transition" activator="parent" text="Descargar">
+            </VTooltip>
+          </VBtn>
+        </div>
+      </VCardTitle>
+
       <VCardText>
         <FilterDialogNew :options-filter="optionsFilter" @force-search="refreshTable" :table-loading="tableLoading">
         </FilterDialogNew>
@@ -221,4 +250,6 @@ const refreshTable = () => {
       </VCardText>
     </VCard>
   </div>
+
+  <ModalShowFiles ref="refModalShowFiles"></ModalShowFiles>
 </template>

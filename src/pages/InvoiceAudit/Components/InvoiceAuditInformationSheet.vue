@@ -34,8 +34,8 @@ const invoice_audit_id = route.params.invoice_audit_id;
 const patient_id = route.params.patient_id;
 
 //LOADING
-
 const isLoading = ref<boolean>(false)
+const isLoadingExcel = ref<boolean>(false)
 
 //FILTER
 const optionsFilter = ref({
@@ -110,6 +110,20 @@ const refModalUploadGlosaFileCsv = ref()
 const openModalUploadGlosaFileCsv = () => {
   refModalUploadGlosaFileCsv.value.openModal()
 }
+
+const downloadExcel = async () => {
+  isLoadingExcel.value = true;
+  const { data, response } = await useAxios("/invoiceAudit/exportServices").post({
+    invoice_audit_id: invoice_audit_id,
+    patient_id: patient_id
+  })
+  isLoadingExcel.value = false;
+
+  if (response.status == 200 && data && data.code == 200) {
+    downloadExcelBase64(data.excel, "Servicios " + invoiceAudit.value?.invoice_number)
+  }
+}
+
 //ModalFormMasiveGlosa
 const refModalFormMasiveGlosa = ref()
 
@@ -247,15 +261,18 @@ const servicesIds = ref<Array<string>>([]);
         <div class="d-flex justify-end gap-3 flex-wrap ">
           <ProgressCircularChannel :channel="'glosa.' + authenticationStore.user.id" tooltipText="Cargando glosas" />
           <VBtn @click="openModalShowFiles">
+            <VIcon start icon="tabler-files" />
             Soportes
           </VBtn>
           <VBtn @click="openModalFormMasiveGlosa">
             Glosa Masiva
           </VBtn>
           <VBtn @click="openModalUploadGlosaFileCsv()">
+            <VIcon start icon="tabler-file-upload" />
             Importar
           </VBtn>
-          <VBtn @click="">
+          <VBtn @click="downloadExcel()" :loading="isLoadingExcel" :disabled="isLoadingExcel">
+            <VIcon start icon="tabler-file-download" />
             Exportar
           </VBtn>
           <VBtn size="38" color="primary" icon @click="">

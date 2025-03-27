@@ -133,13 +133,18 @@ const paginationData = (tableItems: number) => {
 
 <template>
   <div>
-    <VDialog v-model="isDialogVisible" fullscreen transition="dialog-transition" persistent>
+    <VDialog v-model="isDialogVisible" fullscreen transition="dialog-transition" persistent :scrim="false">
 
-      <DialogCloseBtn @click="handleDialogVisible" />
       <VCard :loading="isLoading">
         <div>
           <VToolbar color="primary">
-            <VToolbarTitle>{{ titleModal }}</VToolbarTitle>
+            <VBtn icon variant="plain" @click="handleDialogVisible">
+              <VIcon color="white" icon="tabler-x" />
+            </VBtn>
+
+            <VToolbarTitle>
+              {{ titleModal }}
+            </VToolbarTitle>
           </VToolbar>
         </div>
 

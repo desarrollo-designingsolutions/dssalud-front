@@ -7,6 +7,9 @@ const authenticationStore = useAuthenticationStore();
 const props = defineProps({
   service_id: {
     type: String,
+  },
+  total_value: {
+    type: String,
   }
 })
 
@@ -43,15 +46,15 @@ const optionsFilter = ref({
 const refModalForm = ref()
 
 const openModalFormCreate = () => {
-  refModalForm.value.openModal({ service_id: props.service_id })
+  refModalForm.value.openModal({ service_id: props.service_id, total_value: props.total_value })
 }
 
 const openModalFormEdit = async (data: any) => {
-  refModalForm.value.openModal({ service_id: props.service_id, id: data.id })
+  refModalForm.value.openModal({ service_id: props.service_id, id: data.id, total_value: props.total_value })
 }
 
 const openModalFormView = async (data: any) => {
-  refModalForm.value.openModal({ service_id: props.service_id, id: data.id }, true)
+  refModalForm.value.openModal({ service_id: props.service_id, id: data.id, total_value: props.total_value }, true)
 }
 
 const tableLoading = ref(false); // Estado de carga de la tabla

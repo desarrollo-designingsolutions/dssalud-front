@@ -14,6 +14,7 @@ const isLoading = ref<boolean>(false)
 
 const form = ref({
   id: null as string | null,
+  total_value_origin: null as string | null,
 })
 
 const handleClearForm = () => {
@@ -27,12 +28,13 @@ const handleDialogVisible = () => {
   handleClearForm()
 };
 
-const openModal = async ({ id, description }: any, disabled: boolean = false) => {
+const openModal = async ({ id, description, total_value_origin }: any, disabled: boolean = false) => {
   disabledFiledsView.value = disabled
 
   handleDialogVisible();
 
   form.value.id = id;
+  form.value.total_value_origin = total_value_origin;
   titleModal.value = "Listado de Glosas: " + description;
 };
 
@@ -56,7 +58,7 @@ defineExpose({
         </div>
 
         <VCardText class="px-0">
-          <ListGlosa :service_id="form.id"></ListGlosa>
+          <ListGlosa :service_id="form.id" :total_value="form.total_value_origin"></ListGlosa>
         </VCardText>
       </VCard>
     </VDialog>

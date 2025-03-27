@@ -24,17 +24,11 @@ const form = ref({
     codeGlosa: string | null,
     partialValue: string | null,
     observation: string | null,
-    typeGlosa: string | null,
     user_id: string | number | null,
     service_id: string | number | null,
   }>,
   servicesIds: null as Array<string> | null
 })
-
-const typesValueGlosa = ref([
-  'total',
-  'parcial',
-])
 
 const handleClearForm = () => {
   form.value = {
@@ -52,6 +46,8 @@ const openModal = async (servicesIds: Array<string> | null = null) => {
 
   handleDialogVisible();
   addDataArray();
+
+  titleModal.value = "Glosas Masivas: " + servicesIds?.length + " Servicio/s Seleccionado/s";
 
   form.value.servicesIds = servicesIds;
 };
@@ -88,9 +84,8 @@ defineExpose({
 const addDataArray = async () => {
   form.value.glosas.push({
     codeGlosa: null,
-    partialValue: '0',
+    partialValue: null,
     observation: null,
-    typeGlosa: null,
     user_id: null,
     service_id: null,
   })
@@ -104,9 +99,6 @@ const shouldShowDeleteButton = () => {
   return visibleItems.length > 1; // Mostrar el botón si hay más de un elemento visible
 }
 
-const handleTypeGlosaChange = (item: any) => {
-  if (item.typeGlosa == 'total') item.partialValue = '100'
-}
 </script>
 
 <template>
@@ -131,48 +123,30 @@ const handleTypeGlosaChange = (item: any) => {
                 </VBtn>
               </VCol>
               <template v-for="(item, index) in form.glosas" :key="index">
-                <VCol cols="12" md="4">
-                  <span>Glosa</span>
-                </VCol>
-                <VCol cols="12" md="8">
-                  <AppSelectRemote v-model="item.codeGlosa" url="/selectInfiniteCodeGlosa" array-info="codeGlosa"
-                    clearable>
+                <VCol cols="8">
+                  <AppSelectRemote label="Glosa" :requiredField="true" :rules="[requiredValidator]"
+                    v-model="item.codeGlosa" url="/selectInfiniteCodeGlosa" array-info="codeGlosa" clearable>
                   </AppSelectRemote>
                 </VCol>
 
                 <VCol cols="12" md="4">
-                  <span>Valor a glosar</span>
-                </VCol>
-
-                <VCol cols="12" md="8">
-                  <VRadioGroup v-model="item.typeGlosa" @change="handleTypeGlosaChange(item)" inline>
-                    <div>
-                      <VRadio v-for="radio in typesValueGlosa" :key="radio" :label="radio"
-                        :value="radio.toLocaleLowerCase()" />
-                    </div>
-                  </VRadioGroup>
-                </VCol>
-
-                <VCol cols="12" md="4">
-                  <span>Valor glosa</span>
-                </VCol>
-
-                <VCol cols="12" md="8">
-                  <AppTextField :disabled="item.typeGlosa == 'total'" clearable v-model="item.partialValue" outlined>
+                  <AppTextField :requiredField="true" label="Valor glosa" :rules="[requiredValidator]" clearable
+                    v-model="item.partialValue" placeholder="0">
+                    <template #append-inner>
+                      <span class="ml-2">%</span>
+                    </template>
                   </AppTextField>
                 </VCol>
 
-                <VCol cols="12" md="4">
-                  <span>Observación</span>
-                </VCol>
-
-                <VCol cols="12" md="8">
-                  <VTextarea clearable v-model="item.observation" outlined></VTextarea>
+                <VCol cols="12" md="10">
+                  <AppTextarea :requiredField="true" label="Observación" :rules="[requiredValidator]" clearable
+                    v-model="item.observation" outlined>
+                  </AppTextarea>
                 </VCol>
 
                 <VCol cols="12" sm="2">
-                  <VBtn icon v-if="shouldShowDeleteButton() && !disabledFiledsView && item.task_count == 0" size="30"
-                    class="mt-7" color="error" @click="deleteDataArray(index)">
+                  <VBtn icon v-if="shouldShowDeleteButton() && !disabledFiledsView" size="30" class="mt-7" color="error"
+                    @click="deleteDataArray(index)">
                     <VIcon icon="tabler-trash"></VIcon>
                   </VBtn>
                 </VCol>

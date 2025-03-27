@@ -27,6 +27,10 @@ const form = ref({
   observation: null as string | null,
 })
 
+const typeGlosa = ref<string>('parcial')
+
+const totalValue = ref<string>('')
+
 const typesValueGlosa = ref([
   'total',
   'parcial',
@@ -43,13 +47,15 @@ const handleDialogVisible = () => {
   handleClearForm()
 };
 
-const openModal = async ({ id, service_id }: any, disabled: boolean = false) => {
+const openModal = async ({ id, service_id, total_value }: any, disabled: boolean = false) => {
   disabledFiledsView.value = disabled
 
   handleDialogVisible();
 
   form.value.id = id;
   form.value.service_id = service_id;
+  totalValue.value = total_value;
+
   if (form.value.id) {
     await fetchDataForm();
   }
@@ -98,6 +104,10 @@ defineExpose({
   openModal
 })
 
+const handleTypeGlosaChange = () => {
+  if (typeGlosa.value == 'total') form.value.glosa_value = totalValue.value
+}
+
 </script>
 
 <template>
@@ -122,12 +132,21 @@ defineExpose({
                 </AppSelectRemote>
               </VCol>
               <VCol cols="12">
+                <VRadioGroup :requiredField="true" label="Valor a glosar" v-model="typeGlosa"
+                  @change="handleTypeGlosaChange()" inline>
+                  <div>
+                    <VRadio v-for="radio in typesValueGlosa" :key="radio" :label="radio"
+                      :value="radio.toLocaleLowerCase()" />
+                  </div>
+                </VRadioGroup>
+              </VCol>
+              <VCol cols="12">
                 <AppTextField :requiredField="true" clearable :disabled="disabledFiledsView" label="Valor glosa"
                   :rules="[requiredValidator]" v-model="form.glosa_value" :error-messages="errorsBack.glosa_value"
                   @input="errorsBack.glosa_value = ''" />
               </VCol>
               <VCol cols="12">
-                <AppTextField :requiredField="true" clearable :disabled="disabledFiledsView" label="Observación"
+                <AppTextarea :requiredField="true" clearable :disabled="disabledFiledsView" label="Observación"
                   :rules="[requiredValidator]" v-model="form.observation" :error-messages="errorsBack.observation"
                   @input="errorsBack.observation = ''" />
               </VCol>

@@ -14,7 +14,7 @@ const props = defineProps({
 })
 
 //TABLE
-const refTableFull = ref()
+const refTableFull2 = ref()
 
 const optionsTable = {
   url: "/glosa/paginate",
@@ -57,12 +57,20 @@ const openModalFormView = async (data: any) => {
   refModalForm.value.openModal({ service_id: props.service_id, id: data.id, total_value: props.total_value }, true)
 }
 
-const tableLoading = ref(false); // Estado de carga de la tabla
+const tableLoading = ref(false); // Estado de carga de la tabla 
+const disableUrlSync = ref(true); // Controla si se sincroniza la URL
+
 
 // Método para refrescar los datos
-const refreshTable = () => {
-  if (refTableFull.value) {
-    refTableFull.value.fetchTableData(null, false, true); // Forzamos la búsqueda
+const refreshTable = (queries: any) => {
+  if (refTableFull2.value) {
+    refTableFull2.value.fetchTableData(
+      null,        // page (null para usar la página actual)
+      false,       // fromWatch
+      true,        // force (forzar la petición)
+      disableUrlSync.value, // skipUrlUpdate
+      queries      // externalParams
+    );
   }
 };
 
@@ -85,12 +93,13 @@ const refreshTable = () => {
       </VCardTitle>
 
       <VCardText>
-        <FilterDialogNew :options-filter="optionsFilter" @force-search="refreshTable" :table-loading="tableLoading">
+        <FilterDialogNew :options-filter="optionsFilter" @force-search="refreshTable" :table-loading="tableLoading"
+          :disable-url-sync="disableUrlSync">
         </FilterDialogNew>
       </VCardText>
 
       <VCardText class="mt-2">
-        <TableFullNew ref="refTableFull" :options="optionsTable" @edit="openModalFormEdit" @view="openModalFormView"
+        <TableFullNew ref="refTableFull2" :options="optionsTable" @edit="openModalFormEdit" @view="openModalFormView"
           @update:loading="tableLoading = $event">
 
         </TableFullNew>

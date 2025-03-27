@@ -9,6 +9,7 @@ const emit = defineEmits(["execute"])
 const titleModal = ref<string>("Listado de Glosas")
 const isDialogVisible = ref<boolean>(false)
 const disabledFiledsView = ref<boolean>(false)
+const showList = ref<boolean>(false)
 
 const isLoading = ref<boolean>(false)
 
@@ -25,6 +26,7 @@ const handleClearForm = () => {
 
 const handleDialogVisible = () => {
   isDialogVisible.value = !isDialogVisible.value;
+  showList.value = !showList.value;
   handleClearForm()
 };
 
@@ -58,7 +60,7 @@ defineExpose({
         </div>
 
         <VCardText class="px-0">
-          <ListGlosa :service_id="form.id" :total_value="form.total_value_origin"></ListGlosa>
+          <ListGlosa v-if="showList" :service_id="form.id" :total_value="form.total_value_origin"></ListGlosa>
         </VCardText>
       </VCard>
     </VDialog>

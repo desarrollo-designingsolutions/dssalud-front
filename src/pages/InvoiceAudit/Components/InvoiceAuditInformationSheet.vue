@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import ModalShowFiles from "@/pages/InvoiceAudit/Components/ModalShowFiles.vue";
 import ModalFormMasiveGlosa from "@/pages/Glosa/Components/ModalFormMasive.vue";
 import ModalListGlosa from "@/pages/Glosa/Components/ModalList.vue";
+import ModalShowFiles from "@/pages/InvoiceAudit/Components/ModalShowFiles.vue";
+import ModalUploadGlosaFileCsv from "@/pages/InvoiceAudit/Components/ModalUploadGlosaFileCsv.vue";
 import { useAuthenticationStore } from "@/stores/useAuthenticationStore";
 import { useRouter } from 'vue-router';
-import ModalUploadGlosaFileCsv from "@/pages/InvoiceAudit/Components/ModalUploadGlosaFileCsv.vue";
 
 const { toast } = useToast();
 
@@ -261,24 +261,43 @@ const servicesIds = ref<Array<string>>([]);
         <div class="d-flex justify-end gap-3 flex-wrap ">
           <ProgressCircularChannel :channel="'glosa.' + authenticationStore.user.id" tooltipText="Cargando glosas" />
           <VBtn @click="openModalShowFiles">
-            <VIcon start icon="tabler-files" />
+            <template #prepend>
+              <VIcon start icon="tabler-files" />
+            </template>
             Soportes
           </VBtn>
           <VBtn @click="openModalFormMasiveGlosa">
+            <template #prepend>
+              <VIcon start icon="tabler-folder" />
+            </template>
             Glosa Masiva
           </VBtn>
-          <VBtn @click="openModalUploadGlosaFileCsv()">
-            <VIcon start icon="tabler-file-upload" />
-            Importar
-          </VBtn>
-          <VBtn @click="downloadExcel()" :loading="isLoadingExcel" :disabled="isLoadingExcel">
-            <VIcon start icon="tabler-file-download" />
-            Exportar
-          </VBtn>
-          <VBtn size="38" color="primary" icon @click="">
-            <VIcon icon="tabler-download"></VIcon>
-            <VTooltip location="top" transition="scale-transition" activator="parent" text="Descargar">
-            </VTooltip>
+
+          <VBtn color="primary" append-icon="tabler-chevron-down" :loading="isLoadingExcel">
+            Más Acciones
+            <VMenu activator="parent">
+              <VList>
+                <VListItem @click="openModalUploadGlosaFileCsv()">
+                  <template #prepend>
+                    <VIcon start icon="tabler-file-upload" />
+                  </template>
+                  <span>Importar</span>
+                </VListItem>
+                <VListItem @click="downloadExcel()" :loading="isLoadingExcel" :disabled="isLoadingExcel">
+                  <template #prepend>
+                    <VIcon start icon="tabler-file-download" />
+                  </template>
+                  <span>Exportar</span>
+                </VListItem>
+                <VListItem>
+                  <template #prepend>
+                    <VIcon start icon="tabler-download" />
+                  </template>
+                  <span>Descargar</span>
+                </VListItem>
+
+              </VList>
+            </VMenu>
           </VBtn>
         </div>
       </VCardTitle>

@@ -57,8 +57,13 @@ const openModal = async ({ id, service_id, total_value }: any, disabled: boolean
   totalValue.value = total_value;
 
   if (form.value.id) {
+    typeGlosa.value = 'parcial'
     await fetchDataForm();
+  } else {
+    typeGlosa.value = 'total'
+    handleTypeGlosaChange()
   }
+
 };
 
 const fetchDataForm = async () => {
@@ -104,8 +109,14 @@ defineExpose({
   openModal
 })
 
+const disabledTotal = ref(false)
 const handleTypeGlosaChange = () => {
-  if (typeGlosa.value == 'total') form.value.glosa_value = totalValue.value
+  disabledTotal.value = false
+
+  if (typeGlosa.value == 'total') {
+    form.value.glosa_value = totalValue.value
+    disabledTotal.value = true
+  }
 }
 
 </script>
@@ -141,9 +152,9 @@ const handleTypeGlosaChange = () => {
                 </VRadioGroup>
               </VCol>
               <VCol cols="12">
-                <AppTextField :requiredField="true" clearable :disabled="disabledFiledsView" label="Valor glosa"
-                  :rules="[requiredValidator]" v-model="form.glosa_value" :error-messages="errorsBack.glosa_value"
-                  @input="errorsBack.glosa_value = ''" />
+                <AppTextField :requiredField="true" clearable :disabled="disabledFiledsView || disabledTotal"
+                  label="Valor glosa" :rules="[requiredValidator]" v-model="form.glosa_value"
+                  :error-messages="errorsBack.glosa_value" @input="errorsBack.glosa_value = ''" />
               </VCol>
               <VCol cols="12">
                 <AppTextarea :requiredField="true" clearable :disabled="disabledFiledsView" label="Observación"

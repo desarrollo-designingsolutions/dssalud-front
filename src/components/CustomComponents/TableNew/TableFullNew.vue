@@ -119,13 +119,23 @@ const fetchTableData = async (
     : '';
 
   // Usamos externalParams si se proporcionan, de lo contrario usamos los parámetros actuales
-  const queryParams = externalParams || {
-    page: options.pagination.currentPage.toString(),
-    perPage: options.pagination.rowsPerPage.toString(),
-    ...(sortQuery && { sort: sortQuery }),
-    ...options.params,
-    ...options.paramsGlobal,
-  };
+  let queryParams = null
+
+  if (externalParams) {
+    queryParams = {
+      ...externalParams,
+      ...options.paramsGlobal,
+    };
+  } else {
+    queryParams = {
+      page: options.pagination.currentPage.toString(),
+      perPage: options.pagination.rowsPerPage.toString(),
+      ...(sortQuery && { sort: sortQuery }),
+      ...options.params,
+      ...options.paramsGlobal,
+    }
+  }
+
 
   // Solo actualizamos la URL si skipUrlUpdate es false y no viene del watcher
   if (!skipUrlUpdate && !fromWatch) {

@@ -165,7 +165,9 @@ const clearFilters = () => {
 
 // Inicializa los valores desde los parámetros de la URL
 const initializeFromQuery = () => {
-  const queryParams = route.query;
+  // const source = props.disableUrlSync ? queries.value : route.query;
+
+  const queryParams = props.disableUrlSync ? queries.value : route.query
 
   generalSearch.value = queryParams['filter[inputGeneral]'] ? queryParams['filter[inputGeneral]'] as string : '';
 
@@ -216,12 +218,19 @@ const clearGeneralSearchInput = () => {
 // Calcula los filtros activos para mostrar como chips
 const activeFilters = computed(() => {
   const filters: Record<string, string> = {};
-  for (const key in route.query) {
+  // Elegimos la fuente de datos según disableUrlSync
+  const source = props.disableUrlSync ? queries.value : route.query;
+
+  console.log("props.disableUrlSync", props.disableUrlSync);
+  console.log("source", source);
+  console.log("queries.value", queries.value);
+
+  for (const key in source) {
     if (key.startsWith('filter[')) {
       const filterKey = key.replace('filter[', '').replace(']', '');
-      const value = route.query[key]; // No asumimos que es string directamente
-      const stringValue = value !== null && value !== undefined ? String(value) : ''; // Convertimos a string de forma segura
-      if (stringValue.trim() !== '') { // Usamos stringValue para trim
+      const value = source[key];
+      const stringValue = value !== null && value !== undefined ? String(value) : '';
+      if (stringValue.trim() !== '') {
         const field = props.optionsFilter.dialog?.inputs?.find(f => f.name === filterKey);
         if (field) {
           if (field.type === 'selectApi') {
@@ -237,7 +246,7 @@ const activeFilters = computed(() => {
             filters[filterKey] = stringValue;
           }
         } else {
-          filters[filterKey] = stringValue; // Fallback para filtros no definidos en dialog.inputs
+          filters[filterKey] = stringValue;
         }
       }
     }

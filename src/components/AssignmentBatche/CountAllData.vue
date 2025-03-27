@@ -1,5 +1,23 @@
 <script setup lang="ts">
 
+const props = defineProps({
+  assignment_batch_id: {
+    type: String,
+    required: false,
+    default: null
+  },
+  third_id: {
+    type: String,
+    required: false,
+    default: null
+  },
+  user_id: {
+    type: [String, Number],
+    required: false,
+    default: null
+  },
+});
+
 interface CountData {
   icon: string;
   color: string;
@@ -15,18 +33,18 @@ const countData = ref<CountData[]>([
     "icon": 'tabler-user-shield',
     "color": 'primary',
     "title": 'Cantidad de Prestadores',
-    "value": 10,
+    "value": 0,
     "isHover": false,
-    "progress": '10',
+    "progress": '0',
     // "to": { name: "User-List" },
   },
   {
     "icon": 'tabler-password-user',
     "color": 'info',
     "title": 'Facturas Pendientes',
-    "value": 30,
+    "value": 0,
     "isHover": false,
-    "progress": '90',
+    "progress": '0',
     // "to": { name: "Project-List" },
   },
   {
@@ -42,18 +60,18 @@ const countData = ref<CountData[]>([
     "icon": 'tabler-users',
     "color": 'success',
     "title": 'Total Facturas',
-    "value": 110,
+    "value": 0,
     "isHover": false,
-    "progress": '90',
+    "progress": '0',
     // "to": { name: "Client-List" },
   },
   {
     "icon": 'tabler-users',
     "color": 'warning',
     "title": 'Porcentaje de Avance',
-    "value": 40,
+    "value": 0,
     "isHover": false,
-    "progress": '40',
+    "progress": '0',
     // "to": { name: "Client-List" },
   },
 ]);
@@ -61,25 +79,24 @@ const countData = ref<CountData[]>([
 const loading = ref<boolean>(false)
 
 onMounted(async () => {
-  // loading.value = true;
-  // const { data, response } = await useApi(`/talentHumanCount`).get();
-  // loading.value = false;
+  loading.value = true;
+  const { data, response } = await useAxios(`/assignment/AssignmentCount`).post({
+    assignment_batch_id: props.assignment_batch_id,
+    third_id: props.third_id,
+    user_id: props.user_id
+  });
+  loading.value = false;
 
-  // if (response.value?.ok && data.value) {
-  //   countData.value[0].value = data.value.data.absenteeismPercentage+' %'
-  //   countData.value[0].progress = data.value.data.absenteeismPercentage
 
-  //   countData.value[1].value = data.value.data.actives_count
-  //   countData.value[1].progress = data.value.data.actives_percentage
-
-  //   countData.value[2].value = data.value.data.disabled_employees_count
-  //   countData.value[2].progress = data.value.data.disabled_employees_percentage
-  // }
+  if (response.status == 200 && data) {
+    countData.value[0].value = data.countNumberProviders
+    countData.value[1].value = data.outstandingInvoices
+    countData.value[2].value = data.finalizedInvoices
+    countData.value[3].value = data.allInvoices
+    countData.value[4].value = data.percentageProgress + '%'
+    countData.value[4].progress = data.percentageProgress
+  }
 });
-
-
-
-
 </script>
 
 <template>

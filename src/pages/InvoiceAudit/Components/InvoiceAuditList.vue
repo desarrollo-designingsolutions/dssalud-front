@@ -62,7 +62,7 @@ const goViewAssignmentList = () => {
 
 <template>
 
-  <CountAllData />
+  <CountAllData :assignment_batch_id="assignment_batche_id" :third_id="third_id" :user_id="authenticationStore.user.id" />
 
   <VRow>
     <VCol>

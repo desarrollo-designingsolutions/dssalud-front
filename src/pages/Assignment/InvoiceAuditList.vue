@@ -68,7 +68,7 @@ const refreshTable = () => {
 
 <template>
 
-  <CountAllData />
+  <CountAllData :assignment_batch_id="route.params.assignment_batche_id" :third_id="route.params.third_id" />
 
   <VRow>
     <VCol>

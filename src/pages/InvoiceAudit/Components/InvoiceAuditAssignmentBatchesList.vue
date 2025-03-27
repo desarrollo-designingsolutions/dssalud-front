@@ -51,7 +51,7 @@ const goViewThirds = (data: { id: number | null } = { id: null }) => {
 
 <template>
 
-  <CountAllData />
+  <CountAllData :user_id="authenticationStore.user.id" />
 
   <VRow>
     <VCol>

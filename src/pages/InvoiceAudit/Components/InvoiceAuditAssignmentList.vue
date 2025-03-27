@@ -65,7 +65,7 @@ const goViewAssignmentBatchesList = () => {
 
 <template>
 
-  <CountAllData />
+  <CountAllData :assignment_batch_id="assignment_batche_id" :user_id="authenticationStore.user.id"/>
 
   <VRow>
     <VCol>

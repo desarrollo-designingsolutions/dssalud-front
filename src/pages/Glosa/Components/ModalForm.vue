@@ -8,32 +8,23 @@ const { toast } = useToast()
 const authenticationStore = useAuthenticationStore();
 const { company } = storeToRefs(authenticationStore)
 
-const props = defineProps({
-  servicesIds: {
-    type: Array,
-    required: true,
-  }
-})
-
 const errorsBack = ref<IErrorsBack>({});
 const refForm = ref<VForm>();
 const emit = defineEmits(["execute"])
 
-const titleModal = ref<string>("Glosas Masivas")
+const titleModal = ref<string>("Glosa")
 const isDialogVisible = ref<boolean>(false)
 const disabledFiledsView = ref<boolean>(false)
 
 const isLoading = ref<boolean>(false)
 
 const form = ref({
-  glosas: [] as Array<{
-    codeGlosa: string | null,
-    partialValue: string | null,
-    observation: string | null,
-    typeGlosa: string | null,
-    user_id: string | number | null,
-    service_id: string | number | null,
-  }>,
+  id: null as string | null,
+  user_id: null as string | null,
+  service_id: null as string | null,
+  code_glosa_id: null as string | null,
+  glosa_value: null as string | null,
+  observation: null as string | null,
 })
 
 const typesValueGlosa = ref([
@@ -42,8 +33,8 @@ const typesValueGlosa = ref([
 ])
 
 const handleClearForm = () => {
-  form.value = {
-    glosas: [],
+  for (const key in form.value) {
+    form.value[key] = null;
   }
 }
 
@@ -52,13 +43,16 @@ const handleDialogVisible = () => {
   handleClearForm()
 };
 
-const openModal = async (id: string | null = null, disabled: boolean = false) => {
+const openModal = async ({ id, service_id }: any, disabled: boolean = false) => {
   disabledFiledsView.value = disabled
 
   handleDialogVisible();
-  addDataArray();
 
-  await fetchDataForm();
+  form.value.id = id;
+  form.value.service_id = service_id;
+  if (form.value.id) {
+    await fetchDataForm();
+  }
 };
 
 const fetchDataForm = async () => {
@@ -68,33 +62,30 @@ const fetchDataForm = async () => {
   isLoading.value = true
   const { data, response } = await useAxios(url).get();
 
-  if (response.value?.ok && data.value) {
-    if (data.value.form) {
-      form.value = cloneObject(data.value.form)
+  if (response.status == 200 && data) {
+    if (data.form) {
+      form.value = cloneObject(data.form)
     }
   }
   isLoading.value = false
 }
 
 
-const submitForm = async (isCreateAndNew: boolean = false) => {
+const submitForm = async () => {
   const validation = await refForm.value?.validate()
   if (validation?.valid) {
-    form.value.servicesIds = props.servicesIds;
-    form.value.glosas.forEach(element => {
-      element.code_glosa_id = element.codeGlosa.value;
-      element.user_id = authenticationStore.user.id;
-    });
+    const url = form.value.id ? `/glosa/update/${form.value.id}` : `/glosa/store`
 
-    const url = `/glosa/store`
+    form.value.user_id = authenticationStore.user.id;
 
     isLoading.value = true;
-    const { data, response } = await useApi(url).post(form);
+    const { data, response } = await useAxios(url).post(form.value);
 
-    if (response.value?.ok && data.value) {
+    if (response.status == 200 && data) {
       handleDialogVisible();
+      emit('execute');
     }
-    if (data.value.code === 422) errorsBack.value = data.value.errors ?? {};
+    if (data.code === 422) errorsBack.value = data.errors ?? {};
 
     isLoading.value = false;
   }
@@ -107,32 +98,6 @@ defineExpose({
   openModal
 })
 
-const elementId = computed(() => {
-  const attrs = useAttrs();
-  const _elementIdToken = attrs.id || attrs.label;
-  return _elementIdToken
-    ? `app-selectInifinite-field-${_elementIdToken}-${Math.random()
-      .toString(36)
-      .slice(2, 7)}`
-    : undefined;
-});
-
-const addDataArray = async () => {
-  form.value.glosas.push({
-    codeGlosa: null,
-    partialValue: null,
-    observation: null,
-    typeGlosa: null,
-  })
-}
-
-const deleteDataArray = (index: number) => {
-  form.value.glosas.splice(index, 1);
-}
-const shouldShowDeleteButton = () => {
-  const visibleItems = form.value.glosas;
-  return visibleItems.length > 1; // Mostrar el botón si hay más de un elemento visible
-}
 </script>
 
 <template>
@@ -149,64 +114,23 @@ const shouldShowDeleteButton = () => {
         </div>
 
         <VCardText>
-          <VForm ref="refForm" @submit.prevent="() => { }" v-if="!isLoading">
+          <VForm ref="refForm" @submit.prevent="() => { }">
             <VRow>
-              <VCol cols="12">
-                <VBtn class="ml-3" icon color="success" @click="addDataArray()">
-                  <VIcon icon="tabler-plus" />
-                </VBtn>
+              <VCol cols="12" md="8">
+                <AppSelectRemote :requiredField="true" :disabled="disabledFiledsView" label="Código Glosa"
+                  v-model="form.code_glosa_id" url="/selectInfiniteCodeGlosa" array-info="codeGlosa" clearable>
+                </AppSelectRemote>
               </VCol>
-              <template v-for="(item, index) in form.glosas" :key="index">
-                <VCol cols="12" md="4">
-                  <span>Glosa</span>
-                </VCol>
-                <VCol cols="12" md="8">
-                  <AppSelectRemote v-model="item.codeGlosa" url="/selectInfiniteCodeGlosa" array-info="codeGlosa"
-                    clearable v-bind="{
-                      ...$attrs,
-                      id: elementId,
-                    }">
-                  </AppSelectRemote>
-                </VCol>
-
-                <VCol cols="12" md="4">
-                  <span>Valor a glosar</span>
-                </VCol>
-
-                <VCol cols="12" md="8">
-                  <VRadioGroup v-model="item.typeGlosa" inline>
-                    <div>
-                      <VRadio v-for="radio in typesValueGlosa" :key="radio" :label="radio"
-                        :value="radio.toLocaleLowerCase()" />
-                    </div>
-                  </VRadioGroup>
-                </VCol>
-
-                <VCol cols="12" md="4">
-                  <span>Valor glosa</span>
-                </VCol>
-
-                <VCol cols="12" md="8">
-                  <VTextField label="Valor glosa" v-model="item.partialValue" outlined></VTextField>
-                </VCol>
-
-                <VCol cols="12" md="4">
-                  <span>Observación</span>
-                </VCol>
-
-                <VCol cols="12" md="8">
-                  <VTextarea v-model="item.observation" outlined></VTextarea>
-                </VCol>
-
-                <VCol cols="12" sm="2">
-                  <VBtn icon v-if="shouldShowDeleteButton() && !disabledFiledsView && item.task_count == 0" size="30"
-                    class="mt-7" color="error" @click="deleteDataArray(index)">
-                    <VIcon icon="tabler-trash"></VIcon>
-                  </VBtn>
-                </VCol>
-                <VDivider />
-              </template>
-
+              <VCol cols="12">
+                <AppTextField :requiredField="true" clearable :disabled="disabledFiledsView" label="Valor glosa"
+                  :rules="[requiredValidator]" v-model="form.glosa_value" :error-messages="errorsBack.glosa_value"
+                  @input="errorsBack.glosa_value = ''" />
+              </VCol>
+              <VCol cols="12">
+                <AppTextField :requiredField="true" clearable :disabled="disabledFiledsView" label="Observación"
+                  :rules="[requiredValidator]" v-model="form.observation" :error-messages="errorsBack.observation"
+                  @input="errorsBack.observation = ''" />
+              </VCol>
             </VRow>
           </VForm>
         </VCardText>
@@ -214,7 +138,8 @@ const shouldShowDeleteButton = () => {
         <VCardText class="d-flex justify-end gap-3 flex-wrap mt-5">
           <VBtn color="secondary" :disabled="isLoading" :loading="isLoading" @click="handleDialogVisible">Cancelar
           </VBtn>
-          <VBtn :disabled="isLoading" :loading="isLoading" @click="submitForm()" color="primary">
+          <VBtn v-if="!disabledFiledsView" :disabled="isLoading" :loading="isLoading" @click="submitForm()"
+            color="primary">
             Guardar
           </VBtn>
         </VCardText>

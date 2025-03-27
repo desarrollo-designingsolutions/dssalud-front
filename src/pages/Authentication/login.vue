@@ -83,7 +83,7 @@ if (isAuthenticated) {
               <!-- email -->
               <VCol cols="12">
                 <AppTextField :requiredField="true" v-model="form.email" autofocus label="Correo electrónico"
-                  type="email" placeholder="johndoe@email.com" />
+                  type="email" placeholder="johndoe@email.com" :rules="[requiredValidator]" clearable />
               </VCol>
 
               <!-- password -->
@@ -91,7 +91,7 @@ if (isAuthenticated) {
                 <AppTextField :requiredField="true" v-model="form.password" label="Contraseña"
                   placeholder="············" :type="isPasswordVisible ? 'text' : 'password'"
                   :append-inner-icon="isPasswordVisible ? 'tabler-eye-off' : 'tabler-eye'"
-                  @click:append-inner="isPasswordVisible = !isPasswordVisible" />
+                  @click:append-inner="isPasswordVisible = !isPasswordVisible" :rules="[requiredValidator]" clearable />
 
                 <!-- remember me checkbox -->
                 <div class="d-flex align-center flex-wrap justify-space-between mt-1 mb-4">

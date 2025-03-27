@@ -3,7 +3,7 @@ import { useAuthenticationStore } from "@/stores/useAuthenticationStore";
 import { useRouter } from 'vue-router';
 
 definePage({
-  path: "assignmentList/:assignment_batche_id?",
+  path: "assignmentList/:assignment_batche_id",
   name: "Assignment-List",
   meta: {
     redirectIfLoggedIn: true,
@@ -17,26 +17,24 @@ const authenticationStore = useAuthenticationStore();
 const router = useRouter();
 
 const route = useRoute();
+const assignment_batche_id = route.params.assignment_batche_id;
 
 //TABLE
 const refTableFull = ref()
 
 const optionsTable = {
-  url: "/assignment/paginateThirds/" + route.params.assignment_batche_id,
+  url: "/assignment/paginateThirds/" + assignment_batche_id,
   headers: [
     { key: 'nit', title: 'Nit' },
     { key: 'name', title: 'Razón Social' },
-    { key: 'count_invoice_assignment', title: 'Cant Fact Asignadas' },
-    { key: 'count_invoice_pending', title: 'Cant Fact Pendientes' },
-    { key: 'count_invoice_finish', title: 'Finalizar' },
-    { key: 'values', title: 'Valores' },
+    { key: 'count_invoice_assignment', title: 'Cant Fact Asignadas', sortable: false },
+    { key: 'count_invoice_pending', title: 'Cant Fact Pendientes', sortable: false },
+    { key: 'count_invoice_finish', title: 'Finalizar', sortable: false },
+    { key: 'values', title: 'Valores', sortable: false },
     // { key: 'actions', title: 'Acciones', sortable: false, width: 100 },
   ],
   actions: {
     delete: { url: '/assignment/delete' }
-  },
-  paramsGlobal: {
-    assignment_batche_id: route.params.assignment_batche_id,
   }
 }
 
@@ -48,7 +46,7 @@ const optionsFilter = ref({
 
 const goViewInvoiceAudit = (data: any = { id: null }) => {
 
-  router.push({ name: "AssignmentInvoiceAudit-List", params: { assignment_batche_id: route.params.assignment_batche_id, third_id: data.id } })
+  router.push({ name: "AssignmentInvoiceAudit-List", params: { assignment_batche_id: assignment_batche_id, third_id: data.id } })
 
 }
 

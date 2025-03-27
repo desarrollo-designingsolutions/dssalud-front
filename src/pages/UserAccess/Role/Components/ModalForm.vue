@@ -80,6 +80,7 @@ const handleEdit = async ({ id }: any) => {
 
     selectedElements.value = data.value.role.permissions;
     arrayFather.value = componentData.menus;
+    roleTypeEnum_arrayInfo.value = data.value.roleTypeEnum_arrayInfo;
 
   }
   componentData.isLoading = isFetching.value;

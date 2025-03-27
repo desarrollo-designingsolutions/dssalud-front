@@ -1,9 +1,12 @@
 <script setup lang="ts">
 import ModalShowFiles from "@/pages/InvoiceAudit/Components/ModalShowFiles.vue";
-import ModalFormGlosa from "@/pages/Glosa/Components/ModalForm.vue";
+import ModalFormMasiveGlosa from "@/pages/Glosa/Components/ModalFormMasive.vue";
+import ModalListGlosa from "@/pages/Glosa/Components/ModalList.vue";
 import { useAuthenticationStore } from "@/stores/useAuthenticationStore";
 import { useRouter } from 'vue-router';
 import ModalUploadGlosaFileCsv from "@/pages/InvoiceAudit/Components/ModalUploadGlosaFileCsv.vue";
+
+const { toast } = useToast();
 
 definePage({
   path: "InvoiceAuditInformationSheet/invoice-audit/:assignment_batche_id/:third_id/:invoice_audit_id/:patient_id",
@@ -81,14 +84,9 @@ const optionsTable = {
     { key: "unit_value", title: 'VL Unitario' },
     { key: "moderator_value", title: 'VL Moderadora' },
     { key: "total_value", title: 'VL Total' },
-    { key: 'actions', title: 'Acciones', sortable: false },
+    { key: 'actionsBtn', title: 'Acciones', sortable: false },
   ],
   showSelect: true,
-  actions: {
-    delete: {
-      url: "/invoiceAudit/delete",
-    },
-  }
 }
 
 const tableLoading = ref(false); // Estado de carga de la tabla
@@ -112,11 +110,22 @@ const refModalUploadGlosaFileCsv = ref()
 const openModalUploadGlosaFileCsv = () => {
   refModalUploadGlosaFileCsv.value.openModal()
 }
-//ModalFormGlosa
-const refModalFormGlosa = ref()
+//ModalFormMasiveGlosa
+const refModalFormMasiveGlosa = ref()
 
-const openModalFormGlosa = () => {
-  refModalFormGlosa.value.openModal(invoice_audit_id, "InvoiceAudit")
+const openModalFormMasiveGlosa = () => {
+  if (servicesIds.value.length > 0) {
+    refModalFormMasiveGlosa.value.openModal(servicesIds.value)
+  } else {
+    toast("Debe seleccionar almenos un servicio", "", "info")
+  }
+}
+
+//ModalListGlosa
+const refModalListGlosa = ref()
+
+const openModalListGlosa = (data: any) => {
+  refModalListGlosa.value.openModal(data)
 }
 
 const servicesIds = ref<Array<string>>([]);
@@ -240,7 +249,7 @@ const servicesIds = ref<Array<string>>([]);
           <VBtn @click="openModalShowFiles">
             Soportes
           </VBtn>
-          <VBtn @click="openModalFormGlosa">
+          <VBtn @click="openModalFormMasiveGlosa">
             Glosa Masiva
           </VBtn>
           <VBtn @click="openModalUploadGlosaFileCsv()">
@@ -266,14 +275,34 @@ const servicesIds = ref<Array<string>>([]);
       <VCardText>
         <TableFullNew v-model:selected="servicesIds" ref="refTableFull" :options="optionsTable"
           @update:loading="tableLoading = $event">
+
+          <template #item.actionsBtn="{ item }">
+            <VBtn color="primary" append-icon="tabler-chevron-down">
+              Acciones
+              <VMenu activator="parent">
+
+                <VList>
+                  <VListItem @click="openModalListGlosa(item)">
+                    <template #prepend>
+                      <VIcon size="22" icon="tabler-square-rounded-arrow-right" />
+                    </template>
+                    <span>Listado Glosas</span>
+                  </VListItem>
+                </VList>
+              </VMenu>
+            </VBtn>
+          </template>
+
         </TableFullNew>
       </VCardText>
     </VCard>
+
+    <ModalShowFiles ref="refModalShowFiles"></ModalShowFiles>
+
+    <ModalUploadGlosaFileCsv ref="refModalUploadGlosaFileCsv" />
+
+    <ModalFormMasiveGlosa ref="refModalFormMasiveGlosa"></ModalFormMasiveGlosa>
+
+    <ModalListGlosa ref="refModalListGlosa"></ModalListGlosa>
   </div>
-
-  <ModalShowFiles ref="refModalShowFiles"></ModalShowFiles>
-
-  <ModalUploadGlosaFileCsv ref="refModalUploadGlosaFileCsv" />
-
-  <ModalFormGlosa ref="refModalFormGlosa" :servicesIds="servicesIds"></ModalFormGlosa>
 </template>

@@ -3,7 +3,7 @@ import { useAuthenticationStore } from "@/stores/useAuthenticationStore";
 import { useRouter } from 'vue-router';
 
 definePage({
-  path: "assignmentList/:assignment_batche_id?",
+  path: "assignmentList/:assignment_batche_id",
   name: "Assignment-List",
   meta: {
     redirectIfLoggedIn: true,
@@ -29,8 +29,8 @@ const optionsTable = {
     { key: 'name', title: 'Razón Social' },
     { key: 'count_invoice_assignment', title: 'Cant Fact Asignadas', sortable: false },
     { key: 'count_invoice_pending', title: 'Cant Fact Pendientes', sortable: false },
-    { key: 'count_invoice_finish', title: 'Finalizar' },
-    { key: 'values', title: 'Valores' },
+    { key: 'count_invoice_finish', title: 'Finalizar', sortable: false },
+    { key: 'values', title: 'Valores', sortable: false },
     // { key: 'actions', title: 'Acciones', sortable: false, width: 100 },
   ],
   actions: {

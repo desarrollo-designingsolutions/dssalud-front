@@ -3,7 +3,7 @@ import { useAuthenticationStore } from "@/stores/useAuthenticationStore";
 import { useRouter } from 'vue-router';
 
 definePage({
-  path: "invoiceAuditAssignmentList/invoice-audit/:assignment_batche_id/:third_id/:invoice_audit_id?",
+  path: "invoiceAuditAssignmentList/invoice-audit/:assignment_batche_id/:third_id/:invoice_audit_id",
   name: "InvoiceAuditPatient-List",
   meta: {
     redirectIfLoggedIn: true,
@@ -30,11 +30,11 @@ const optionsTable = {
     { key: 'identification_number', title: 'Documento' },
     { key: 'full_name', title: 'Nombre' },
     { key: 'gender', title: 'Genero' },
-    { key: 'glosas', title: 'Glosas' },
-    { key: 'value_glosa', title: 'Valor Glosado' },
-    { key: 'value_borrowed', title: 'Valor Prestado' },
-    { key: 'total_value', title: 'Valor Total' },
-    { key: 'status', title: 'Estado' },
+    { key: 'glosas', title: 'Glosas', sortable: false },
+    { key: 'value_glosa', title: 'Valor Glosado', sortable: false },
+    { key: 'value_borrowed', title: 'Valor Prestado', sortable: false },
+    { key: 'total_value', title: 'Valor Total', sortable: false },
+    { key: 'status', title: 'Estado', sortable: false },
     // { key: 'actions', title: 'Acciones', sortable: false, width: 100 },
   ],
   actions: {

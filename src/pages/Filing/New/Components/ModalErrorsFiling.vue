@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const titleModal = ref<string>("Errores en la validación")
+const titleModal = ref<string>("Errores en la validación 1")
 const isDialogVisible = ref<boolean>(false)
 const loading = reactive({
   excel: false,
@@ -87,7 +87,7 @@ const downloadExcel = async () => {
           <VRow>
             <VCol cols="12" sm="6">
               <AppTextField v-model="search" density="compact" placeholder="Search ..."
-                append-inner-icon="tabler-search" single-line hide-details dense outlined />
+                append-inner-icon="tabler-search" single-line hide-details dense outlined clearable />
             </VCol>
             <VCol cols="12" sm="6" class="d-flex justify-end">
               <VBtn :loading="loading.excel" :disabled="loading.excel" @click="downloadExcel">Exportar a Excel</VBtn>

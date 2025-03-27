@@ -121,7 +121,7 @@ const openModalQuestion = () => {
   <div>
     <VDialog v-model="isDialogVisible" :overlay="false" transition="dialog-transition" persistent>
       <DialogCloseBtn @click="handleDialogVisible" />
-      <VCard :loading="loading.getData" :disabled="loading.getData" class="w-100">
+      <VCard :loading="loading.getData" :disabled="loading.getData" class="w-100" >
         <!-- Toolbar -->
         <div>
           <VToolbar color="primary">
@@ -133,7 +133,7 @@ const openModalQuestion = () => {
           <VRow>
             <VCol cols="12" sm="6">
               <AppTextField v-model="search" density="compact" placeholder="Search ..."
-                append-inner-icon="tabler-search" single-line hide-details dense outlined />
+                append-inner-icon="tabler-search" single-line hide-details dense outlined clearable />
             </VCol>
             <VCol cols="12" sm="6" class="d-flex justify-end">
               <VBtn :loading="loading.excel" :disabled="loading.excel" @click="downloadExcel">Exportar a Excel</VBtn>

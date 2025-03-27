@@ -118,7 +118,7 @@ const refreshTable = () => {
             <VCol cols="3">
               <AppTextField prepend-inner-icon="tabler-search"
                 v-model="extraFilters.filing_invoice_pre_radicated_count.value" label="Facturar preradicadas"
-                placeholder="Filtrar por facturar preradicadas" type="text" name="filing_invoice_pre_radicated_count" />
+                placeholder="Filtrar por facturar preradicadas" type="text" name="filing_invoice_pre_radicated_count" clearable />
             </VCol>
           </template>
         </FilterDialogNew>

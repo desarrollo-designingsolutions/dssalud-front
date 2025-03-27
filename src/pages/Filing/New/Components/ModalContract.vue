@@ -81,7 +81,7 @@ defineExpose({
 
         <VCardText>
           <VForm ref="refForm" @submit.prevent="() => { }">
-            <SelectInfiniteContract url="/selectInfiniteContract" array-info="contract" v-model="form.contract_id"
+            <AppSelectRemote url="/selectInfiniteContract" array-info="contract" v-model="form.contract_id"
               :rules="[requiredValidator]" />
           </VForm>
         </VCardText>

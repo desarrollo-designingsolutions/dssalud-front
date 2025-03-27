@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { OptionsFilter, Queries } from '@/components/CustomComponents/Filter/types'; // Ajusta la ruta según tu proyecto
+import { OptionsFilter, Queries } from '@/components/CustomComponents/FilterNew/types'; // Ajusta la ruta según tu proyecto
 import { computed, defineProps, onMounted, reactive, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
@@ -13,6 +13,7 @@ import { useRoute, useRouter } from 'vue-router';
 const props = defineProps<{
   optionsFilter: OptionsFilter;
   tableLoading?: boolean; // Nueva prop para el estado de carga de la tabla
+  disableUrlSync?: boolean; // Nueva prop para deshabilitar la sincronización con la URL (default: false)
 }>();
 
 // Estado reactivo local para los filtros
@@ -31,7 +32,7 @@ const filters = reactive({
 
 // Emits
 const emit = defineEmits<{
-  (e: 'forceSearch'): void;
+  (e: 'forceSearch', queries?: Queries): void; // Modificamos para incluir queries opcionalmente
 }>();
 
 const generalSearch = ref<string>('');
@@ -51,7 +52,8 @@ const isButtonSearchMode = ref(false);
 const debounceTimeout = ref<NodeJS.Timeout | null>(null);
 
 // Actualiza los parámetros de la URL con los valores actuales de los filtros
-const updateQueries = async () => {
+// Actualiza los parámetros de búsqueda y opcionalmente la URL
+const updateQueries = async (skipUrlUpdate: boolean = props.disableUrlSync) => {
   queries.value = {
     sort: route.query.sort ? route.query.sort as string : '', // Preservamos el sort existente
     'filter[inputGeneral]': '',
@@ -86,7 +88,10 @@ const updateQueries = async () => {
     }
   }
 
-  await router.push({ query: { ...queries.value } });
+  // Solo actualizamos la URL si skipUrlUpdate es false
+  if (!skipUrlUpdate) {
+    await router.push({ query: { ...queries.value } });
+  }
 };
 
 // Combinamos isLoading y tableLoading para deshabilitar el botón
@@ -95,9 +100,9 @@ const isButtonDisabled = computed(() => isLoading.value || props.tableLoading);
 // Método para forzar la búsqueda
 const forceSearch = async () => {
   isLoading.value = true; // Indicamos que está cargando
-  await updateQueries(); // Esperamos a que los parámetros se actualicen
+  await updateQueries(props.disableUrlSync); // Pasamos la prop para decidir si se actualiza la URL
   isLoading.value = false; // Reseteamos el estado de carga
-  emit('forceSearch'); // Emitimos el evento después de actualizar la URL
+  emit('forceSearch', queries.value); // Emitimos el evento con los queries actuales
 };
 
 // Aplica los filtros manualmente al hacer clic en el botón "Buscar"
@@ -109,8 +114,11 @@ const applySearch = async () => {
 // Ejecuta updateQueries con un debounce de 500ms
 const debounceUpdateQueries = () => {
   if (debounceTimeout.value) clearTimeout(debounceTimeout.value);
-  debounceTimeout.value = setTimeout(() => {
-    updateQueries();
+  debounceTimeout.value = setTimeout(async () => {
+    await updateQueries(props.disableUrlSync); // Actualizamos queries
+    if (!isButtonSearchMode.value) {
+      emit('forceSearch', queries.value); // Emitimos forceSearch directamente en modo automático
+    }
     debounceTimeout.value = null;
   }, 500);
 };

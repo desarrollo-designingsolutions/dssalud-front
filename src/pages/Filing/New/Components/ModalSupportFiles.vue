@@ -161,8 +161,8 @@ const openFileDialog = () => {
           <VForm ref="formValidation" @submit.prevent="() => { }">
             <VRow>
               <VCol cols="12" md="6">
-                <SelectInfiniteSupportType label="Tipos de soporte" v-model="form.support_type_id"
-                  :rules="[requiredValidator]" />
+                <AppSelectRemote url="/selectInfiniteSupportType" array-info="supportType" label="Tipos de soporte"
+                  v-model="form.support_type_id" :rules="[requiredValidator]" />
               </VCol>
             </VRow>
           </VForm>

@@ -94,11 +94,20 @@ watch(loading, (newValue) => {
 });
 
 /**
- * Obtiene los datos de la tabla desde la API y actualiza la URL del navegador.
- * @param page Número de página opcional para la paginación.
+ * Obtiene los datos de la tabla desde la API, con opción de omitir la actualización de la URL y usar parámetros externos.
+ * @param page Número de página opcional.
  * @param fromWatch Indica si la llamada viene del watcher.
+ * @param force Forzar la petición incluso si está en curso.
+ * @param skipUrlUpdate Omitir la actualización de la URL.
+ * @param externalParams Parámetros externos para la petición (opcional).
  */
-const fetchTableData = async (page: number | null = null, fromWatch = false, force = false) => {
+const fetchTableData = async (
+  page: number | null = null,
+  fromWatch = false,
+  force = false,
+  skipUrlUpdate = false,
+  externalParams: Record<string, any> | null = null
+) => {
   if (!options.url || (isFetching.value && !force)) return; // Solo evita si no es forzado
 
   isFetching.value = true;
@@ -109,7 +118,8 @@ const fetchTableData = async (page: number | null = null, fromWatch = false, for
     ? options.sortBy.map(s => `${s.order === 'desc' ? '-' : ''}${s.key}`).join(',')
     : '';
 
-  const queryParams = {
+  // Usamos externalParams si se proporcionan, de lo contrario usamos los parámetros actuales
+  const queryParams = externalParams || {
     page: options.pagination.currentPage.toString(),
     perPage: options.pagination.rowsPerPage.toString(),
     ...(sortQuery && { sort: sortQuery }),
@@ -117,8 +127,9 @@ const fetchTableData = async (page: number | null = null, fromWatch = false, for
     ...options.paramsGlobal,
   };
 
-  if (!fromWatch) {
-    router.push({ query: queryParams });
+  // Solo actualizamos la URL si skipUrlUpdate es false y no viene del watcher
+  if (!skipUrlUpdate && !fromWatch) {
+    await router.push({ query: queryParams });
   }
 
   const { data, response } = await useAxios(`${options.url}`).get({ params: queryParams });

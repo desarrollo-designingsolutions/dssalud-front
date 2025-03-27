@@ -232,7 +232,7 @@ const refreshTable = () => {
           <template #default="{ extraFilters }">
             <VCol cols="3">
               <AppTextField prepend-inner-icon="tabler-search" v-model="extraFilters.files_count.value"
-                label="Soportes cargados" placeholder="Filtrar por soportes cargados" type="text" name="files_count" />
+                label="Soportes cargados" placeholder="Filtrar por soportes cargados" type="text" name="files_count" clearable />
             </VCol>
           </template>
         </FilterDialogNew>

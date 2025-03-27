@@ -3,7 +3,7 @@ import { useAuthenticationStore } from "@/stores/useAuthenticationStore";
 import { useRouter } from 'vue-router';
 
 definePage({
-  path: "invoiceAuditAssignmentList/invoice-audit/:assignment_batche_id/:third_id?",
+  path: "invoiceAuditAssignmentList/invoice-audit/:assignment_batche_id/:third_id",
   name: "InvoiceAuditInvoiceAudit-List",
   meta: {
     redirectIfLoggedIn: true,
@@ -28,12 +28,12 @@ const optionsTable = {
   url: `/invoiceAudit/paginateInvoiceAudit/${assignment_batche_id}/${third_id}`,
   headers: [
     { key: 'invoice_number', title: 'Factura' },
-    { key: 'count_patients', title: 'Cantidad Usuarios' },
-    { key: 'count_services', title: 'Cant Servicios' },
-    { key: 'total_value_services', title: 'Valor Factura' },
-    { key: 'glosas', title: 'Glosas' },
-    { key: 'value_glosa', title: 'Valor Glosado' },
-    { key: 'spent', title: 'Gastado' },
+    { key: 'count_patients', title: 'Cantidad Usuarios', sortable: false },
+    { key: 'count_services', title: 'Cant Servicios', sortable: false },
+    { key: 'total_value_services', title: 'Valor Factura', sortable: false },
+    { key: 'glosas', title: 'Glosas', sortable: false },
+    { key: 'value_glosa', title: 'Valor Glosado', sortable: false },
+    { key: 'spent', title: 'Gastado', sortable: false },
     // { key: 'actions', title: 'Acciones', sortable: false, width: 100 },
   ],
   actions: {

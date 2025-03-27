@@ -37,7 +37,7 @@ const search = ref('')
         <VRow>
           <VCol cols="12" offset-md="8" md="4">
             <AppTextField v-model="search" density="compact" placeholder="Search ..." append-inner-icon="tabler-search"
-              single-line hide-details dense outlined />
+              single-line hide-details dense outlined clearable />
           </VCol>
         </VRow>
       </VCardText>

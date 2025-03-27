@@ -69,7 +69,7 @@ const sendLink = async () => {
             <VRow>
               <!-- email -->
               <VCol cols="12">
-                <AppTextField v-model="form.email" autofocus label="Correo electrónico" type="email"
+                <AppTextField :requiredField="true" v-model="form.email" autofocus label="Correo electrónico" type="email"
                   placeholder="johndoe@email.com" :rules="[requiredValidator, emailValidator]" />
               </VCol>
 

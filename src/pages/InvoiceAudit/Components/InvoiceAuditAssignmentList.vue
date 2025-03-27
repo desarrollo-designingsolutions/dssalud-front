@@ -3,7 +3,7 @@ import { useAuthenticationStore } from "@/stores/useAuthenticationStore";
 import { useRouter } from 'vue-router';
 
 definePage({
-  path: "invoiceAuditAssignmentList/:assignment_batche_id?",
+  path: "invoiceAuditAssignmentList/:assignment_batche_id",
   name: "InvoiceAuditAssignment-List",
   meta: {
     redirectIfLoggedIn: true,
@@ -28,10 +28,10 @@ const optionsTable = {
   headers: [
     { key: 'nit', title: 'Nit' },
     { key: 'name', title: 'Razón Social' },
-    { key: 'count_invoice_assignment', title: 'Cant Fact Totales' },
-    { key: 'count_invoice_pending', title: 'Cant Fact Pendientes' },
-    { key: 'count_invoice_finish', title: 'Cant Fact Finalizadas' },
-    { key: 'values', title: 'Valores' },
+    { key: 'count_invoice_assignment', title: 'Cant Fact Totales', sortable: false },
+    { key: 'count_invoice_pending', title: 'Cant Fact Pendientes', sortable: false },
+    { key: 'count_invoice_finish', title: 'Cant Fact Finalizadas', sortable: false },
+    { key: 'values', title: 'Valores', sortable: false },
     // { key: 'actions', title: 'Acciones', sortable: false, width: 100 },
   ],
   actions: {

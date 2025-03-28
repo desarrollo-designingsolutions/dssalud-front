@@ -36,6 +36,7 @@ const patient_id = route.params.patient_id;
 //LOADING
 const isLoading = ref<boolean>(false)
 const isLoadingExcel = ref<boolean>(false)
+const isLoadingExcelList = ref<boolean>(false)
 
 //FILTER
 const optionsFilter = ref({
@@ -121,6 +122,19 @@ const downloadExcel = async () => {
 
   if (response.status == 200 && data && data.code == 200) {
     downloadExcelBase64(data.excel, "Servicios " + invoiceAudit.value?.invoice_number)
+  }
+}
+
+const downloadExcelList = async () => {
+  isLoadingExcelList.value = true;
+  const { data, response } = await useAxios("/invoiceAudit/exportListServicesExcel").post({
+    invoice_audit_id: invoice_audit_id,
+    patient_id: patient_id
+  })
+  isLoadingExcelList.value = false;
+
+  if (response.status == 200 && data && data.code == 200) {
+    downloadExcelBase64(data.excel, "Listado de Servicios Factura: " + invoiceAudit.value?.invoice_number)
   }
 }
 
@@ -289,7 +303,7 @@ const servicesIds = ref<Array<string>>([]);
                   </template>
                   <span>Exportar</span>
                 </VListItem>
-                <VListItem>
+                <VListItem @click="downloadExcelList()" :loading="isLoadingExcelList" :disabled="isLoadingExcelList">
                   <template #prepend>
                     <VIcon start icon="tabler-download" />
                   </template>

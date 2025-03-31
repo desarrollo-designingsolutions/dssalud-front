@@ -139,9 +139,9 @@ const fetchTableData = async (
 
 
   // Solo actualizamos la URL si skipUrlUpdate es false y no viene del watcher
-  if (!skipUrlUpdate && !fromWatch) {
-    await router.push({ query: queryParams });
-  }
+  // if (!skipUrlUpdate && !fromWatch) {
+  //   await router.push({ query: queryParams });
+  // }
 
   const { data, response } = await useAxios(`${options.url}`).get({ params: queryParams });
 
@@ -204,6 +204,8 @@ const callActionOrChangeStatus = (newFunction: FunctionNewAction | undefined, it
 const updateSortBy = (sortByData: any) => {
   sortBy.value = sortByData;
   options.sortBy = sortByData;
+  console.log("updateSortBy");
+
 
   fetchTableData(null, false);
 };
@@ -224,6 +226,8 @@ const deleteItem = async (id: string | number) => {
 
   if (data && (data.code === 200 || !data.code)) {
     emit('deleteSuccess', id);
+    console.log("deleteItem");
+
     await fetchTableData();
   }
 };
@@ -251,6 +255,8 @@ watch(() => route.query, (newQuery, oldQuery) => {
     delete options.params.page;
     delete options.params.perPage;
     delete options.params.sort;
+    console.log("watch");
+
     fetchTableData(null, true);
   }
 }, { deep: true });
@@ -275,6 +281,8 @@ onMounted(() => {
   delete options.params.page;
   delete options.params.perPage;
   delete options.params.sort;
+  console.log("onMounted");
+
   fetchTableData(null, true);
 });
 

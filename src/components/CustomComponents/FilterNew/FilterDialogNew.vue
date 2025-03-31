@@ -116,7 +116,7 @@ const debounceUpdateQueries = () => {
   if (debounceTimeout.value) clearTimeout(debounceTimeout.value);
   debounceTimeout.value = setTimeout(async () => {
     await updateQueries(props.disableUrlSync); // Actualizamos queries
-    if (!isButtonSearchMode.value) {
+    if (props.disableUrlSync) {
       emit('forceSearch', queries.value); // Emitimos forceSearch directamente en modo automático
     }
     debounceTimeout.value = null;
@@ -220,11 +220,6 @@ const activeFilters = computed(() => {
   const filters: Record<string, string> = {};
   // Elegimos la fuente de datos según disableUrlSync
   const source = props.disableUrlSync ? queries.value : route.query;
-
-  console.log("props.disableUrlSync", props.disableUrlSync);
-  console.log("source", source);
-  console.log("queries.value", queries.value);
-
   for (const key in source) {
     if (key.startsWith('filter[')) {
       const filterKey = key.replace('filter[', '').replace(']', '');

@@ -108,6 +108,7 @@ const fetchTableData = async (
   skipUrlUpdate = false,
   externalParams: Record<string, any> | null = null
 ) => {
+
   if (!options.url || (isFetching.value && !force)) return; // Solo evita si no es forzado
 
   isFetching.value = true;
@@ -203,6 +204,7 @@ const callActionOrChangeStatus = (newFunction: FunctionNewAction | undefined, it
 const updateSortBy = (sortByData: any) => {
   sortBy.value = sortByData;
   options.sortBy = sortByData;
+
   fetchTableData(null, false);
 };
 

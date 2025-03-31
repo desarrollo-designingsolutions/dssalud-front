@@ -3,7 +3,7 @@ import { useAuthenticationStore } from "@/stores/useAuthenticationStore";
 import { useRouter } from 'vue-router';
 
 definePage({
-  path: "assignment/invoice-audit/:assignment_batche_id/:third_id/:invoice_audit_id",
+  path: "assignment/invoice-audit/:assignment_batch_id/:third_id/:invoice_audit_id",
   name: "AssignmentPatient-List",
   meta: {
     redirectIfLoggedIn: true,
@@ -17,7 +17,7 @@ const authenticationStore = useAuthenticationStore();
 const router = useRouter();
 
 const route = useRoute();
-const assignment_batche_id = route.params.assignment_batche_id;
+const assignment_batch_id = route.params.assignment_batch_id;
 const third_id = route.params.third_id;
 const invoice_audit_id = route.params.invoice_audit_id;
 
@@ -25,7 +25,7 @@ const invoice_audit_id = route.params.invoice_audit_id;
 const refTableFull = ref()
 
 const optionsTable = {
-  url: `/assignment/paginatePatient/${assignment_batche_id}/${third_id}/${invoice_audit_id}`,
+  url: `/assignment/paginatePatient/${assignment_batch_id}/${third_id}/${invoice_audit_id}`,
   headers: [
     { key: 'identification_number', title: 'Documento' },
     { key: 'full_name', title: 'Nombre' },
@@ -52,7 +52,7 @@ const optionsFilter = ref({
 })
 
 const goViewInvoiceAuditList = () => {
-  router.push({ name: "AssignmentInvoiceAudit-List", params: { assignment_batche_id: assignment_batche_id, third_id: third_id } })
+  router.push({ name: "AssignmentInvoiceAudit-List", params: { assignment_batch_id: assignment_batch_id, third_id: third_id } })
 }
 
 const tableLoading = ref(false); // Estado de carga de la tabla
@@ -67,7 +67,7 @@ const refreshTable = () => {
 
 <template>
   <div>
-    <CountAllData :assignment_batch_id="assignment_batche_id" :third_id="third_id" />
+    <CountAllData :assignment_batch_id="assignment_batch_id" :third_id="third_id" />
 
     <VRow>
       <VCol>

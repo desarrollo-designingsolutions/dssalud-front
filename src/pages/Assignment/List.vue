@@ -3,7 +3,7 @@ import { useAuthenticationStore } from "@/stores/useAuthenticationStore";
 import { useRouter } from 'vue-router';
 
 definePage({
-  path: "assignmentList/:assignment_batche_id",
+  path: "assignmentList/:assignment_batch_id",
   name: "Assignment-List",
   meta: {
     redirectIfLoggedIn: true,
@@ -17,20 +17,20 @@ const authenticationStore = useAuthenticationStore();
 const router = useRouter();
 
 const route = useRoute();
-const assignment_batche_id = route.params.assignment_batche_id;
+const assignment_batch_id = route.params.assignment_batch_id;
 
 //TABLE
 const refTableFull = ref()
 
 const optionsTable = {
-  url: "/assignment/paginateThirds/" + assignment_batche_id,
+  url: "/assignment/paginateThirds/" + assignment_batch_id,
   headers: [
     { key: 'nit', title: 'Nit' },
     { key: 'name', title: 'Razón Social' },
-    { key: 'count_invoice_assignment', title: 'Cant Fact Asignadas', sortable: false },
+    { key: 'count_invoice_total', title: 'Cant Fact', sortable: false },
     { key: 'count_invoice_pending', title: 'Cant Fact Pendientes', sortable: false },
     { key: 'count_invoice_finish', title: 'Finalizar', sortable: false },
-    { key: 'values', title: 'Valores', sortable: false },
+    { key: 'total_value_sum', title: 'Valores', sortable: false },
     // { key: 'actions', title: 'Acciones', sortable: false, width: 100 },
   ],
   actions: {
@@ -46,7 +46,7 @@ const optionsFilter = ref({
 
 const goViewInvoiceAudit = (data: any = { id: null }) => {
 
-  router.push({ name: "AssignmentInvoiceAudit-List", params: { assignment_batche_id: assignment_batche_id, third_id: data.id } })
+  router.push({ name: "AssignmentInvoiceAudit-List", params: { assignment_batch_id: assignment_batch_id, third_id: data.id } })
 
 }
 
@@ -68,7 +68,7 @@ const refreshTable = () => {
 
 <template>
 
-  <CountAllData :assignment_batch_id="assignment_batche_id" />
+  <CountAllData :assignment_batch_id="assignment_batch_id" />
 
   <VRow>
     <VCol>

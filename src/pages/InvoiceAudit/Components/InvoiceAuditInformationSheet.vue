@@ -9,7 +9,7 @@ import { useRouter } from 'vue-router';
 const { toast } = useToast();
 
 definePage({
-  path: "InvoiceAuditInformationSheet/invoice-audit/:assignment_batche_id/:third_id/:invoice_audit_id/:patient_id",
+  path: "InvoiceAuditInformationSheet/invoice-audit/:assignment_batch_id/:third_id/:invoice_audit_id/:patient_id",
   name: "InvoiceAuditInformationSheet-Info",
   meta: {
     redirectIfLoggedIn: true,
@@ -28,7 +28,7 @@ const router = useRouter();
 
 const route = useRoute();
 
-const assignment_batche_id = route.params.assignment_batche_id;
+const assignment_batch_id = route.params.assignment_batch_id;
 const third_id = route.params.third_id;
 const invoice_audit_id = route.params.invoice_audit_id;
 const patient_id = route.params.patient_id;
@@ -45,7 +45,7 @@ const optionsFilter = ref({
 
 const goViewPatient = (data: any = { id: null }) => {
 
-  router.push({ name: "InvoiceAuditPatient-List", params: { assignment_batche_id: assignment_batche_id, third_id: third_id, invoice_audit_id: invoice_audit_id } })
+  router.push({ name: "InvoiceAuditPatient-List", params: { assignment_batch_id: assignment_batch_id, third_id: third_id, invoice_audit_id: invoice_audit_id } })
 
 }
 

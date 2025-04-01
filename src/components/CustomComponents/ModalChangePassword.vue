@@ -101,7 +101,7 @@ const isPasswordVisible = ref(false);
 
               </VCol>
               <VCol cols="12">
-                <AppTextField clearable v-model="componentData.form.new_password" label="Contraseña"
+                <AppTextField clearable v-model="componentData.form.new_password" label="Contraseña" :requiredField="true"
                   placeholder="············" :type="isPasswordVisible ? 'text' : 'password'" :append-inner-icon="isPasswordVisible ? 'tabler-eye-off' : 'tabler-eye'
                     " @click:append-inner="isPasswordVisible = !isPasswordVisible"
                   :rules="[requiredValidator, passwordValidator]" :error-messages="errorsBack.new_password"

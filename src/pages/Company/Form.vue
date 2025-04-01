@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { useToast } from '@/composables/useToast';
 import IErrorsBack from "@/interfaces/Axios/IErrorsBack";
+import IImageSelected from '@/interfaces/FileUpload/IImageSelected';
 import { router } from '@/plugins/1.router';
 import moment from "moment";
 import type { VForm } from 'vuetify/components/VForm';
@@ -47,6 +48,7 @@ const clearForm = () => {
     form.value[key] = null
   }
 }
+
 const countries_arrayInfo = ref<Array<{
   value: number,
   title: string
@@ -202,9 +204,30 @@ const changeFinalDate = (event: any) => {
 const logo = ref(useFileUpload())
 logo.value.allowedExtensions = ["jpg", "jpeg", "png"];
 watch(logo.value, (newVal, oldVal) => {
-
   if (newVal.imageFile) form.value.logo = newVal.imageFile
 })
+
+const changeFile = (event: Event, logo: any) => {
+  // Definir un tipo para la respuesta
+  const response: IImageSelected = logo.handleImageSelected(event);
+
+  if (response.success == false && response.icon) {
+    openModalQuestion(response)
+  }
+}
+
+//ModalQuestion
+const refModalQuestion = ref()
+
+const openModalQuestion = (response: IImageSelected) => {
+  refModalQuestion.value.componentData.isDialogVisible = true
+  refModalQuestion.value.componentData.dialogMaxWidth = '20rem'
+  refModalQuestion.value.componentData.showBtnCancel = false
+  refModalQuestion.value.componentData.btnSuccessText = 'Ok'
+  refModalQuestion.value.componentData.icon = response.icon
+  refModalQuestion.value.componentData.title = response.title
+  refModalQuestion.value.componentData.subTitle = response.text
+}
 
 // Computed que verifica si al menos uno de los valores es true
 const isLoading = computed(() => {
@@ -252,15 +275,15 @@ const addressRules = [
           Formulario Compañia
         </span>
       </VCardTitle>
-      <VCardText>
 
+      <VCardText>
         <VForm ref="formValidation" @submit.prevent="() => { }" :disabled="disabledFiledsView">
           <VRow>
             <VCol sm="4">
               <VRow>
                 <VCol>
                   <VLabel>Logo</VLabel>
-                  <VFileInput accept="image/*" :loading="logo.loading" @change="logo.handleImageSelected"
+                  <VFileInput accept="image/*" :loading="logo.loading" @change="changeFile($event, logo)"
                     :key="logo.key">
                   </VFileInput>
                 </VCol>
@@ -353,5 +376,7 @@ const addressRules = [
         </VBtn>
       </VCardText>
     </VCard>
+
+    <ModalQuestion ref="refModalQuestion" />
   </div>
 </template>

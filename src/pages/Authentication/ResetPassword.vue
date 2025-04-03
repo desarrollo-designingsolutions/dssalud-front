@@ -48,9 +48,7 @@ const resetPassword = async () => {
     if (response.value?.ok && data.value) {
     }
 
-    if (data.value.code == 422) {
-      errorsBack.value = data.value.errors ?? {}
-    }
+    errorsBack.value = data.value.errors ?? {}
   }
 }
 

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { OptionsFilter, Queries } from '@/components/CustomComponents/FilterNew/types'; // Ajusta la ruta según tu proyecto
+import { OptionsFilter, Queries } from '@/components/CustomComponents/Filter/types'; // Ajusta la ruta según tu proyecto
 import { computed, defineProps, onMounted, reactive, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
@@ -13,7 +13,6 @@ import { useRoute, useRouter } from 'vue-router';
 const props = defineProps<{
   optionsFilter: OptionsFilter;
   tableLoading?: boolean; // Nueva prop para el estado de carga de la tabla
-  disableUrlSync?: boolean; // Nueva prop para deshabilitar la sincronización con la URL (default: false)
 }>();
 
 // Estado reactivo local para los filtros
@@ -32,7 +31,7 @@ const filters = reactive({
 
 // Emits
 const emit = defineEmits<{
-  (e: 'forceSearch', queries?: Queries): void; // Modificamos para incluir queries opcionalmente
+  (e: 'forceSearch'): void;
 }>();
 
 const generalSearch = ref<string>('');
@@ -52,8 +51,7 @@ const isButtonSearchMode = ref(false);
 const debounceTimeout = ref<NodeJS.Timeout | null>(null);
 
 // Actualiza los parámetros de la URL con los valores actuales de los filtros
-// Actualiza los parámetros de búsqueda y opcionalmente la URL
-const updateQueries = async (skipUrlUpdate: boolean = props.disableUrlSync) => {
+const updateQueries = async () => {
   queries.value = {
     sort: route.query.sort ? route.query.sort as string : '', // Preservamos el sort existente
     'filter[inputGeneral]': '',
@@ -88,10 +86,7 @@ const updateQueries = async (skipUrlUpdate: boolean = props.disableUrlSync) => {
     }
   }
 
-  // Solo actualizamos la URL si skipUrlUpdate es false
-  if (!skipUrlUpdate) {
-    await router.push({ query: { ...queries.value } });
-  }
+  await router.push({ query: { ...queries.value } });
 };
 
 // Combinamos isLoading y tableLoading para deshabilitar el botón
@@ -100,9 +95,9 @@ const isButtonDisabled = computed(() => isLoading.value || props.tableLoading);
 // Método para forzar la búsqueda
 const forceSearch = async () => {
   isLoading.value = true; // Indicamos que está cargando
-  await updateQueries(props.disableUrlSync); // Pasamos la prop para decidir si se actualiza la URL
+  await updateQueries(); // Esperamos a que los parámetros se actualicen
   isLoading.value = false; // Reseteamos el estado de carga
-  emit('forceSearch', queries.value); // Emitimos el evento con los queries actuales
+  emit('forceSearch'); // Emitimos el evento después de actualizar la URL
 };
 
 // Aplica los filtros manualmente al hacer clic en el botón "Buscar"
@@ -114,11 +109,8 @@ const applySearch = async () => {
 // Ejecuta updateQueries con un debounce de 500ms
 const debounceUpdateQueries = () => {
   if (debounceTimeout.value) clearTimeout(debounceTimeout.value);
-  debounceTimeout.value = setTimeout(async () => {
-    await updateQueries(props.disableUrlSync); // Actualizamos queries
-    if (props.disableUrlSync) {
-      emit('forceSearch', queries.value); // Emitimos forceSearch directamente en modo automático
-    }
+  debounceTimeout.value = setTimeout(() => {
+    updateQueries();
     debounceTimeout.value = null;
   }, 500);
 };
@@ -165,9 +157,7 @@ const clearFilters = () => {
 
 // Inicializa los valores desde los parámetros de la URL
 const initializeFromQuery = () => {
-  // const source = props.disableUrlSync ? queries.value : route.query;
-
-  const queryParams = props.disableUrlSync ? queries.value : route.query
+  const queryParams = route.query;
 
   generalSearch.value = queryParams['filter[inputGeneral]'] ? queryParams['filter[inputGeneral]'] as string : '';
 
@@ -218,14 +208,12 @@ const clearGeneralSearchInput = () => {
 // Calcula los filtros activos para mostrar como chips
 const activeFilters = computed(() => {
   const filters: Record<string, string> = {};
-  // Elegimos la fuente de datos según disableUrlSync
-  const source = props.disableUrlSync ? queries.value : route.query;
-  for (const key in source) {
+  for (const key in route.query) {
     if (key.startsWith('filter[')) {
       const filterKey = key.replace('filter[', '').replace(']', '');
-      const value = source[key];
-      const stringValue = value !== null && value !== undefined ? String(value) : '';
-      if (stringValue.trim() !== '') {
+      const value = route.query[key]; // No asumimos que es string directamente
+      const stringValue = value !== null && value !== undefined ? String(value) : ''; // Convertimos a string de forma segura
+      if (stringValue.trim() !== '') { // Usamos stringValue para trim
         const field = props.optionsFilter.dialog?.inputs?.find(f => f.name === filterKey);
         if (field) {
           if (field.type === 'selectApi') {
@@ -241,7 +229,7 @@ const activeFilters = computed(() => {
             filters[filterKey] = stringValue;
           }
         } else {
-          filters[filterKey] = stringValue;
+          filters[filterKey] = stringValue; // Fallback para filtros no definidos en dialog.inputs
         }
       }
     }
@@ -406,7 +394,7 @@ defineExpose({
                 :label="field.label" :chips="field.chips" :closable-chips="field.chips" clearable />
               <AppSelectRemote v-if="field.type === 'selectApi'" v-model="field.value" :url="field.url"
                 :arrayInfo="field.arrayInfo" :item-title="field.itemTitle" :item-value="field.itemValue"
-                :multiple="field.multiple" :search-param="field.searchParam" :label="field.label" :params="field.params">
+                :multiple="field.multiple" :search-param="field.searchParam" :label="field.label">
                 <template v-slot:selection="{ item, index }">
                   <v-chip closable @click:close="field.value.splice(index, 1)" v-if="index < 5">
                     <span>{{ item.title }}</span>

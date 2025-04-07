@@ -39,7 +39,6 @@ const optionsTable = {
 
 //FILTER
 const optionsFilter = ref({
-  showBtnSearch: true,
   filterLabels: { inputGeneral: 'Buscar en todo' }
 })
 

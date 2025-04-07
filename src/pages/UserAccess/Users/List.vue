@@ -14,9 +14,10 @@ import { useAuthenticationStore } from "@/stores/useAuthenticationStore";
 const authenticationStore = useAuthenticationStore();
 const { company, user } = storeToRefs(authenticationStore);
 
-
-//TABLE
-const refTableFull = ref()
+// Referencia al componente de filtro
+const refFilterDialog = ref();
+// Referencia al componente de tabla
+const refTableFull = ref();
 
 const optionsTable = {
   url: "/user/paginate",
@@ -58,20 +59,19 @@ const optionsFilter = ref({
   filterLabels: { inputGeneral: 'Buscar en todo' }
 })
 
-
 //ModalForm
-const refModalForm = ref()
+const refModalForm = ref();
 
 const openModalForm = () => {
-  refModalForm.value.openModal()
+  refModalForm.value.openModal();
 }
 
 const goViewEdit = async (data: any) => {
-  refModalForm.value.openModal(data.id)
+  refModalForm.value.openModal(data.id);
 }
 
 const reloadTable = () => {
-  refTableFull.value.fetchTableData()
+  refTableFull.value.fetchTableData();
 }
 
 const tableLoading = ref(false); // Estado de carga de la tabla
@@ -82,18 +82,18 @@ const refreshTable = () => {
     refTableFull.value.fetchTableData(null, false, true); // Forzamos la búsqueda
   }
 };
+
 </script>
 
 <template>
   <div>
-
     <VCard>
       <VCardTitle class="d-flex justify-space-between">
         <span>
           Usuarios
         </span>
 
-        <div class="d-flex justify-end gap-3 flex-wrap ">
+        <div class="d-flex justify-end gap-3 flex-wrap">
           <VBtn @click="openModalForm">
             Agregar usuario
           </VBtn>
@@ -101,7 +101,8 @@ const refreshTable = () => {
       </VCardTitle>
 
       <VCardText>
-        <FilterDialogNew :options-filter="optionsFilter" @force-search="refreshTable" :table-loading="tableLoading">
+        <FilterDialogNew ref="refFilterDialog" :options-filter="optionsFilter" @force-search="refreshTable"
+          :table-loading="tableLoading">
         </FilterDialogNew>
       </VCardText>
 

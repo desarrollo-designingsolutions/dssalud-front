@@ -14,7 +14,7 @@ const props = defineProps({
 })
 
 //TABLE
-const refTableFull2 = ref()
+const refTableFull = ref()
 
 const optionsTable = {
   url: "/glosa/paginate",
@@ -39,6 +39,7 @@ const optionsTable = {
 
 //FILTER
 const optionsFilter = ref({
+  showBtnSearch: true,
   filterLabels: { inputGeneral: 'Buscar en todo' }
 })
 
@@ -57,20 +58,21 @@ const openModalFormView = async (data: any) => {
   refModalForm.value.openModal({ service_id: props.service_id, id: data.id, total_value: props.total_value }, true)
 }
 
-const tableLoading = ref(false); // Estado de carga de la tabla 
-const disableUrlSync = ref(true); // Controla si se sincroniza la URL
+const tableLoading = ref(false); // Estado de carga de la tabla
 
 
-// Método para refrescar los datos
-const refreshTable = (queries: any) => {
-  if (refTableFull2.value) {
-    refTableFull2.value.fetchTableData(
-      null,        // page (null para usar la página actual)
-      false,       // fromWatch
-      true,        // force (forzar la petición)
-      disableUrlSync.value, // skipUrlUpdate
-      queries      // externalParams
-    );
+// Nueva prop para controlar si se actualiza la URL
+const disableUrlUpdate = ref(true);
+
+// Nuevo método para manejar la búsqueda forzada desde el filtro
+const handleForceSearch = (params) => {
+  if (refTableFull.value) {
+    // Si disableUrlUpdate está activo, pasamos los parámetros manualmente
+    if (disableUrlUpdate.value && params) {
+      refTableFull.value.fetchTableData(null, false, true, params);
+    } else {
+      refTableFull.value.fetchTableData(null, false, true);
+    }
   }
 };
 
@@ -93,19 +95,19 @@ const refreshTable = (queries: any) => {
       </VCardTitle>
 
       <VCardText>
-        <FilterDialogNew :options-filter="optionsFilter" @force-search="refreshTable" :table-loading="tableLoading"
-          :disable-url-sync="disableUrlSync">
+        <FilterDialogNew :options-filter="optionsFilter" @force-search="handleForceSearch" :table-loading="tableLoading"
+          :disable-url-update="disableUrlUpdate">
         </FilterDialogNew>
       </VCardText>
 
       <VCardText class="mt-2">
-        <TableFullNew ref="refTableFull2" :options="optionsTable" @edit="openModalFormEdit" @view="openModalFormView"
-          @update:loading="tableLoading = $event">
+        <TableFullNew ref="refTableFull" :options="optionsTable" @edit="openModalFormEdit" @view="openModalFormView"
+          @update:loading="tableLoading = $event" :disable-url-update="disableUrlUpdate">
 
         </TableFullNew>
 
       </VCardText>
     </VCard>
-    <ModalForm ref="refModalForm" @execute="refreshTable"></ModalForm>
+    <ModalForm ref="refModalForm" @execute="handleForceSearch"></ModalForm>
   </div>
 </template>

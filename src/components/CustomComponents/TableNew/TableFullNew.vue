@@ -7,16 +7,12 @@ import { useRoute, useRouter } from 'vue-router';
  * Componente TableFullNew: una tabla configurable para Vue 3 con Vuetify.
  * Permite mostrar datos de una API con opciones de paginación, ordenamiento, selección y acciones personalizables.
  * Diseñado para integrarse con FilterDialogNew para filtrado dinámico.
- *
- * @example
- * ```vue
- * <TableFullNew :options="tableOptions" @view="handleView" @edit="handleEdit" @delete="handleDelete" />
- * ```
  */
 
 const props = defineProps<{
   options: TableOptions;
   'onUpdate:selected'?: (value: any[]) => void; // Para v-model
+  disableUrlUpdate?: boolean; // Nueva prop para deshabilitar la actualización de URL
 }>();
 
 const emit = defineEmits<{
@@ -25,10 +21,8 @@ const emit = defineEmits<{
   (e: 'deleteSuccess', id: string | number): void;
   (e: 'dataFetched', data: any): void;
   (e: 'update:selected', value: any[]): void; // Emit para v-model  
-  (e: 'update:loading', value: boolean): void; // Nuevo emit para loading 
+  (e: 'update:loading', value: boolean): void; // Emit para loading 
 }>();
-
-
 
 const loading = ref<boolean>(false);
 const tableData = ref<any[]>([]);
@@ -36,6 +30,7 @@ const sortBy = ref<any[]>([]);
 const router = useRouter();
 const route = useRoute();
 const isFetching = ref(false);
+const manualParams = ref<object | null>(null); // Para almacenar parámetros manuales cuando disableUrlUpdate es true
 
 // Configuración reactiva basada en props.options
 const options = reactive<TableOptions>({
@@ -95,13 +90,14 @@ watch(loading, (newValue) => {
 
 let fetchDebounceTimeout: NodeJS.Timeout | null = null;
 
-
 /**
  * Obtiene los datos de la tabla desde la API y actualiza la URL del navegador.
  * @param page Número de página opcional para la paginación.
  * @param fromWatch Indica si la llamada viene del watcher.
+ * @param force Indica si se debe forzar la petición incluso si ya hay una en curso.
+ * @param customParams Parámetros personalizados para la petición (usado cuando disableUrlUpdate es true).
  */
-const fetchTableData = async (page: number | null = null, fromWatch = false, force = false) => {
+const fetchTableData = async (page: number | null = null, fromWatch = false, force = false, customParams: object | null = null) => {
   if (!options.url || (isFetching.value && !force)) return; // Solo evita si no es forzado
 
   // Clear any pending debounce
@@ -109,26 +105,51 @@ const fetchTableData = async (page: number | null = null, fromWatch = false, for
     clearTimeout(fetchDebounceTimeout);
   }
 
-
   // Set a new debounce
   fetchDebounceTimeout = setTimeout(async () => {
     isFetching.value = true;
     loading.value = true;
     if (page !== null) options.pagination.currentPage = page;
 
+    // Si tenemos parámetros personalizados, los usamos
+    if (customParams !== null) {
+      manualParams.value = customParams;
+    }
+
+    // Determinamos qué parámetros usar para la consulta
+    const sourceParams = props.disableUrlUpdate && (manualParams.value || customParams)
+      ? (customParams || manualParams.value)
+      : route.query;
+
     const sortQuery = options.sortBy.length
       ? options.sortBy.map(s => `${s.order === 'desc' ? '-' : ''}${s.key}`).join(',')
       : '';
 
+    // Construimos los parámetros de consulta
     const queryParams = {
       page: options.pagination.currentPage.toString(),
       perPage: options.pagination.rowsPerPage.toString(),
       ...(sortQuery && { sort: sortQuery }),
-      ...options.params,
       ...options.paramsGlobal,
     };
 
-    if (!fromWatch) {
+    // Si no estamos usando disableUrlUpdate, añadimos los parámetros de options.params
+    if (!props.disableUrlUpdate) {
+      Object.assign(queryParams, options.params);
+    }
+
+    // Si estamos usando parámetros personalizados, los combinamos
+    if (props.disableUrlUpdate && (manualParams.value || customParams)) {
+      // Añadimos todos los filtros del objeto sourceParams
+      for (const key in sourceParams) {
+        if (key.startsWith('filter[')) {
+          queryParams[key] = sourceParams[key];
+        }
+      }
+    }
+
+    // Solo actualizamos la URL si no está deshabilitado
+    if (!props.disableUrlUpdate && !fromWatch) {
       router.push({ query: queryParams });
     }
 
@@ -153,10 +174,6 @@ const fetchTableData = async (page: number | null = null, fromWatch = false, for
 
     fetchDebounceTimeout = null;
   }, 100); // Small delay to prevent duplicate calls
-
-
-
-
 };
 
 /**
@@ -217,8 +234,6 @@ const deleteItem = async (id: string | number) => {
   const { data, response } = await useAxios(deleteUrl).delete();
   loading.value = false;
 
-
-
   if (data.value && (data.value.code === 200 || !data.value.code)) {
     emit('deleteSuccess', id);
     await fetchTableData();
@@ -238,7 +253,8 @@ const refModalQuestion = ref();
 
 // Observa cambios en route.query para actualizar la tabla
 watch(() => route.query, (newQuery, oldQuery) => {
-  if (isFetching.value) return;
+  // Si disableUrlUpdate está activo, no reaccionamos a cambios en la URL
+  if (isFetching.value || props.disableUrlUpdate) return;
 
   const hasFiltersChanged = JSON.stringify({ ...newQuery, page: undefined, perPage: undefined, sort: undefined }) !==
     JSON.stringify({ ...oldQuery, page: undefined, perPage: undefined, sort: undefined });
@@ -254,28 +270,32 @@ watch(() => route.query, (newQuery, oldQuery) => {
 
 // Carga inicial de datos
 onMounted(() => {
-  if (route.query.page) {
-    options.pagination.currentPage = parseInt(route.query.page as string) || 1;
+  // Solo inicializamos desde la URL si no está deshabilitado
+  if (!props.disableUrlUpdate) {
+    if (route.query.page) {
+      options.pagination.currentPage = parseInt(route.query.page as string) || 1;
+    }
+    if (route.query.perPage) {
+      options.pagination.rowsPerPage = parseInt(route.query.perPage as string) || 10;
+      rowsPerPageInput.value = options.pagination.rowsPerPage; // Sincronizamos el input
+    }
+    if (route.query.sort) {
+      const sortParts = (route.query.sort as string).split(',');
+      options.sortBy = sortParts.map(part => ({
+        key: part.startsWith('-') ? part.slice(1) : part,
+        order: part.startsWith('-') ? 'desc' : 'asc'
+      }));
+      sortBy.value = options.sortBy;
+    }
+
+    options.params = { ...route.query };
+    delete options.params.page;
+    delete options.params.perPage;
+    delete options.params.sort;
   }
-  if (route.query.perPage) {
-    options.pagination.rowsPerPage = parseInt(route.query.perPage as string) || 10;
-    rowsPerPageInput.value = options.pagination.rowsPerPage; // Sincronizamos el input
-  }
-  if (route.query.sort) {
-    const sortParts = (route.query.sort as string).split(',');
-    options.sortBy = sortParts.map(part => ({
-      key: part.startsWith('-') ? part.slice(1) : part,
-      order: part.startsWith('-') ? 'desc' : 'asc'
-    }));
-    sortBy.value = options.sortBy;
-  }
-  options.params = { ...route.query };
-  delete options.params.page;
-  delete options.params.perPage;
-  delete options.params.sort;
+
   fetchTableData(null, true);
 });
-
 
 // Variable intermedia para el input del número de filas por página
 const rowsPerPageInput = ref(options.pagination?.rowsPerPage || 10);
@@ -295,7 +315,6 @@ const debouncedFetchTableData = debounce((page: number) => {
   options.pagination.rowsPerPage = Number(rowsPerPageInput.value) || 10; // Aseguramos que sea un número válido
   fetchTableData(page);
 }, 500);
-
 
 defineExpose({
   openDeleteModal,

@@ -57,7 +57,6 @@ const fetchData = async () => {
   const { data, response } = await useApi<any>(url).get();
 
   if (response.value?.ok && data.value) {
-    console.log(data.value)
     invoiceAudit.value = data.value.data.invoice_audit
     third.value = data.value.data.third
     patient.value = data.value.data.patient

@@ -121,7 +121,6 @@ const startEchoChannel = (data: any) => {
 
   channel = window.Echo.channel(`filing.${data.id}`);
   channel.listen(".FilingFinishProcessJob", (event: any) => {
-    console.log(event);
 
     setTimeout(() => {
       if (refLoading.value) {

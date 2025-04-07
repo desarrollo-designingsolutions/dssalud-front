@@ -71,10 +71,6 @@ const submitForm = async (isCreateAndNew: boolean = false) => {
     }
     if (data.value.code === 422) errorsBack.value = data.value.errors ?? {};
 
-    console.log(errorsBack.value)
-
-    console.log(data.value.errors)
-
     isLoading.value = false;
   }
   else {

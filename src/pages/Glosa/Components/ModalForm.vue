@@ -23,13 +23,15 @@ const form = ref({
   user_id: null as string | null,
   service_id: null as string | null,
   code_glosa_id: null as string | null,
-  glosa_value: null as string | null,
+  glosa_value: null as number | string | null,
   observation: null as string | null,
 })
 
 const typeGlosa = ref<string>('parcial')
 
-const totalValue = ref<string>('')
+const totalValueService = ref<string>('')
+
+const totalValueGlosa = ref<string>('')
 
 const typesValueGlosa = ref([
   'total',
@@ -54,14 +56,20 @@ const openModal = async ({ id, service_id, total_value }: any, disabled: boolean
 
   form.value.id = id;
   form.value.service_id = service_id;
-  totalValue.value = total_value;
+  totalValueService.value = total_value;
 
   if (form.value.id) {
     typeGlosa.value = 'parcial'
+    disabledTotal.value = false
     await fetchDataForm();
   } else {
+    totalValueGlosa.value = total_value;
     typeGlosa.value = 'total'
-    handleTypeGlosaChange()
+
+    form.value.glosa_value = cloneObject(totalValueGlosa.value);
+    dataCalculate.real_glosa_value = cloneObject(totalValueGlosa.value);
+
+    disabledTotal.value = true
   }
 
 };
@@ -76,6 +84,14 @@ const fetchDataForm = async () => {
   if (response.status == 200 && data) {
     if (data.form) {
       form.value = cloneObject(data.form)
+
+      totalValueGlosa.value = form.value.glosa_value;
+
+      form.value.glosa_value = currencyFormat(
+        formatToCurrencyFormat(totalValueGlosa.value)
+      );
+      dataCalculate.real_glosa_value = cloneObject(totalValueGlosa.value);
+
     }
   }
   isLoading.value = false
@@ -88,6 +104,11 @@ const submitForm = async () => {
     const url = form.value.id ? `/glosa/update/${form.value.id}` : `/glosa/store`
 
     form.value.user_id = authenticationStore.user.id;
+
+
+    dataReal(parseEuropeanNumber(form.value.glosa_value), 'real_glosa_value');
+
+    form.value.glosa_value = dataCalculate.real_glosa_value;
 
     isLoading.value = true;
     const { data, response } = await useAxios(url).post(form.value);
@@ -110,13 +131,52 @@ defineExpose({
 })
 
 const disabledTotal = ref(false)
-const handleTypeGlosaChange = () => {
+const handleTypeGlosaChange = (event: any) => {
   disabledTotal.value = false
 
-  if (typeGlosa.value == 'total') {
-    form.value.glosa_value = totalValue.value
+  if (event.target.value == 'total') {
+
+    form.value.glosa_value = currencyFormat(
+      formatToCurrencyFormat(totalValueService.value)
+    );
     disabledTotal.value = true
   }
+  loadFirstTime.value = false;
+  mayorTotalValueServiceValidator();
+}
+
+// Regla para que sea mayor que cero
+const positiveValidator = (value: number | string) => {
+  const num = typeof value === 'string' ? parseFloat(value) : value
+  if (isNaN(num) || num <= 0) {
+    return 'El valor debe ser mayor que cero'
+  }
+  return true
+}
+
+const mayorTotalValueServiceValidator = () => {
+  if (parseEuropeanNumber(form.value.glosa_value) > totalValueService.value) {
+    return 'El valor debe ser menor o igual al valor total del servicio'
+  }
+  return true
+}
+
+//FORMATO COMPONENTE MONEDA
+const dataCalculate = reactive({
+  real_glosa_value: 0 as number,
+})
+
+const loadFirstTime = ref(true);
+
+const dataReal = (data: any, field: string) => {
+  dataCalculate[field] = data
+}
+
+function parseEuropeanNumber(value: string): number {
+  if (!value) return 0;
+  // Quitar el punto de miles y reemplazar la coma decimal
+  const cleaned = value.replace(/\./g, '').replace(',', '.');
+  return parseFloat(cleaned);
 }
 
 </script>
@@ -138,23 +198,31 @@ const handleTypeGlosaChange = () => {
           <VForm ref="refForm" @submit.prevent="() => { }">
             <VRow>
               <VCol cols="12" md="8">
-                <AppSelectRemote :requiredField="true" :disabled="disabledFiledsView" label="Código Glosa"
-                  v-model="form.code_glosa_id" url="/selectInfiniteCodeGlosa" array-info="codeGlosa" clearable>
+                <AppSelectRemote :requiredField="true" :rules="[requiredValidator]" :disabled="disabledFiledsView"
+                  label="Código Glosa" v-model="form.code_glosa_id" url="/selectInfiniteCodeGlosa"
+                  array-info="codeGlosa" clearable :error-messages="errorsBack.code_glosa_id"
+                  @input="errorsBack.code_glosa_id = ''">
                 </AppSelectRemote>
               </VCol>
               <VCol cols="12">
-                <VRadioGroup :requiredField="true" label="Valor a glosar" v-model="typeGlosa"
-                  @change="handleTypeGlosaChange()" inline>
+                <VRadioGroup :requiredField="true" label="Valor a glosar" v-model="typeGlosa" inline>
                   <div>
-                    <VRadio v-for="radio in typesValueGlosa" :key="radio" :label="radio"
-                      :value="radio.toLocaleLowerCase()" />
+                    <VRadio v-for="radio in typesValueGlosa" @click="handleTypeGlosaChange($event)" :key="radio"
+                      :label="radio" :value="radio.toLocaleLowerCase()" />
                   </div>
                 </VRadioGroup>
               </VCol>
-              <VCol cols="12">
+              <!-- <VCol cols="12">
                 <AppTextField :requiredField="true" clearable :disabled="disabledFiledsView || disabledTotal"
                   label="Valor glosa" :rules="[requiredValidator]" v-model="form.glosa_value"
                   :error-messages="errorsBack.glosa_value" @input="errorsBack.glosa_value = ''" />
+              </VCol> -->
+              <VCol cols="12">
+                <FormatCurrency v-show="!isLoading" :requiredField="true"
+                  :disabled="disabledFiledsView || disabledTotal" label="Valor glosa"
+                  :rules="[requiredValidator, positiveValidator, mayorTotalValueServiceValidator]"
+                  v-model="form.glosa_value" @realValue="dataReal($event, 'real_glosa_value')"
+                  :error-messages="errorsBack.glosa_value" @input="errorsBack.glosa_value = ''" clearable />
               </VCol>
               <VCol cols="12">
                 <AppTextarea :requiredField="true" clearable :disabled="disabledFiledsView" label="Observación"

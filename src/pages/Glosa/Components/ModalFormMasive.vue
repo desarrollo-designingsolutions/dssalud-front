@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import AppTextField from '@/@core/components/app-form-elements/AppTextField.vue';
 import { useToast } from '@/composables/useToast';
 import IErrorsBack from "@/interfaces/Axios/IErrorsBack";
 import { useAuthenticationStore } from "@/stores/useAuthenticationStore";
@@ -21,8 +20,9 @@ const isLoading = ref<boolean>(false)
 
 const form = ref({
   glosas: [] as Array<{
+    id: string | null,
     codeGlosa: string | null,
-    partialValue: string | null,
+    partialValue: number | string | null,
     observation: string | null,
     user_id: string | number | null,
     service_id: string | number | null,
@@ -70,6 +70,10 @@ const submitForm = async (isCreateAndNew: boolean = false) => {
     }
     if (data.value.code === 422) errorsBack.value = data.value.errors ?? {};
 
+    console.log(errorsBack.value)
+
+    console.log(data.value.errors)
+
     isLoading.value = false;
   }
   else {
@@ -82,9 +86,13 @@ defineExpose({
 })
 
 const addDataArray = async () => {
+
+  const nextId = form.value.glosas.length
+
   form.value.glosas.push({
+    id: nextId.toString(),
     codeGlosa: null,
-    partialValue: null,
+    partialValue: 0,
     observation: null,
     user_id: null,
     service_id: null,
@@ -97,6 +105,24 @@ const deleteDataArray = (index: number) => {
 const shouldShowDeleteButton = () => {
   const visibleItems = form.value.glosas;
   return visibleItems.length > 1; // Mostrar el botón si hay más de un elemento visible
+}
+
+const positiveValidator = (value: number | string) => {
+  const num = typeof value === 'string' ? parseFloat(value) : value
+  if (isNaN(num) || num <= 0) {
+    return 'El valor debe ser mayor que cero'
+  }
+  return true
+}
+
+//FORMATO COMPONENTE MONEDA
+const dataPercentage = reactive({
+  partial_value_real: 0 as number,
+})
+
+//FORMATO COMPONENTE PORCENTAJES
+const dataReal = (data: any, field: string) => {
+  dataPercentage[field] = data
 }
 
 </script>
@@ -125,22 +151,22 @@ const shouldShowDeleteButton = () => {
               <template v-for="(item, index) in form.glosas" :key="index">
                 <VCol cols="8">
                   <AppSelectRemote label="Glosa" :requiredField="true" :rules="[requiredValidator]"
-                    v-model="item.codeGlosa" url="/selectInfiniteCodeGlosa" array-info="codeGlosa" clearable>
+                    v-model="item.codeGlosa" url="/selectInfiniteCodeGlosa" array-info="codeGlosa"
+                    :error-messages="errorsBack[`${item.id}.codeGlosa`]"
+                    @input="errorsBack[`${item.id}.codeGlosa`] = ''" clearable>
                   </AppSelectRemote>
                 </VCol>
 
                 <VCol cols="12" md="4">
-                  <AppTextField :requiredField="true" label="Valor glosa" :rules="[requiredValidator]" clearable
-                    v-model="item.partialValue" placeholder="0">
-                    <template #append-inner>
-                      <span class="ml-2">%</span>
-                    </template>
-                  </AppTextField>
+                  <PercentageInput label="Valor glosa" clearable maxDecimal="2" v-model="item.partialValue"
+                    @realValue="dataReal($event, 'partial_value_real')"
+                    :rules="[requiredValidator, positiveValidator]" />
                 </VCol>
 
                 <VCol cols="12" md="10">
                   <AppTextarea :requiredField="true" label="Observación" :rules="[requiredValidator]" clearable
-                    v-model="item.observation" outlined>
+                    v-model="item.observation" outlined :error-messages="errorsBack[`${item.id}.observation`]"
+                    @input="errorsBack[`${item.id}.observation`] = ''">
                   </AppTextarea>
                 </VCol>
 

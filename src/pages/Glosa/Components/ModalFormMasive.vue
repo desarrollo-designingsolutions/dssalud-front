@@ -57,6 +57,7 @@ const submitForm = async (isCreateAndNew: boolean = false) => {
   if (validation?.valid) {
     form.value.glosas.forEach(element => {
       element.code_glosa_id = element.codeGlosa.value;
+      element.partialValue = parseEuropeanNumber(element.partialValue);
       element.user_id = authenticationStore.user.id;
     });
 
@@ -79,6 +80,13 @@ const submitForm = async (isCreateAndNew: boolean = false) => {
   else {
     toast('Faltan Campos Por Diligenciar', '', 'danger')
   }
+}
+
+function parseEuropeanNumber(value: string): number {
+  if (!value) return 0;
+  // Quitar el punto de miles y reemplazar la coma decimal
+  const cleaned = value.replace(/\./g, '').replace(',', '.');
+  return parseFloat(cleaned);
 }
 
 defineExpose({

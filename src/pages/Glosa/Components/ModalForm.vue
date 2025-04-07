@@ -105,13 +105,11 @@ const submitForm = async () => {
 
     form.value.user_id = authenticationStore.user.id;
 
-
-    dataReal(parseEuropeanNumber(form.value.glosa_value), 'real_glosa_value');
-
-    form.value.glosa_value = dataCalculate.real_glosa_value;
-
     isLoading.value = true;
-    const { data, response } = await useAxios(url).post(form.value);
+    const { data, response } = await useAxios(url).post({
+      ...form.value,
+      glosa_value: dataCalculate.real_glosa_value
+    });
 
     if (response.status == 200 && data) {
       handleDialogVisible();
@@ -141,6 +139,7 @@ const handleTypeGlosaChange = (event: any) => {
     );
     disabledTotal.value = true
   }
+  dataReal(parseEuropeanNumber(form.value.glosa_value), 'real_glosa_value');
   loadFirstTime.value = false;
   mayorTotalValueServiceValidator();
 }

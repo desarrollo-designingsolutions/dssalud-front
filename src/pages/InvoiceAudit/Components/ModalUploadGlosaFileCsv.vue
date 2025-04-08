@@ -39,7 +39,6 @@ const submitForm = async () => {
     isLoading.value = false;
 
     if (response.status == 200 && data) {
-      console.log("entro");
       progress.value = 0;
       refLoading.value.startLoading();
       startEchoChannel(data); // Inicia el canal aquí
@@ -82,7 +81,6 @@ const startEchoChannel = (data: any) => {
       setTimeout(() => {
         refLoading.value.stopLoading();
         handleDialogVisible();
-        toast('Cargado Exitosamente', '', "success");
       }, 1000);
     }
 

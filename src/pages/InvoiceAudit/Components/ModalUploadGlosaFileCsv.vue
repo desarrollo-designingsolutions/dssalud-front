@@ -40,7 +40,7 @@ const submitForm = async () => {
 
     if (response.status == 200 && data) {
       progress.value = 0;
-      // refLoading.value.startLoading();
+      refLoading.value.startLoading();
     }
   } else {
     if (refModalQuestion.value) {
@@ -81,7 +81,7 @@ const startEchoChannel = () => {
 
     if (progress.value == 100) {
       setTimeout(() => {
-        // refLoading.value.stopLoading();
+        refLoading.value.stopLoading();
         handleDialogVisible();
         toast('Cargado Exitosamente', '', "success");
       }, 1000);

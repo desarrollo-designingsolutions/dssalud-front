@@ -170,6 +170,7 @@ const startEchoChannel = () => {
     openModalErrorsGlosas(event.errors);
   });
 };
+
 startEchoChannel()
 
 const servicesIds = ref<Array<string>>([]);

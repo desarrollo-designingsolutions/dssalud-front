@@ -166,8 +166,9 @@ const openModalErrorsGlosas = (data: any) => {
 const startEchoChannel = () => {
   const channel = window.Echo.channel(`glosaModalErrors.${authenticationStore.user.id}`);
   channel.listen('ModalError', (event: any) => {
-    console.log(event, "que eres");
-    openModalErrorsGlosas(event.errors);
+    if (event.errors.length > 0) {
+      openModalErrorsGlosas(event.errors);
+    }
   });
 };
 
@@ -182,7 +183,7 @@ const servicesIds = ref<Array<string>>([]);
     <VCard :loading="isLoading">
       <VCardTitle class="d-flex justify-space-between">
         <h1>
-          <p><strong>N° de Factura: </strong>{{ invoiceAudit.invoice_number}}</p>
+          <p><strong>N° de Factura: </strong>{{ invoiceAudit.invoice_number }}</p>
         </h1>
         <div class="d-flex justify-end gap-3 flex-wrap">
           <VBtn @click="goViewPatient">Regresar</VBtn>
@@ -367,9 +368,9 @@ const servicesIds = ref<Array<string>>([]);
     <ModalShowFiles ref="refModalShowFiles"></ModalShowFiles>
 
     <ModalUploadGlosaFileCsv ref="refModalUploadGlosaFileCsv" />
-    
+
     <ModalFormMasiveGlosa ref="refModalFormMasiveGlosa"></ModalFormMasiveGlosa>
-    
+
     <ModalListGlosa ref="refModalListGlosa"></ModalListGlosa>
 
     <ModalErrorsGlosas ref="refModalErrorsGlosas" />

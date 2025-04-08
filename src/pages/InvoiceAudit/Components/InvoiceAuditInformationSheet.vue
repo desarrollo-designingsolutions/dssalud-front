@@ -166,10 +166,12 @@ const openModalErrorsGlosas = (data: any) => {
 const startEchoChannel = () => {
   const channel = window.Echo.channel(`glosaModalErrors.${authenticationStore.user.id}`);
   channel.listen('ModalError', (event: any) => {
-    console.log(event, "que eres");
-    openModalErrorsGlosas(event.errors);
+    if (event.errors.length > 0) {
+      openModalErrorsGlosas(event.errors);
+    }
   });
 };
+
 startEchoChannel()
 
 const servicesIds = ref<Array<string>>([]);

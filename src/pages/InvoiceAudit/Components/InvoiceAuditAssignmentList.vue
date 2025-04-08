@@ -67,7 +67,6 @@ const isLoadingExcel = ref<boolean>(false)
 const downloadExcel = async () => {
   isLoadingExcel.value = true;
   const { data, response } = await useAxios("/invoiceAudit/exportPatients").post({
-    third_id: third_id,
     assignment_batch_id: assignment_batch_id,
   })
   isLoadingExcel.value = false;

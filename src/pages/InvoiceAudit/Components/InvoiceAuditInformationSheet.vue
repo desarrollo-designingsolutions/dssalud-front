@@ -22,6 +22,8 @@ definePage({
 const invoiceAudit = ref({});
 const third = ref({});
 const patient = ref({});
+const value_glosa = ref(0);
+const value_approved = ref(0);
 
 const authenticationStore = useAuthenticationStore();
 
@@ -36,7 +38,6 @@ const patient_id = route.params.patient_id;
 
 //LOADING
 const isLoading = ref<boolean>(false)
-const isLoadingExcel = ref<boolean>(false)
 const isLoadingExcelList = ref<boolean>(false)
 
 //FILTER
@@ -61,6 +62,8 @@ const fetchData = async () => {
     invoiceAudit.value = data.value.data.invoice_audit
     third.value = data.value.data.third
     patient.value = data.value.data.patient
+    value_glosa.value = data.value.data.value_glosa
+    value_approved.value = data.value.data.value_approved
   }
   isLoading.value = false
 }
@@ -112,17 +115,14 @@ const openModalUploadGlosaFileCsv = () => {
   refModalUploadGlosaFileCsv.value.openModal()
 }
 
-const downloadExcel = async () => {
-  isLoadingExcel.value = true;
-  const { data, response } = await useAxios("/invoiceAudit/exportServices").post({
+
+const { downloadExcel, isLoadingExcel } = useGlosaInportExport()
+
+const downloadExport = async () => {
+  downloadExcel({
     invoice_audit_id: invoice_audit_id,
     patient_id: patient_id
   })
-  isLoadingExcel.value = false;
-
-  if (response.status == 200 && data && data.code == 200) {
-    downloadExcelBase64(data.excel, "Servicios " + invoiceAudit.value?.invoice_number)
-  }
 }
 
 const downloadExcelList = async () => {
@@ -194,10 +194,10 @@ const servicesIds = ref<Array<string>>([]);
         <div class="mb-4">
           <VRow>
             <VCol cols="12" md="2">
-              <p><strong>N° de radicación</strong> <br> ??? </p>
+              <p><strong>N° de radicación</strong> <br> </p>
             </VCol>
             <VCol cols="12" md="2">
-              <p><strong>Fecha Radicación</strong> <br> ??? </p>
+              <p><strong>Fecha Radicación</strong> <br> </p>
             </VCol>
             <VCol cols="12" md="2">
               <p><strong>N° Factura</strong> <br> {{ invoiceAudit.invoice_number }}</p>
@@ -209,22 +209,22 @@ const servicesIds = ref<Array<string>>([]);
               <p><strong>Valor Factura</strong> <br> {{ invoiceAudit.total_value }}</p>
             </VCol>
             <VCol cols="12" md="2">
-              <p><strong>Nota Credito</strong> <br> ??? </p>
+              <p><strong>Nota Credito</strong> <br> </p>
             </VCol>
             <VCol cols="12" md="2">
-              <p><strong>Valor Copago</strong> <br> ??? </p>
+              <p><strong>Valor Copago</strong> <br> </p>
             </VCol>
             <VCol cols="12" md="2">
-              <p><strong>Valor Cuota Moderada</strong> <br> ??? </p>
+              <p><strong>Valor Cuota Moderada</strong> <br> </p>
             </VCol>
             <VCol cols="12" md="2">
-              <p><strong>Valor Pago Moderador</strong> <br> ??? </p>
+              <p><strong>Valor Pago Moderador</strong> <br> </p>
             </VCol>
             <VCol cols="12" md="2">
-              <p><strong>Valor Aprobado</strong> <br> ??? </p>
+              <p><strong>Valor Aprobado</strong> <br> {{ value_glosa }}</p>
             </VCol>
             <VCol cols="12" md="2">
-              <p><strong>Valor Glosado</strong> <br> ??? </p>
+              <p><strong>Valor Glosado</strong> <br>{{ value_approved }} </p>
             </VCol>
           </VRow>
         </div>
@@ -243,10 +243,10 @@ const servicesIds = ref<Array<string>>([]);
                   <p><strong>NIT</strong> <br> {{ third.nit }} </p>
                 </VCol>
                 <VCol cols="12" md="2">
-                  <p><strong>Código Habilitación</strong> <br> ??? </p>
+                  <p><strong>Código Habilitación</strong> <br> </p>
                 </VCol>
                 <VCol cols="12" md="2">
-                  <p><strong>Sede</strong> <br> ??? </p>
+                  <p><strong>Sede</strong> <br> </p>
                 </VCol>
               </VRow>
             </VExpansionPanelText>
@@ -267,16 +267,16 @@ const servicesIds = ref<Array<string>>([]);
                   <p><strong>Documento</strong> <br> {{ patient.identification_number }} </p>
                 </VCol>
                 <VCol cols="12" md="2">
-                  <p><strong>Edad</strong> <br> ??? </p>
+                  <p><strong>Edad</strong> <br> </p>
                 </VCol>
                 <VCol cols="12" md="2">
-                  <p><strong>Fecha de Ingreso</strong> <br> ??? </p>
+                  <p><strong>Fecha de Ingreso</strong> <br> </p>
                 </VCol>
                 <VCol cols="12" md="2">
-                  <p><strong>Fecha de Egreso</strong> <br> ??? </p>
+                  <p><strong>Fecha de Egreso</strong> <br> </p>
                 </VCol>
                 <VCol cols="12" md="2">
-                  <p><strong>Días Estancia</strong> <br> ??? </p>
+                  <p><strong>Días Estancia</strong> <br> </p>
                 </VCol>
               </VRow>
             </VExpansionPanelText>
@@ -315,7 +315,7 @@ const servicesIds = ref<Array<string>>([]);
                   </template>
                   <span>Importar</span>
                 </VListItem>
-                <VListItem @click="downloadExcel()" :loading="isLoadingExcel" :disabled="isLoadingExcel">
+                <VListItem @click="downloadExport()" :loading="isLoadingExcel" :disabled="isLoadingExcel">
                   <template #prepend>
                     <VIcon start icon="tabler-file-download" />
                   </template>

@@ -10,30 +10,11 @@ const handleDialogVisible = () => {
   isDialogVisible.value = !isDialogVisible.value;
 };
 
-const objData = ref()
+const errorMessages = ref([]);
 const openModal = async (element: any) => {
   handleDialogVisible();
-  objData.value = element
-  init()
+  errorMessages.value = element
 };
-
-defineExpose({
-  openModal,
-})
-
-const errorMessages = ref([]);
-
-const init = async () => {
-  errorMessages.value = []
-  loading.getData = true
-  const { data, response } = await useApi(`/filingInvoice/showErrorsValidation/${objData.value.id}`).get()
-  if (response.value?.ok && data.value) {
-    errorMessages.value = data.value.errorMessages
-  }
-
-  loading.getData = false
-}
-
 
 // headers
 const inputsTableFilter = [
@@ -48,17 +29,21 @@ const options = ref({ page: 1, itemsPerPage: 10, sortBy: [''], sortDesc: [false]
 const search = ref('')
 
 const downloadExcel = async () => {
-  loading.excel = true;
-  const { data, response } = await useApi("/filingInvoice/excelErrorsValidation").post({
-    id: objData.value.id,
-  })
+  // loading.excel = true;
+  // const { data, response } = await useApi("/filingInvoice/excelErrorsValidation").post({
+  //   id: objData.value.id,
+  // })
 
-  loading.excel = false;
+  // loading.excel = false;
 
-  if (response.value?.ok && data.value) {
-    downloadExcelBase64(data.value.excel, "Lista de errores de validación")
-  }
+  // if (response.value?.ok && data.value) {
+  //   downloadExcelBase64(data.value.excel, "Lista de errores de validación")
+  // }
 }
+
+defineExpose({
+  openModal,
+})
 </script>
 
 <template>

@@ -169,7 +169,6 @@ const startEchoChannel = () => {
     console.log(event, "que eres");
     openModalErrorsGlosas(event.errors);
   });
-
 };
 startEchoChannel()
 
@@ -182,7 +181,7 @@ const servicesIds = ref<Array<string>>([]);
     <VCard :loading="isLoading">
       <VCardTitle class="d-flex justify-space-between">
         <h1>
-          <p><strong>N° de Factura: </strong>{{ invoiceAuditData.invoice_number}}</p>
+          <p><strong>N° de Factura: </strong>{{ invoiceAudit.invoice_number}}</p>
         </h1>
         <div class="d-flex justify-end gap-3 flex-wrap">
           <VBtn @click="goViewPatient">Regresar</VBtn>

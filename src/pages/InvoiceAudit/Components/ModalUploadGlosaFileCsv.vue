@@ -83,7 +83,6 @@ const startEchoChannel = (data: any) => {
         handleDialogVisible();
       }, 1000);
     }
-
   });
 };
 

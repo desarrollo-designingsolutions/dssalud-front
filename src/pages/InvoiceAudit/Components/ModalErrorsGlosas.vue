@@ -11,13 +11,9 @@ const handleDialogVisible = () => {
 };
 
 const objData = ref()
-
 const openModal = async (element: any) => {
   handleDialogVisible();
-
-  objData.value = { id: element }
-
-
+  objData.value = element
   init()
 };
 
@@ -30,27 +26,22 @@ const errorMessages = ref([]);
 const init = async () => {
   errorMessages.value = []
   loading.getData = true
-  const { data, response } = await useApi(`/filing/getAllValidation/${objData.value.id}`).get()
+  const { data, response } = await useApi(`/filingInvoice/showErrorsValidation/${objData.value.id}`).get()
   if (response.value?.ok && data.value) {
     errorMessages.value = data.value.errorMessages
   }
 
   loading.getData = false
-
 }
 
 
 // headers
 const inputsTableFilter = [
-  { title: 'Proceso', key: 'type' },
-  { title: 'Tipo de Validación', key: 'validacion_type_Y' },
-  { title: 'Num Factura', key: 'num_invoice' },
-  { title: 'Archivo', key: 'file' },
   { title: 'Columna', key: 'column' },
   { title: 'Fila', key: 'row' },
-  { title: 'Validacion', key: 'validacion' },
-  { title: 'Dato registrado', key: 'data' },
-  { title: 'Descripción error', key: 'error' },
+  { title: 'Valor', key: 'value' },
+  // { title: 'Data', key: 'data' },
+  { title: 'Errors', key: 'errors' },
 ]
 
 const options = ref({ page: 1, itemsPerPage: 10, sortBy: [''], sortDesc: [false] })
@@ -58,7 +49,7 @@ const search = ref('')
 
 const downloadExcel = async () => {
   loading.excel = true;
-  const { data, response } = await useApi("/filing/excelAllValidation").post({
+  const { data, response } = await useApi("/filingInvoice/excelErrorsValidation").post({
     id: objData.value.id,
   })
 

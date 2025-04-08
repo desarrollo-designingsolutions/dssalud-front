@@ -3,6 +3,7 @@ import ModalFormMasiveGlosa from "@/pages/Glosa/Components/ModalFormMasive.vue";
 import ModalListGlosa from "@/pages/Glosa/Components/ModalList.vue";
 import ModalShowFiles from "@/pages/InvoiceAudit/Components/ModalShowFiles.vue";
 import ModalUploadGlosaFileCsv from "@/pages/InvoiceAudit/Components/ModalUploadGlosaFileCsv.vue";
+import ModalErrorsGlosas from "@/pages/InvoiceAudit/Components/ModalErrorsGlosas.vue";
 import { useAuthenticationStore } from "@/stores/useAuthenticationStore";
 import { useRouter } from 'vue-router';
 
@@ -155,6 +156,23 @@ const openModalListGlosa = (data: any) => {
   refModalListGlosa.value.openModal(data)
 }
 
+//ModalErrorsGlosas
+const refModalErrorsGlosas = ref()
+const openModalErrorsGlosas = (data: any) => {
+  refModalErrorsGlosas.value.openModal(data)
+}
+
+// Función para iniciar y manejar el canal dinámicamente
+const startEchoChannel = () => {
+  const channel = window.Echo.channel(`glosaModalErrors.${authenticationStore.user.id}`);
+  channel.listen('ModalError', (event: any) => {
+    console.log(event, "que eres");
+    openModalErrorsGlosas(event.errors);
+  });
+
+};
+startEchoChannel()
+
 const servicesIds = ref<Array<string>>([]);
 
 </script>
@@ -164,7 +182,7 @@ const servicesIds = ref<Array<string>>([]);
     <VCard :loading="isLoading">
       <VCardTitle class="d-flex justify-space-between">
         <h1>
-          <p><strong>N° de Factura: </strong>{{ invoiceAudit.invoice_number }}</p>
+          <p><strong>N° de Factura: </strong>{{ invoiceAuditData.invoice_number}}</p>
         </h1>
         <div class="d-flex justify-end gap-3 flex-wrap">
           <VBtn @click="goViewPatient">Regresar</VBtn>
@@ -349,9 +367,11 @@ const servicesIds = ref<Array<string>>([]);
     <ModalShowFiles ref="refModalShowFiles"></ModalShowFiles>
 
     <ModalUploadGlosaFileCsv ref="refModalUploadGlosaFileCsv" />
-
+    
     <ModalFormMasiveGlosa ref="refModalFormMasiveGlosa"></ModalFormMasiveGlosa>
-
+    
     <ModalListGlosa ref="refModalListGlosa"></ModalListGlosa>
+
+    <ModalErrorsGlosas ref="refModalErrorsGlosas" />
   </div>
 </template>

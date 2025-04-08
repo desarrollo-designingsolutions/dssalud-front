@@ -75,7 +75,7 @@ watch(error, (newError) => {
 const startEchoChannel = (data: any) => {
   const channel = window.Echo.channel(`glosa.${authenticationStore.user.id}`);
   channel.listen('ProgressCircular', (event: any) => {
-
+    
     progress.value = event.progress;
 
     if (progress.value == 100) {
@@ -85,8 +85,14 @@ const startEchoChannel = (data: any) => {
         toast('Cargado Exitosamente', '', "success");
       }, 1000);
     }
-
+    
   });
+  
+  const channelErrors = window.Echo.channel(`glosaModalErrors.${authenticationStore.user.id}`);
+  channelErrors.listen('ModalError', (event: any) => {
+    console.log(event, "que eres");
+  });
+
 };
 
 const openFileDialog = () => {

@@ -79,6 +79,27 @@ const goViewInvoiceAuditList = () => {
             <VBtn @click="goViewInvoiceAuditList">
               Regresar
             </VBtn>
+
+            <VBtn color="primary" append-icon="tabler-chevron-down">
+              Más Acciones
+              <VMenu activator="parent">
+                <VList>
+                  <VListItem @click="true">
+                    <template #prepend>
+                      <VIcon start icon="tabler-file-upload" />
+                    </template>
+                    <span>Importar</span>
+                  </VListItem>
+                  <VListItem @click="true">
+                    <template #prepend>
+                      <VIcon start icon="tabler-file-download" />
+                    </template>
+                    <span>Exportar</span>
+                  </VListItem>
+
+                </VList>
+              </VMenu>
+            </VBtn>
           </div>
         </VCardTitle>
 

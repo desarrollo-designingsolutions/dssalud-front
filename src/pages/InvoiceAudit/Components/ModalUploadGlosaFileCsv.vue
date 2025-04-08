@@ -39,10 +39,8 @@ const submitForm = async () => {
     isLoading.value = false;
 
     if (response.status == 200 && data) {
-      console.log("entro");
       progress.value = 0;
-      refLoading.value.startLoading();
-      startEchoChannel(data); // Inicia el canal aquí
+      // refLoading.value.startLoading();
     }
   } else {
     if (refModalQuestion.value) {
@@ -72,15 +70,18 @@ watch(error, (newError) => {
 });
 
 // Función para iniciar y manejar el canal dinámicamente
-const startEchoChannel = (data: any) => {
+const startEchoChannel = () => {
   const channel = window.Echo.channel(`glosa.${authenticationStore.user.id}`);
   channel.listen('ProgressCircular', (event: any) => {
 
+    console.log('ProgressCircular:', event);
     progress.value = event.progress;
+
+    console.log('Progress:', event.progress);
 
     if (progress.value == 100) {
       setTimeout(() => {
-        refLoading.value.stopLoading();
+        // refLoading.value.stopLoading();
         handleDialogVisible();
         toast('Cargado Exitosamente', '', "success");
       }, 1000);
@@ -92,11 +93,14 @@ const openFileDialog = () => {
   error.value = null;
   open();
 };
+
+startEchoChannel(); // Inicia el canal aquí
 </script>
 
 <template>
   <div>
     <Loading ref="refLoading" :progress="progress" :is-loading="isLoading" />
+
     <VDialog v-model="isDialogVisible" :overlay="false" max-width="30rem" transition="dialog-transition" persistent>
       <DialogCloseBtn @click="handleDialogVisible" />
       <VCard :loading="isLoading" :disabled="isLoading" class="w-100">

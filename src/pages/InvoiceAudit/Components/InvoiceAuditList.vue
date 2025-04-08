@@ -58,6 +58,15 @@ const goViewAssignmentList = () => {
   router.push({ name: "InvoiceAuditAssignment-List", params: { assignment_batch_id: assignment_batch_id } })
 }
 
+
+const { downloadExcel, isLoadingExcel } = useGlosaInportExport()
+
+const downloadExport = async () => {
+  downloadExcel({
+    third_id: third_id,
+    assignment_batch_id: assignment_batch_id,
+  })
+}
 </script>
 
 <template>
@@ -77,6 +86,27 @@ const goViewAssignmentList = () => {
             <VBtn @click="goViewAssignmentList">
               Regresar
             </VBtn>
+
+            <VBtn color="primary" append-icon="tabler-chevron-down">
+              Más Acciones
+              <VMenu activator="parent" :loading="isLoadingExcel">
+                <VList>
+                  <VListItem @click="true">
+                    <template #prepend>
+                      <VIcon start icon="tabler-file-upload" />
+                    </template>
+                    <span>Importar</span>
+                  </VListItem>
+                  <VListItem @click="downloadExport()">
+                    <template #prepend>
+                      <VIcon start icon="tabler-file-download" />
+                    </template>
+                    <span>Exportar</span>
+                  </VListItem>
+
+                </VList>
+              </VMenu>
+            </VBtn>
           </div>
         </VCardTitle>
 
@@ -86,7 +116,7 @@ const goViewAssignmentList = () => {
         </VCardText>
 
         <VCardText class="mt-2">
-          <TableFullNew ref="refTableFull" :options="optionsTable" @edit="goViewEdit" @view="goViewView">
+          <TableFullNew ref="refTableFull" :options="optionsTable">
 
             <template #item.invoice_number="{ item }">
               <div style="cursor: pointer;" @click="goViewPatients({ id: item.id })">

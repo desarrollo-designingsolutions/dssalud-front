@@ -61,6 +61,22 @@ const goViewAssignmentBatchesList = () => {
 
 }
 
+//LOADING 
+const isLoadingExcel = ref<boolean>(false)
+
+const downloadExcel = async () => {
+  isLoadingExcel.value = true;
+  const { data, response } = await useAxios("/invoiceAudit/exportPatients").post({
+    third_id: third_id,
+    assignment_batch_id: assignment_batch_id,
+  })
+  isLoadingExcel.value = false;
+
+  if (response.status == 200 && data && data.code == 200) {
+    downloadExcelBase64(data.excel, "Servicios " + new Date().toLocaleDateString() + ".xlsx")
+  }
+}
+
 </script>
 
 <template>
@@ -78,6 +94,27 @@ const goViewAssignmentBatchesList = () => {
           <div class="d-flex justify-end gap-3 flex-wrap ">
             <VBtn @click="goViewAssignmentBatchesList">
               Regresar
+            </VBtn>
+
+            <VBtn color="primary" append-icon="tabler-chevron-down">
+              Más Acciones
+              <VMenu activator="parent" :loading="isLoadingExcel">
+                <VList>
+                  <VListItem @click="true">
+                    <template #prepend>
+                      <VIcon start icon="tabler-file-upload" />
+                    </template>
+                    <span>Importar</span>
+                  </VListItem>
+                  <VListItem @click="downloadExcel()">
+                    <template #prepend>
+                      <VIcon start icon="tabler-file-download" />
+                    </template>
+                    <span>Exportar</span>
+                  </VListItem>
+
+                </VList>
+              </VMenu>
             </VBtn>
           </div>
         </VCardTitle>

@@ -61,6 +61,22 @@ const goViewInvoiceAuditList = () => {
   router.push({ name: "InvoiceAuditInvoiceAudit-List", params: { assignment_batch_id: assignment_batch_id, third_id: third_id } })
 }
 
+//LOADING 
+const isLoadingExcel = ref<boolean>(false)
+
+const downloadExcel = async () => {
+  isLoadingExcel.value = true;
+  const { data, response } = await useAxios("/invoiceAudit/exportPatients").post({
+    invoice_audit_id: invoice_audit_id,
+    third_id: third_id,
+    assignment_batch_id: assignment_batch_id,
+  })
+  isLoadingExcel.value = false;
+
+  if (response.status == 200 && data && data.code == 200) {
+    downloadExcelBase64(data.excel, "Servicios " + new Date().toLocaleDateString() + ".xlsx")
+  }
+}
 </script>
 
 <template>
@@ -82,7 +98,7 @@ const goViewInvoiceAuditList = () => {
 
             <VBtn color="primary" append-icon="tabler-chevron-down">
               Más Acciones
-              <VMenu activator="parent">
+              <VMenu activator="parent" :loading="isLoadingExcel">
                 <VList>
                   <VListItem @click="true">
                     <template #prepend>
@@ -90,7 +106,7 @@ const goViewInvoiceAuditList = () => {
                     </template>
                     <span>Importar</span>
                   </VListItem>
-                  <VListItem @click="true">
+                  <VListItem @click="downloadExcel()">
                     <template #prepend>
                       <VIcon start icon="tabler-file-download" />
                     </template>

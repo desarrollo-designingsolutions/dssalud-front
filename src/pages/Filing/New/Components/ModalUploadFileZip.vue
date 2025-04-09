@@ -136,7 +136,7 @@ const startEchoChannel = (data: any) => {
 
     }
   }).listen('ProgressCircular', (event: any) => {
-    progress.value = event.progress;
+    progress.value = Number(event.progress);
   });
 };
 

@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import ModalErrorsGlosas from "@/pages/InvoiceAudit/Components/ModalErrorsGlosas.vue";
+import ModalUploadGlosaFileCsv from "@/pages/InvoiceAudit/Components/ModalUploadGlosaFileCsv.vue";
 import { useAuthenticationStore } from "@/stores/useAuthenticationStore";
 import { useRouter } from 'vue-router';
 
@@ -61,111 +63,139 @@ const goViewAssignmentBatchesList = () => {
 
 }
 
-//LOADING 
-const isLoadingExcel = ref<boolean>(false)
+const { downloadExcel, isLoadingExcel } = useGlosaInportExport()
 
-const downloadExcel = async () => {
-  isLoadingExcel.value = true;
-  const { data, response } = await useAxios("/invoiceAudit/exportPatients").post({
+const downloadExport = async () => {
+  downloadExcel({
     assignment_batch_id: assignment_batch_id,
+    user_id: authenticationStore.user.id,
   })
-  isLoadingExcel.value = false;
-
-  if (response.status == 200 && data && data.code == 200) {
-    downloadExcelBase64(data.excel, "Servicios " + new Date().toLocaleDateString() + ".xlsx")
-  }
 }
 
+//ModalUploadGlosaFileCsv
+const refModalUploadGlosaFileCsv = ref()
+const openModalUploadGlosaFileCsv = () => {
+  refModalUploadGlosaFileCsv.value.openModal()
+}
+
+//ModalErrorsGlosas
+const refModalErrorsGlosas = ref()
+const openModalErrorsGlosas = (data: any) => {
+  refModalErrorsGlosas.value.openModal(data, authenticationStore.user.id)
+}
+
+// Función para iniciar y manejar el canal dinámicamente
+const startEchoChannel = () => {
+  const channel = window.Echo.channel(`glosaModalErrors.${authenticationStore.user.id}`);
+  channel.listen('ModalError', (event: any) => {
+    if (event.errors.length > 0) {
+      openModalErrorsGlosas(event.errors);
+    }
+  });
+};
+
+startEchoChannel()
 </script>
 
 <template>
 
-  <CountAllData :assignment_batch_id="assignment_batch_id" :user_id="authenticationStore.user.id" />
+  <div>
+    <CountAllData :assignment_batch_id="assignment_batch_id" :user_id="authenticationStore.user.id" />
 
-  <VRow>
-    <VCol>
-      <VCard>
-        <VCardTitle class="d-flex justify-space-between">
-          <span>
-            Prestadores
-          </span>
+    <VRow>
+      <VCol>
+        <VCard>
+          <VCardTitle class="d-flex justify-space-between">
+            <span>
+              Prestadores
+            </span>
 
-          <div class="d-flex justify-end gap-3 flex-wrap ">
-            <VBtn @click="goViewAssignmentBatchesList">
-              Regresar
-            </VBtn>
+            <div class="d-flex justify-end gap-3 flex-wrap ">
+              <ProgressCircularChannel :channel="'glosa.' + authenticationStore.user.id"
+                tooltipText="Cargando glosas" />
 
-            <VBtn color="primary" append-icon="tabler-chevron-down">
-              Más Acciones
-              <VMenu activator="parent" :loading="isLoadingExcel">
-                <VList>
-                  <VListItem @click="true">
-                    <template #prepend>
-                      <VIcon start icon="tabler-file-upload" />
-                    </template>
-                    <span>Importar</span>
-                  </VListItem>
-                  <VListItem @click="downloadExcel()">
-                    <template #prepend>
-                      <VIcon start icon="tabler-file-download" />
-                    </template>
-                    <span>Exportar</span>
-                  </VListItem>
 
-                </VList>
-              </VMenu>
-            </VBtn>
-          </div>
-        </VCardTitle>
+              <VBtn @click="goViewAssignmentBatchesList">
+                Regresar
+              </VBtn>
 
-        <VCardText>
-          <FilterDialogNew :options-filter="optionsFilter">
-          </FilterDialogNew>
-        </VCardText>
+              <VBtn color="primary" append-icon="tabler-chevron-down">
+                Más Acciones
+                <VMenu activator="parent" :loading="isLoadingExcel">
+                  <VList>
+                    <VListItem @click="openModalUploadGlosaFileCsv()">
+                      <template #prepend>
+                        <VIcon start icon="tabler-file-upload" />
+                      </template>
+                      <span>Importar</span>
+                    </VListItem>
+                    <VListItem @click="downloadExport()">
+                      <template #prepend>
+                        <VIcon start icon="tabler-file-download" />
+                      </template>
+                      <span>Exportar</span>
+                    </VListItem>
 
-        <VCardText class="mt-2">
-          <TableFullNew ref="refTableFull" :options="optionsTable">
+                  </VList>
+                </VMenu>
+              </VBtn>
+            </div>
+          </VCardTitle>
 
-            <template #item.nit="{ item }">
-              <div style="cursor: pointer;" @click="goViewInvoiceAudit({ id: item.id })">
-                {{ item.nit }}
-              </div>
-            </template>
+          <VCardText>
+            <FilterDialogNew :options-filter="optionsFilter">
+            </FilterDialogNew>
+          </VCardText>
 
-            <template #item.name="{ item }">
-              <div style="cursor: pointer;" @click="goViewInvoiceAudit({ id: item.id })">
-                {{ item.name }}
-              </div>
-            </template>
+          <VCardText class="mt-2">
+            <TableFullNew ref="refTableFull" :options="optionsTable">
 
-            <template #item.count_invoice_assignment="{ item }">
-              <div style="cursor: pointer;" @click="goViewInvoiceAudit({ id: item.id })">
-                {{ item.count_invoice_assignment }}
-              </div>
-            </template>
+              <template #item.nit="{ item }">
+                <div style="cursor: pointer;" @click="goViewInvoiceAudit({ id: item.id })">
+                  {{ item.nit }}
+                </div>
+              </template>
 
-            <template #item.count_invoice_pending="{ item }">
-              <div style="cursor: pointer;" @click="goViewInvoiceAudit({ id: item.id })">
-                {{ item.count_invoice_pending }}
-              </div>
-            </template>
+              <template #item.name="{ item }">
+                <div style="cursor: pointer;" @click="goViewInvoiceAudit({ id: item.id })">
+                  {{ item.name }}
+                </div>
+              </template>
 
-            <template #item.count_invoice_finish="{ item }">
-              <div style="cursor: pointer;" @click="goViewInvoiceAudit({ id: item.id })">
-                {{ item.count_invoice_finish }}
-              </div>
-            </template>
+              <template #item.count_invoice_assignment="{ item }">
+                <div style="cursor: pointer;" @click="goViewInvoiceAudit({ id: item.id })">
+                  {{ item.count_invoice_assignment }}
+                </div>
+              </template>
 
-            <template #item.values="{ item }">
-              <div style="cursor: pointer;" @click="goViewInvoiceAudit({ id: item.id })">
-                {{ item.values }}
-              </div>
-            </template>
+              <template #item.count_invoice_pending="{ item }">
+                <div style="cursor: pointer;" @click="goViewInvoiceAudit({ id: item.id })">
+                  {{ item.count_invoice_pending }}
+                </div>
+              </template>
 
-          </TableFullNew>
-        </VCardText>
-      </VCard>
-    </VCol>
-  </VRow>
+              <template #item.count_invoice_finish="{ item }">
+                <div style="cursor: pointer;" @click="goViewInvoiceAudit({ id: item.id })">
+                  {{ item.count_invoice_finish }}
+                </div>
+              </template>
+
+              <template #item.values="{ item }">
+                <div style="cursor: pointer;" @click="goViewInvoiceAudit({ id: item.id })">
+                  {{ item.values }}
+                </div>
+              </template>
+
+            </TableFullNew>
+          </VCardText>
+        </VCard>
+      </VCol>
+    </VRow>
+
+
+    <ModalUploadGlosaFileCsv ref="refModalUploadGlosaFileCsv" />
+
+    <ModalErrorsGlosas ref="refModalErrorsGlosas" />
+  </div>
 
 </template>

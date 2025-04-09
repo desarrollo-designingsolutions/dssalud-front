@@ -23,9 +23,8 @@ const echoChannel = () => {
 
   window.Echo.channel(`${props.channel}`)
     .listen('ProgressCircular', (event: any) => {
-      progressValue.value = event.progress
-
-      if (event.progress === 100) {
+      progressValue.value = Number(event.progress)
+      if (event.progress == 100) {
         emit("execute")
         setTimeout(() => {
           progressValue.value = 0

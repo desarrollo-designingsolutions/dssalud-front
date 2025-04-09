@@ -5,7 +5,7 @@ export function useGlosaInportExport() {
 
   const downloadExcel = async (params: {}) => {
     isLoadingExcel.value = true;
-    const { data, response } = await useAxios("/invoiceAudit/exportPatients").post(params)
+    const { data, response } = await useAxios("/invoiceAudit/exportDataToGlosasImportCsv").post(params)
     isLoadingExcel.value = false;
 
     if (response.status == 200 && data && data.code == 200) {

@@ -91,12 +91,13 @@ export const openPdfBase64 = (pdfBase64: string) => {
 
 export const downloadExcelBase64 = (
   base64: string,
-  fileName: string = "excel"
+  fileName: string = "excel",
+  ext: string = ".xlsx",
 ) => {
   if (base64) {
     const link = document.createElement("a");
     link.href = `data:application/vnd.ms-excel;base64,${base64}`;
-    link.download = fileName + ".xlsx";
+    link.download = fileName + ext;
     link.click();
   }
 };

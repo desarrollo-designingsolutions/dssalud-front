@@ -11,9 +11,11 @@ const handleDialogVisible = () => {
 };
 
 const errorMessages = ref([]);
-const openModal = async (element: any) => {
+const user_id = ref<string>("");
+const openModal = async (element: any, userId: string) => {
   handleDialogVisible();
   errorMessages.value = element
+  user_id.value = userId
 };
 
 // headers
@@ -29,16 +31,33 @@ const options = ref({ page: 1, itemsPerPage: 10, sortBy: [''], sortDesc: [false]
 const search = ref('')
 
 const downloadExcel = async () => {
-  // loading.excel = true;
-  // const { data, response } = await useApi("/filingInvoice/excelErrorsValidation").post({
-  //   id: objData.value.id,
-  // })
+  loading.excel = true;
+  const { data, response } = await useAxios("/invoiceAudit/excelErrorsValidation").get({
+    params: {
+      user_id: user_id.value,
+    }
+  })
 
-  // loading.excel = false;
+  loading.excel = false;
 
-  // if (response.value?.ok && data.value) {
-  //   downloadExcelBase64(data.value.excel, "Lista de errores de validación")
-  // }
+  if (response.status == 200 && data) {
+    downloadExcelBase64(data.excel, "Lista de errores de validación")
+  }
+}
+
+const downloadCsv = async () => {
+  loading.excel = true;
+  const { data, response } = await useAxios("/invoiceAudit/exportCsvErrorsValidation").get({
+    params: {
+      user_id: user_id.value,
+    }
+  })
+
+  loading.excel = false;
+
+  if (response.status == 200 && data) {
+    downloadExcelBase64(data.excel, "glosas", ".csv")
+  }
 }
 
 defineExpose({
@@ -67,6 +86,7 @@ defineExpose({
             </VCol>
             <VCol cols="12" sm="6" class="d-flex justify-end">
               <VBtn :loading="loading.excel" :disabled="loading.excel" @click="downloadExcel">Exportar a Excel</VBtn>
+              <VBtn :loading="loading.excel" :disabled="loading.excel" @click="downloadCsv">Exportar CSV</VBtn>
             </VCol>
           </VRow>
         </VCardText>

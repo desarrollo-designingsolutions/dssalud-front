@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import ModalErrorsGlosas from "@/pages/InvoiceAudit/Components/ModalErrorsGlosas.vue";
+import ModalUploadGlosaFileCsv from "@/pages/InvoiceAudit/Components/ModalUploadGlosaFileCsv.vue";
+
 import { useAuthenticationStore } from "@/stores/useAuthenticationStore";
 import { useRouter } from 'vue-router';
 
@@ -61,124 +64,155 @@ const goViewInvoiceAuditList = () => {
   router.push({ name: "InvoiceAuditInvoiceAudit-List", params: { assignment_batch_id: assignment_batch_id, third_id: third_id } })
 }
 
-//LOADING 
-const isLoadingExcel = ref<boolean>(false)
 
-const downloadExcel = async () => {
-  isLoadingExcel.value = true;
-  const { data, response } = await useAxios("/invoiceAudit/exportPatients").post({
-    invoice_audit_id: invoice_audit_id,
+const { downloadExcel, isLoadingExcel } = useGlosaInportExport()
+
+const downloadExport = async () => {
+  downloadExcel({
     third_id: third_id,
     assignment_batch_id: assignment_batch_id,
+    invoice_audit_id: invoice_audit_id,
+    user_id: authenticationStore.user.id,
   })
-  isLoadingExcel.value = false;
-
-  if (response.status == 200 && data && data.code == 200) {
-    downloadExcelBase64(data.excel, "Servicios " + new Date().toLocaleDateString() + ".xlsx")
-  }
 }
+
+//ModalUploadGlosaFileCsv
+const refModalUploadGlosaFileCsv = ref()
+const openModalUploadGlosaFileCsv = () => {
+  refModalUploadGlosaFileCsv.value.openModal()
+}
+
+//ModalErrorsGlosas
+const refModalErrorsGlosas = ref()
+const openModalErrorsGlosas = (data: any) => {
+  refModalErrorsGlosas.value.openModal(data, authenticationStore.user.id)
+}
+
+// Función para iniciar y manejar el canal dinámicamente
+const startEchoChannel = () => {
+  const channel = window.Echo.channel(`glosaModalErrors.${authenticationStore.user.id}`);
+  channel.listen('ModalError', (event: any) => {
+    if (event.errors.length > 0) {
+      openModalErrorsGlosas(event.errors);
+    }
+  });
+};
+
+startEchoChannel()
 </script>
 
 <template>
+  <div>
 
-  <CountAllData :assignment_batch_id="assignment_batch_id" :third_id="third_id" />
+    <CountAllData :assignment_batch_id="assignment_batch_id" :third_id="third_id" />
 
-  <VRow>
-    <VCol>
-      <VCard>
-        <VCardTitle class="d-flex justify-space-between">
-          <span>
-            Usuarios
-          </span>
-
-          <div class="d-flex justify-end gap-3 flex-wrap ">
-            <VBtn @click="goViewInvoiceAuditList">
-              Regresar
-            </VBtn>
-
-            <VBtn color="primary" append-icon="tabler-chevron-down">
-              Más Acciones
-              <VMenu activator="parent" :loading="isLoadingExcel">
-                <VList>
-                  <VListItem @click="true">
-                    <template #prepend>
-                      <VIcon start icon="tabler-file-upload" />
-                    </template>
-                    <span>Importar</span>
-                  </VListItem>
-                  <VListItem @click="downloadExcel()">
-                    <template #prepend>
-                      <VIcon start icon="tabler-file-download" />
-                    </template>
-                    <span>Exportar</span>
-                  </VListItem>
-
-                </VList>
-              </VMenu>
-            </VBtn>
-          </div>
-        </VCardTitle>
-
-        <VCardText>
-          <FilterDialogNew :options-filter="optionsFilter">
-          </FilterDialogNew>
-        </VCardText>
-
-        <VCardText class="mt-2">
-          <TableFullNew ref="refTableFull" :options="optionsTable">
-
-            <template #item.identification_number="{ item }">
-              <div style="cursor: pointer;" @click="goViewInformationSheet({ id: item.id })">
-                {{ item.identification_number }}
-              </div>
-            </template>
-
-            <template #item.full_name="{ item }">
-              <div style="cursor: pointer;" @click="goViewInformationSheet({ id: item.id })">
-                {{ item.full_name }}
-              </div>
-            </template>
-
-            <template #item.gender="{ item }">
-              <div style="cursor: pointer;" @click="goViewInformationSheet({ id: item.id })">
-                {{ item.gender }}
-              </div>
-            </template>
-
-            <template #item.glosas="{ item }">
-              <div style="cursor: pointer;" @click="goViewInformationSheet({ id: item.id })">
-                {{ item.glosas }}
-              </div>
-            </template>
-
-            <template #item.value_glosa="{ item }">
-              <div style="cursor: pointer;" @click="goViewInformationSheet({ id: item.id })">
-                {{ item.value_glosa }}
-              </div>
-            </template>
-
-            <template #item.value_borrowed="{ item }">
-              <div style="cursor: pointer;" @click="goViewInformationSheet({ id: item.id })">
-                {{ item.value_borrowed }}
-              </div>
-            </template>
-
-            <template #item.total_value="{ item }">
-              <div style="cursor: pointer;" @click="goViewInformationSheet({ id: item.id })">
-                {{ item.total_value }}
-              </div>
-            </template>
-
-            <template #item.status="{ item }">
-              <div style="cursor: pointer;" @click="goViewInformationSheet({ id: item.id })">
-                {{ item.status }}
-              </div>
-            </template>
+    <VRow>
+      <VCol>
+        <VCard>
+          <VCardTitle class="d-flex justify-space-between">
+            <span>
+              Usuarios
+            </span>
 
 
-          </TableFullNew>
-        </VCardText>
-      </VCard>
-    </VCol>
-  </VRow>
+            <div class="d-flex justify-end gap-3 flex-wrap ">
+              <ProgressCircularChannel :channel="'glosa.' + authenticationStore.user.id"
+                tooltipText="Cargando glosas" />
+              <VBtn @click="goViewInvoiceAuditList">
+                Regresar
+              </VBtn>
+
+              <VBtn color="primary" append-icon="tabler-chevron-down">
+                Más Acciones
+                <VMenu activator="parent" :loading="isLoadingExcel">
+                  <VList>
+                    <VListItem @click="openModalUploadGlosaFileCsv()">
+                      <template #prepend>
+                        <VIcon start icon="tabler-file-upload" />
+                      </template>
+                      <span>Importar</span>
+                    </VListItem>
+                    <VListItem @click="downloadExport()">
+                      <template #prepend>
+                        <VIcon start icon="tabler-file-download" />
+                      </template>
+                      <span>Exportar</span>
+                    </VListItem>
+
+                  </VList>
+                </VMenu>
+              </VBtn>
+            </div>
+          </VCardTitle>
+
+          <VCardText>
+            <FilterDialogNew :options-filter="optionsFilter">
+            </FilterDialogNew>
+          </VCardText>
+
+          <VCardText class="mt-2">
+            <TableFullNew ref="refTableFull" :options="optionsTable">
+
+              <template #item.identification_number="{ item }">
+                <div style="cursor: pointer;" @click="goViewInformationSheet({ id: item.id })">
+                  {{ item.identification_number }}
+                </div>
+              </template>
+
+              <template #item.full_name="{ item }">
+                <div style="cursor: pointer;" @click="goViewInformationSheet({ id: item.id })">
+                  {{ item.full_name }}
+                </div>
+              </template>
+
+              <template #item.gender="{ item }">
+                <div style="cursor: pointer;" @click="goViewInformationSheet({ id: item.id })">
+                  {{ item.gender }}
+                </div>
+              </template>
+
+              <template #item.glosas="{ item }">
+                <div style="cursor: pointer;" @click="goViewInformationSheet({ id: item.id })">
+                  {{ item.glosas }}
+                </div>
+              </template>
+
+              <template #item.value_glosa="{ item }">
+                <div style="cursor: pointer;" @click="goViewInformationSheet({ id: item.id })">
+                  {{ item.value_glosa }}
+                </div>
+              </template>
+
+              <template #item.value_borrowed="{ item }">
+                <div style="cursor: pointer;" @click="goViewInformationSheet({ id: item.id })">
+                  {{ item.value_borrowed }}
+                </div>
+              </template>
+
+              <template #item.total_value="{ item }">
+                <div style="cursor: pointer;" @click="goViewInformationSheet({ id: item.id })">
+                  {{ item.total_value }}
+                </div>
+              </template>
+
+              <template #item.status="{ item }">
+                <div style="cursor: pointer;" @click="goViewInformationSheet({ id: item.id })">
+                  {{ item.status }}
+                </div>
+              </template>
+
+
+            </TableFullNew>
+          </VCardText>
+        </VCard>
+      </VCol>
+    </VRow>
+
+    <ModalUploadGlosaFileCsv ref="refModalUploadGlosaFileCsv" />
+
+    <ModalErrorsGlosas ref="refModalErrorsGlosas" />
+
+
+  </div>
+
 </template>

@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import ModalFormMasiveGlosa from "@/pages/Glosa/Components/ModalFormMasive.vue";
 import ModalListGlosa from "@/pages/Glosa/Components/ModalList.vue";
+import ModalErrorsGlosas from "@/pages/InvoiceAudit/Components/ModalErrorsGlosas.vue";
 import ModalShowFiles from "@/pages/InvoiceAudit/Components/ModalShowFiles.vue";
 import ModalUploadGlosaFileCsv from "@/pages/InvoiceAudit/Components/ModalUploadGlosaFileCsv.vue";
-import ModalErrorsGlosas from "@/pages/InvoiceAudit/Components/ModalErrorsGlosas.vue";
 import { useAuthenticationStore } from "@/stores/useAuthenticationStore";
 import { useRouter } from 'vue-router';
 
@@ -121,7 +121,8 @@ const { downloadExcel, isLoadingExcel } = useGlosaInportExport()
 const downloadExport = async () => {
   downloadExcel({
     invoice_audit_id: invoice_audit_id,
-    patient_id: patient_id
+    patient_id: patient_id,
+    user_id: authenticationStore.user.id,
   })
 }
 
@@ -159,7 +160,7 @@ const openModalListGlosa = (data: any) => {
 //ModalErrorsGlosas
 const refModalErrorsGlosas = ref()
 const openModalErrorsGlosas = (data: any) => {
-  refModalErrorsGlosas.value.openModal(data)
+  refModalErrorsGlosas.value.openModal(data, authenticationStore.user.id)
 }
 
 // Función para iniciar y manejar el canal dinámicamente

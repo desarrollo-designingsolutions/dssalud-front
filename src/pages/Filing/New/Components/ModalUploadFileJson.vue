@@ -139,7 +139,7 @@ const startEchoChannel = (data: any) => {
       stopEchoChannel(); // Detiene los eventos específicos
     }
   }).listen(".FilingProgressEvent", (event: any) => {
-    progress.value = event.progress;
+    progress.value = Number(event.progress);
   });
 };
 

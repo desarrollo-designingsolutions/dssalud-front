@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import ModalErrorsGlosas from "@/pages/InvoiceAudit/Components/ModalErrorsGlosas.vue";
+import ModalUploadGlosaFileCsv from "@/pages/InvoiceAudit/Components/ModalUploadGlosaFileCsv.vue";
 import { useAuthenticationStore } from "@/stores/useAuthenticationStore";
 import { useRouter } from 'vue-router';
 
@@ -65,104 +67,142 @@ const downloadExport = async () => {
   downloadExcel({
     third_id: third_id,
     assignment_batch_id: assignment_batch_id,
+    user_id: authenticationStore.user.id,
   })
 }
+
+//ModalUploadGlosaFileCsv
+const refModalUploadGlosaFileCsv = ref()
+const openModalUploadGlosaFileCsv = () => {
+  refModalUploadGlosaFileCsv.value.openModal()
+}
+
+//ModalErrorsGlosas
+const refModalErrorsGlosas = ref()
+const openModalErrorsGlosas = (data: any) => {
+  refModalErrorsGlosas.value.openModal(data, authenticationStore.user.id)
+}
+
+// Función para iniciar y manejar el canal dinámicamente
+const startEchoChannel = () => {
+  const channel = window.Echo.channel(`glosaModalErrors.${authenticationStore.user.id}`);
+  channel.listen('ModalError', (event: any) => {
+    if (event.errors.length > 0) {
+      openModalErrorsGlosas(event.errors);
+    }
+  });
+};
+
+startEchoChannel()
 </script>
 
 <template>
+  <div>
+    <CountAllData :assignment_batch_id="assignment_batch_id" :third_id="third_id"
+      :user_id="authenticationStore.user.id" />
 
-  <CountAllData :assignment_batch_id="assignment_batch_id" :third_id="third_id"
-    :user_id="authenticationStore.user.id" />
+    <VRow>
+      <VCol>
+        <VCard>
+          <VCardTitle class="d-flex justify-space-between">
+            <span>
+              Facturas
+            </span>
 
-  <VRow>
-    <VCol>
-      <VCard>
-        <VCardTitle class="d-flex justify-space-between">
-          <span>
-            Facturas
-          </span>
+            <div class="d-flex justify-end gap-3 flex-wrap ">
 
-          <div class="d-flex justify-end gap-3 flex-wrap ">
-            <VBtn @click="goViewAssignmentList">
-              Regresar
-            </VBtn>
+              <ProgressCircularChannel :channel="'glosa.' + authenticationStore.user.id"
+                tooltipText="Cargando glosas" />
 
-            <VBtn color="primary" append-icon="tabler-chevron-down">
-              Más Acciones
-              <VMenu activator="parent" :loading="isLoadingExcel">
-                <VList>
-                  <VListItem @click="true">
-                    <template #prepend>
-                      <VIcon start icon="tabler-file-upload" />
-                    </template>
-                    <span>Importar</span>
-                  </VListItem>
-                  <VListItem @click="downloadExport()">
-                    <template #prepend>
-                      <VIcon start icon="tabler-file-download" />
-                    </template>
-                    <span>Exportar</span>
-                  </VListItem>
+              <VBtn @click="goViewAssignmentList">
+                Regresar
+              </VBtn>
 
-                </VList>
-              </VMenu>
-            </VBtn>
-          </div>
-        </VCardTitle>
+              <VBtn color="primary" append-icon="tabler-chevron-down">
+                Más Acciones
+                <VMenu activator="parent" :loading="isLoadingExcel">
+                  <VList>
+                    <VListItem @click="openModalUploadGlosaFileCsv()">
+                      <template #prepend>
+                        <VIcon start icon="tabler-file-upload" />
+                      </template>
+                      <span>Importar</span>
+                    </VListItem>
+                    <VListItem @click="downloadExport()">
+                      <template #prepend>
+                        <VIcon start icon="tabler-file-download" />
+                      </template>
+                      <span>Exportar</span>
+                    </VListItem>
 
-        <VCardText>
-          <FilterDialogNew :options-filter="optionsFilter">
-          </FilterDialogNew>
-        </VCardText>
+                  </VList>
+                </VMenu>
+              </VBtn>
+            </div>
+          </VCardTitle>
 
-        <VCardText class="mt-2">
-          <TableFullNew ref="refTableFull" :options="optionsTable">
+          <VCardText>
+            <FilterDialogNew :options-filter="optionsFilter">
+            </FilterDialogNew>
+          </VCardText>
 
-            <template #item.invoice_number="{ item }">
-              <div style="cursor: pointer;" @click="goViewPatients({ id: item.id })">
-                {{ item.invoice_number }}
-              </div>
-            </template>
+          <VCardText class="mt-2">
+            <TableFullNew ref="refTableFull" :options="optionsTable">
 
-            <template #item.count_patients="{ item }">
-              <div style="cursor: pointer;" @click="goViewPatients({ id: item.id })">
-                {{ item.count_patients }}
-              </div>
-            </template>
+              <template #item.invoice_number="{ item }">
+                <div style="cursor: pointer;" @click="goViewPatients({ id: item.id })">
+                  {{ item.invoice_number }}
+                </div>
+              </template>
 
-            <template #item.count_services="{ item }">
-              <div style="cursor: pointer;" @click="goViewPatients({ id: item.id })">
-                {{ item.count_services }}
-              </div>
-            </template>
+              <template #item.count_patients="{ item }">
+                <div style="cursor: pointer;" @click="goViewPatients({ id: item.id })">
+                  {{ item.count_patients }}
+                </div>
+              </template>
 
-            <template #item.total_value_services="{ item }">
-              <div style="cursor: pointer;" @click="goViewPatients({ id: item.id })">
-                {{ item.total_value_services }}
-              </div>
-            </template>
+              <template #item.count_services="{ item }">
+                <div style="cursor: pointer;" @click="goViewPatients({ id: item.id })">
+                  {{ item.count_services }}
+                </div>
+              </template>
 
-            <template #item.glosas="{ item }">
-              <div style="cursor: pointer;" @click="goViewPatients({ id: item.id })">
-                {{ item.glosas }}
-              </div>
-            </template>
+              <template #item.total_value_services="{ item }">
+                <div style="cursor: pointer;" @click="goViewPatients({ id: item.id })">
+                  {{ item.total_value_services }}
+                </div>
+              </template>
 
-            <template #item.value_glosa="{ item }">
-              <div style="cursor: pointer;" @click="goViewPatients({ id: item.id })">
-                {{ item.value_glosa }}
-              </div>
-            </template>
+              <template #item.glosas="{ item }">
+                <div style="cursor: pointer;" @click="goViewPatients({ id: item.id })">
+                  {{ item.glosas }}
+                </div>
+              </template>
 
-            <template #item.spent="{ item }">
-              <div style="cursor: pointer;" @click="goViewPatients({ id: item.id })">
-                {{ item.spent }}
-              </div>
-            </template>
+              <template #item.value_glosa="{ item }">
+                <div style="cursor: pointer;" @click="goViewPatients({ id: item.id })">
+                  {{ item.value_glosa }}
+                </div>
+              </template>
 
-          </TableFullNew>
-        </VCardText>
-      </VCard>
-    </VCol>
-  </VRow>
+              <template #item.spent="{ item }">
+                <div style="cursor: pointer;" @click="goViewPatients({ id: item.id })">
+                  {{ item.spent }}
+                </div>
+              </template>
+
+            </TableFullNew>
+          </VCardText>
+        </VCard>
+      </VCol>
+    </VRow>
+
+
+    <ModalUploadGlosaFileCsv ref="refModalUploadGlosaFileCsv" />
+
+    <ModalErrorsGlosas ref="refModalErrorsGlosas" />
+
+
+
+  </div>
 </template>

@@ -41,6 +41,8 @@ const submitForm = async () => {
     if (response.status == 200 && data) {
       progress.value = 0;
       refLoading.value.startLoading();
+      startEchoChannel(); // Inicia el canal aquí
+
     }
   } else {
     if (refModalQuestion.value) {
@@ -69,15 +71,17 @@ watch(error, (newError) => {
   }
 });
 
+let channel = null;
 // Función para iniciar y manejar el canal dinámicamente
 const startEchoChannel = () => {
-  const channel = window.Echo.channel(`glosa.${authenticationStore.user.id}`);
+
+  if (channel) {
+    stopEchoChannel(); // Limpia los eventos específicos antes de volver a suscribirse
+  }
+
+  channel = window.Echo.channel(`glosa.${authenticationStore.user.id}`);
   channel.listen('ProgressCircular', (event: any) => {
-
-    console.log('ProgressCircular:', event);
-    progress.value = event.progress;
-
-    console.log('Progress:', event.progress);
+    progress.value = Number(event.progress);
 
     if (progress.value == 100) {
       setTimeout(() => {
@@ -88,12 +92,25 @@ const startEchoChannel = () => {
   });
 };
 
+const stopEchoChannel = () => {
+  if (channel) {
+    // Deja de escuchar eventos específicos sin cerrar el canal 
+    channel.stopListening('.ProgressCircular');
+    channel = null; // Limpia la referencia local
+  }
+  // NO usamos window.Echo.leave aquí para no afectar otras suscripciones
+};
+
 const openFileDialog = () => {
   error.value = null;
   open();
 };
 
-startEchoChannel(); // Inicia el canal aquí
+
+// Limpia el canal cuando el componente se desmonta
+onUnmounted(() => {
+  stopEchoChannel(); // Limpia solo los eventos de este componente
+});
 </script>
 
 <template>

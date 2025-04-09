@@ -89,7 +89,7 @@ const submitForm = async () => {
 const listenToProgress = (uploadId: string) => {
   window.Echo.channel(`upload-progress.${uploadId}`)
     .listen('.file-progress', (event: any) => {
-      progress.value = event.progress;
+      progress.value = Number(event.progress);
 
       const fileItem = fileData.value.find((item) => item.file.name === event.fileName);
       if (fileItem) {
@@ -99,7 +99,7 @@ const listenToProgress = (uploadId: string) => {
         console.warn(`No se encontró archivo para ${event.fileName}`);
       }
 
-      if (progress.value === 100) {
+      if (progress.value == 100) {
         isLoading.value = false;
         refModalQuestion.value.componentData.isDialogVisible = true;
         refModalQuestion.value.componentData.showBtnCancel = false;

@@ -77,7 +77,7 @@ const startEchoChannel = (data: any) => {
   const channel = window.Echo.channel(`assignment.${authenticationStore.user.id}`);
   channel.listen('ProgressCircular', (event: any) => {
 
-    progress.value = event.progress;
+    progress.value = Number(event.progress);
     setTimeout(() => {
       if (progress.value == 100) {
         refLoading.value.stopLoading();

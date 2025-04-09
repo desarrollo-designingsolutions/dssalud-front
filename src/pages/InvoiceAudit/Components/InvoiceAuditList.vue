@@ -68,6 +68,8 @@ const downloadExport = async () => {
     third_id: third_id,
     assignment_batch_id: assignment_batch_id,
     user_id: authenticationStore.user.id,
+    from: "invoices",
+
   })
 }
 

@@ -90,6 +90,9 @@ const optionsTable = {
     { key: 'actionsBtn', title: 'Acciones', sortable: false },
   ],
   showSelect: true,
+  paramsGlobal: {
+    company_id: authenticationStore.company.id,
+  },
 }
 
 const tableLoading = ref(false); // Estado de carga de la tabla

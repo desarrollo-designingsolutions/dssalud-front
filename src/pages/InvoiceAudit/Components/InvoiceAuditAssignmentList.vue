@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import ModalErrorsGlosas from "@/pages/InvoiceAudit/Components/ModalErrorsGlosas.vue";
 import ModalUploadGlosaFileCsv from "@/pages/InvoiceAudit/Components/ModalUploadGlosaFileCsv.vue";
 import { useAuthenticationStore } from "@/stores/useAuthenticationStore";
 import { useRouter } from 'vue-router';
@@ -76,26 +75,12 @@ const downloadExport = async () => {
 //ModalUploadGlosaFileCsv
 const refModalUploadGlosaFileCsv = ref()
 const openModalUploadGlosaFileCsv = () => {
-  refModalUploadGlosaFileCsv.value.openModal()
+  refModalUploadGlosaFileCsv.value.openModal({
+    assignment_batch_id: assignment_batch_id,
+    user_id: authenticationStore.user.id,
+  })
 }
 
-//ModalErrorsGlosas
-const refModalErrorsGlosas = ref()
-const openModalErrorsGlosas = (data: any) => {
-  refModalErrorsGlosas.value.openModal(data, authenticationStore.user.id)
-}
-
-// Función para iniciar y manejar el canal dinámicamente
-const startEchoChannel = () => {
-  const channel = window.Echo.channel(`glosaModalErrors.${authenticationStore.user.id}`);
-  channel.listen('ModalError', (event: any) => {
-    if (event.errors.length > 0) {
-      openModalErrorsGlosas(event.errors);
-    }
-  });
-};
-
-startEchoChannel()
 </script>
 
 <template>
@@ -196,7 +181,6 @@ startEchoChannel()
 
     <ModalUploadGlosaFileCsv ref="refModalUploadGlosaFileCsv" />
 
-    <ModalErrorsGlosas ref="refModalErrorsGlosas" />
   </div>
 
 </template>

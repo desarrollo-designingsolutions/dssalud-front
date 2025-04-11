@@ -19,11 +19,12 @@ const progress = ref(0)
 const handleDialogVisible = () => {
   isDialogVisible.value = !isDialogVisible.value;
 };
-
-const openModal = async () => {
+const dataParams = ref()
+const openModal = async (data: any) => {
   handleDialogVisible();
   resetValues();
   progress.value = 0;
+  dataParams.value = data;
 };
 
 const submitForm = async () => {
@@ -33,6 +34,11 @@ const submitForm = async () => {
       formData.append("archiveCsv", fileData.value[0].file);
     }
     formData.append("user_id", String(authenticationStore.user.id));
+    formData.append("invoice_audit_id", String(dataParams.value.invoice_audit_id ?? null));
+    formData.append("patient_id", String(dataParams.value.patient_id ?? null));
+    formData.append("third_id", String(dataParams.value.third_id ?? null));
+    formData.append("assignment_batch_id", String(dataParams.value.assignment_batch_id ?? null));
+
 
     isLoading.value = true;
     const { response, data } = await useAxios(`/glosa/uploadCsvGlosa`).post(formData);
@@ -83,9 +89,12 @@ const startEchoChannel = () => {
   channel.listen('ProgressCircular', (event: any) => {
     progress.value = Number(event.progress);
 
+
     if (progress.value == 100) {
       setTimeout(() => {
-        refLoading.value.stopLoading();
+        if (refLoading.value) {
+          refLoading.value.stopLoading();
+        }
         handleDialogVisible();
       }, 1000);
     }

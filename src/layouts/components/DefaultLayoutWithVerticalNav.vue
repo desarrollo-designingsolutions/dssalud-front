@@ -14,38 +14,55 @@ import { VerticalNavLayout } from '@layouts'
 import { useAuthenticationStore } from "@/stores/useAuthenticationStore"
 const authenticationStore = useAuthenticationStore();
 
+
 </script>
 
 <template>
-  <VerticalNavLayout :nav-items="navItems">
-    <!-- 👉 navbar -->
-    <template #navbar="{ toggleVerticalOverlayNavActive }">
-      <div class="d-flex h-100 align-center">
-        <IconBtn id="vertical-nav-toggle-btn" class="ms-n3 d-lg-none" @click="toggleVerticalOverlayNavActive(true)">
-          <VIcon size="26" icon="tabler-menu-2" />
-        </IconBtn>
+  <div>
+    <ChannelsGlobal />
 
-        <NavbarThemeSwitcher />
+    <VerticalNavLayout :nav-items="navItems">
+      <!-- 👉 navbar -->
+      <template #navbar="{ toggleVerticalOverlayNavActive }">
+        <div class="d-flex h-100 align-center">
+          <IconBtn id="vertical-nav-toggle-btn" class="ms-n3 d-lg-none" @click="toggleVerticalOverlayNavActive(true)">
+            <VIcon size="26" icon="tabler-menu-2" />
+          </IconBtn>
 
-        <VSpacer />
-        <ProgressCircularChannel :channel="'assignment.' + authenticationStore.user.id"
-          tooltipText="Cargando asignaciones" />
-        <NavBarI18n v-if="themeConfig.app.i18n.enable && themeConfig.app.i18n.langConfig?.length"
-          :languages="themeConfig.app.i18n.langConfig" />
-        <NavBarNotificationBell class="me-1" />
-        <UserProfile />
-      </div>
-    </template>
+          <NavbarThemeSwitcher />
 
-    <!-- 👉 Pages -->
-    <slot />
+          <VSpacer />
 
-    <!-- 👉 Footer -->
-    <template #footer>
-      <Footer />
-    </template>
 
-    <!-- 👉 Customizer -->
-    <!-- <TheCustomizer /> -->
-  </VerticalNavLayout>
+          <ProgressCircularChannel :channel="'assignment.' + authenticationStore.user.id"
+            tooltipText="Cargando asignaciones" />
+
+          <ProgressCircularChannel :channel="'glosa.' + authenticationStore.user.id" tooltipText="Cargando glosas" />
+
+          <ProgressCircularChannel :channel="'glosa_service_jobs.' + authenticationStore.user.id"
+            tooltipText="Cargando servicios" />
+
+
+          <NavBarI18n v-if="themeConfig.app.i18n.enable && themeConfig.app.i18n.langConfig?.length"
+            :languages="themeConfig.app.i18n.langConfig" />
+          <NavBarNotificationBell class="me-1" />
+          <UserProfile />
+        </div>
+      </template>
+
+      <!-- 👉 Pages -->
+      <slot />
+
+      <!-- 👉 Footer -->
+      <template #footer>
+        <Footer />
+      </template>
+
+      <!-- 👉 Customizer -->
+      <!-- <TheCustomizer /> -->
+    </VerticalNavLayout>
+
+
+  </div>
+
 </template>

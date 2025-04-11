@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import ModalFormMasiveGlosa from "@/pages/Glosa/Components/ModalFormMasive.vue";
 import ModalListGlosa from "@/pages/Glosa/Components/ModalList.vue";
-import ModalErrorsGlosas from "@/pages/InvoiceAudit/Components/ModalErrorsGlosas.vue";
 import ModalShowFiles from "@/pages/InvoiceAudit/Components/ModalShowFiles.vue";
 import ModalUploadGlosaFileCsv from "@/pages/InvoiceAudit/Components/ModalUploadGlosaFileCsv.vue";
 import { useAuthenticationStore } from "@/stores/useAuthenticationStore";
@@ -112,7 +111,13 @@ const openModalShowFiles = () => {
 //ModalUploadGlosaFileCsv
 const refModalUploadGlosaFileCsv = ref()
 const openModalUploadGlosaFileCsv = () => {
-  refModalUploadGlosaFileCsv.value.openModal()
+  refModalUploadGlosaFileCsv.value.openModal({
+    assignment_batch_id: assignment_batch_id,
+    third_id: third_id,
+    invoice_audit_id: invoice_audit_id,
+    patient_id: patient_id,
+    user_id: authenticationStore.user.id,
+  })
 }
 
 
@@ -158,25 +163,35 @@ const openModalListGlosa = (data: any) => {
   refModalListGlosa.value.openModal(data)
 }
 
-//ModalErrorsGlosas
-const refModalErrorsGlosas = ref()
-const openModalErrorsGlosas = (data: any) => {
-  refModalErrorsGlosas.value.openModal(data, authenticationStore.user.id)
-}
+
+const servicesIds = ref<Array<string>>([]);
+
+
+
+
+
+const channels = reactive({
+  invoiceAuditData: `invoice_audit.${invoice_audit_id}`,
+  glosa_service_jobs: `glosa_service_jobs.${authenticationStore.user.id}`,
+})
+
 
 // Función para iniciar y manejar el canal dinámicamente
 const startEchoChannel = () => {
-  const channel = window.Echo.channel(`glosaModalErrors.${authenticationStore.user.id}`);
-  channel.listen('ModalError', (event: any) => {
-    if (event.errors.length > 0) {
-      openModalErrorsGlosas(event.errors);
-    }
+  const channelInvoiceAuditData = window.Echo.channel(channels.invoiceAuditData);
+  channelInvoiceAuditData.listen('ChangeInvoiceAuditData', (event: any) => {
+
+    console.log("event", event)
+    value_glosa.value = event.data.value_glosa
+    value_approved.value = event.data.value_approved
   });
+
 };
 
-startEchoChannel()
+onMounted(() => {
+  startEchoChannel()
+})
 
-const servicesIds = ref<Array<string>>([]);
 
 </script>
 
@@ -293,7 +308,10 @@ const servicesIds = ref<Array<string>>([]);
         </span>
 
         <div class="d-flex justify-end gap-3 flex-wrap ">
-          <ProgressCircularChannel :channel="'glosa.' + authenticationStore.user.id" tooltipText="Cargando glosas" />
+
+          <!-- <ProgressCircularChannel :channel="'glosa.' + authenticationStore.user.id" tooltipText="Cargando glosas" /> -->
+
+
           <VBtn @click="openModalShowFiles">
             <template #prepend>
               <VIcon start icon="tabler-files" />
@@ -375,6 +393,5 @@ const servicesIds = ref<Array<string>>([]);
 
     <ModalListGlosa ref="refModalListGlosa"></ModalListGlosa>
 
-    <ModalErrorsGlosas ref="refModalErrorsGlosas" />
   </div>
 </template>

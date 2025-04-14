@@ -41,6 +41,7 @@ const optionsTable = {
   paramsGlobal: {
     user_id: authenticationStore.user.id,
     assignment_batch_id: assignment_batch_id,
+    company_id: authenticationStore.company.id,
   }
 }
 

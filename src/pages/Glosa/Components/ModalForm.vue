@@ -104,6 +104,7 @@ const submitForm = async () => {
     const url = form.value.id ? `/glosa/update/${form.value.id}` : `/glosa/store`
 
     form.value.user_id = authenticationStore.user.id;
+    form.value.company_id = authenticationStore.company.id;
 
     isLoading.value = true;
     const { data, response } = await useAxios(url).post({

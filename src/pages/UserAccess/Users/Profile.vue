@@ -146,7 +146,6 @@ const openModalQuestion = (response: IImageSelected) => {
     </VCard>
 
     <ModalChangePassword ref="refModalChangePassword" />
-    <ModalChangePhotoProfile ref="refModalChangePhotoProfile" />
     <ModalQuestion ref="refModalQuestion" />
 
   </div>

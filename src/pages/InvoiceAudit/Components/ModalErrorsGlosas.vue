@@ -56,7 +56,7 @@ const downloadCsv = async () => {
   loading.excel = false;
 
   if (response.status == 200 && data) {
-    downloadExcelBase64(data.excel, "glosas", ".csv")
+    downloadExcelBase64(data.excel, "Glosas", ".csv")
   }
 }
 

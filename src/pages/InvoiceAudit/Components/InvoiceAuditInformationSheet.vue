@@ -31,6 +31,8 @@ const router = useRouter();
 
 const route = useRoute();
 
+const refModalQuestion = ref()
+
 const assignment_batch_id = route.params.assignment_batch_id;
 const third_id = route.params.third_id;
 const invoice_audit_id = route.params.invoice_audit_id;
@@ -170,6 +172,14 @@ const startEchoChannel = () => {
   channel.listen('ModalError', (event: any) => {
     if (event.errors.length > 0) {
       openModalErrorsGlosas(event.errors);
+    } else {
+      if (refModalQuestion.value) {
+        refModalQuestion.value.componentData.isDialogVisible = true;
+        refModalQuestion.value.componentData.showBtnCancel = false;
+        refModalQuestion.value.componentData.btnSuccessText = 'Ok';
+        refModalQuestion.value.componentData.title = 'Glosas cargadas exitosamente.';
+        refModalQuestion.value.componentData.principalIcon = 'tabler-check';
+      }
     }
   });
 };
@@ -376,5 +386,7 @@ const servicesIds = ref<Array<string>>([]);
     <ModalListGlosa ref="refModalListGlosa"></ModalListGlosa>
 
     <ModalErrorsGlosas ref="refModalErrorsGlosas" />
+
+    <ModalQuestion ref="refModalQuestion" />
   </div>
 </template>

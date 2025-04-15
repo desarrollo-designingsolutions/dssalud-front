@@ -42,6 +42,8 @@ const optionsTable = {
   },
   paramsGlobal: {
     company_id: authenticationStore.company.id,
+    user_id: authenticationStore.user.id,
+
   }
 }
 
@@ -83,6 +85,14 @@ const openModalUploadGlosaFileCsv = () => {
 }
 
 
+const tableLoading = ref(false); // Estado de carga de la tabla
+
+// Método para refrescar los datos
+const refreshTable = () => {
+  if (refTableFull.value) {
+    refTableFull.value.fetchTableData(null, false, true); // Forzamos la búsqueda
+  }
+};
 </script>
 
 <template>
@@ -127,12 +137,12 @@ const openModalUploadGlosaFileCsv = () => {
           </VCardTitle>
 
           <VCardText>
-            <FilterDialogNew :options-filter="optionsFilter">
+            <FilterDialogNew :options-filter="optionsFilter" @force-search="refreshTable" :table-loading="tableLoading">
             </FilterDialogNew>
           </VCardText>
 
           <VCardText class="mt-2">
-            <TableFullNew ref="refTableFull" :options="optionsTable">
+            <TableFullNew ref="refTableFull" :options="optionsTable" @update:loading="tableLoading = $event">
 
               <template #item.invoice_number="{ item }">
                 <div style="cursor: pointer;" @click="goViewPatients({ id: item.id })">

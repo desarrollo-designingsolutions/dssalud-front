@@ -92,6 +92,7 @@ const optionsTable = {
   showSelect: true,
   paramsGlobal: {
     company_id: authenticationStore.company.id,
+    user_id: authenticationStore.user.id,
   },
 }
 

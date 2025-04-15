@@ -48,57 +48,69 @@ const goViewThirds = (data: { id: number | null } = { id: null }) => {
 
 }
 
+const tableLoading = ref(false); // Estado de carga de la tabla
+
+// Método para refrescar los datos
+const refreshTable = () => {
+  if (refTableFull.value) {
+    refTableFull.value.fetchTableData(null, false, true); // Forzamos la búsqueda
+  }
+};
+
 </script>
 
 <template>
+  <div>
+    <CountAllData :user_id="authenticationStore.user.id" />
 
-  <CountAllData :user_id="authenticationStore.user.id" />
+    <VRow>
+      <VCol>
 
-  <VRow>
-    <VCol>
+        <VCard>
+          <VCardTitle class="d-flex justify-space-between">
+            <span>
+              Auditorias
+            </span>
+          </VCardTitle>
 
-      <VCard>
-        <VCardTitle class="d-flex justify-space-between">
-          <span>
-            Auditorias
-          </span>
-        </VCardTitle>
+          <VCardText>
+            <FilterDialogNew :options-filter="optionsFilter" @force-search="refreshTable" :table-loading="tableLoading">
+            </FilterDialogNew>
+          </VCardText>
 
-        <VCardText>
-          <FilterDialogNew :options-filter="optionsFilter">
-          </FilterDialogNew>
-        </VCardText>
+          <VCardText class="mt-2">
+            <TableFullNew ref="refTableFull" :options="optionsTable" @update:loading="tableLoading = $event">
 
-        <VCardText class="mt-2">
-          <TableFullNew ref="refTableFull" :options="optionsTable">
+              <template #item.description="{ item }">
+                <div style="cursor: pointer;" @click="goViewThirds({ id: item.id })">
+                  {{ item.description }}
+                </div>
+              </template>
 
-            <template #item.description="{ item }">
-              <div style="cursor: pointer;" @click="goViewThirds({ id: item.id })">
-                {{ item.description }}
-              </div>
-            </template>
+              <template #item.count_invoice="{ item }">
+                <div style="cursor: pointer;" @click="goViewThirds({ id: item.id })">
+                  {{ item.count_invoice }}
+                </div>
+              </template>
 
-            <template #item.count_invoice="{ item }">
-              <div style="cursor: pointer;" @click="goViewThirds({ id: item.id })">
-                {{ item.count_invoice }}
-              </div>
-            </template>
+              <template #item.count_invoice_pending="{ item }">
+                <div style="cursor: pointer;" @click="goViewThirds({ id: item.id })">
+                  {{ item.count_invoice_pending }}
+                </div>
+              </template>
 
-            <template #item.count_invoice_pending="{ item }">
-              <div style="cursor: pointer;" @click="goViewThirds({ id: item.id })">
-                {{ item.count_invoice_pending }}
-              </div>
-            </template>
+              <template #item.count_invoice_completed="{ item }">
+                <div style="cursor: pointer;" @click="goViewThirds({ id: item.id })">
+                  {{ item.count_invoice_completed }}
+                </div>
+              </template>
 
-            <template #item.count_invoice_completed="{ item }">
-              <div style="cursor: pointer;" @click="goViewThirds({ id: item.id })">
-                {{ item.count_invoice_completed }}
-              </div>
-            </template>
+            </TableFullNew>
+          </VCardText>
+        </VCard>
+      </VCol>
+    </VRow>
 
-          </TableFullNew>
-        </VCardText>
-      </VCard>
-    </VCol>
-  </VRow>
+  </div>
+
 </template>

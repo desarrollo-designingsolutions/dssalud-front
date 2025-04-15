@@ -22,15 +22,15 @@ const openModal = async (element: any, userId: string) => {
 
 const openJson = async (url: any) => {
   console.log(url)
-  // loading.excel = true;
+  loading.getData = true;
   const { data, response } = await useAxios("/glosa/getContentJson/").post({
       url_json: url
   })
 
-  // loading.excel = false;
+  loading.getData = false;
 
   if (response.status == 200 && data) {
-
+    errorMessages.value = data.data;
   }
 }
 

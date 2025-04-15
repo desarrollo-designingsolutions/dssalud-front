@@ -180,26 +180,6 @@ const channels = reactive({
   glosa_service_jobs: `glosa_service_jobs.${authenticationStore.user.id}`,
 })
 
-
-// Función para iniciar y manejar el canal dinámicamente
-const startEchoChannel = () => {
-  const channel = window.Echo.channel(`glosaModalErrors.${authenticationStore.user.id}`);
-  channel.listen('ModalError', (event: any) => {
-    if (event.errors.length > 0) {
-      openModalErrorsGlosas(event.errors);
-    } else {
-      if (refModalQuestion.value) {
-        refModalQuestion.value.componentData.isDialogVisible = true;
-        refModalQuestion.value.componentData.showBtnCancel = false;
-        refModalQuestion.value.componentData.btnSuccessText = 'Ok';
-        refModalQuestion.value.componentData.title = 'Glosas cargadas exitosamente.';
-        refModalQuestion.value.componentData.principalIcon = 'tabler-check';
-      }
-    }
-  });
-};
-
-
 const channelInvoiceAuditData = window.Echo.channel(channels.invoiceAuditData);
 channelInvoiceAuditData.listen('ChangeInvoiceAuditData', (event: any) => {
 
@@ -207,12 +187,6 @@ channelInvoiceAuditData.listen('ChangeInvoiceAuditData', (event: any) => {
   value_glosa.value = event.data.value_glosa
   value_approved.value = event.data.value_approved
 });
-
-onMounted(() => {
-  startEchoChannel()
-})
-
-
 </script>
 
 <template>

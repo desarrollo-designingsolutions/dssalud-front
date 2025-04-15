@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import ModalErrorsGlosas from "@/pages/InvoiceAudit/Components/ModalErrorsGlosas.vue";
 import { useAuthenticationStore } from "@/stores/useAuthenticationStore";
+
 const authenticationStore = useAuthenticationStore();
 
 //ModalErrorsGlosas
@@ -19,7 +20,7 @@ const channels = reactive({
 const startEchoChannel = () => {
   const channelGlosaModalErrors = window.Echo.channel(channels.glosaModalErrors);
   channelGlosaModalErrors.listen('ModalError', (event: any) => {
-    if (event.errors.length > 0) {
+    if (event.errors != null) {
       openModalErrorsGlosas(event.errors);
     }  else {
       if (refModalQuestion.value) {
@@ -45,6 +46,5 @@ onMounted(() => {
     <ModalErrorsGlosas ref="refModalErrorsGlosas" />
 
     <ModalQuestion ref="refModalQuestion" />
-
   </div>
 </template>

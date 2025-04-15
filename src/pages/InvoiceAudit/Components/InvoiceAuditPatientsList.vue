@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import ModalErrorsGlosas from "@/pages/InvoiceAudit/Components/ModalErrorsGlosas.vue";
 import ModalUploadGlosaFileCsv from "@/pages/InvoiceAudit/Components/ModalUploadGlosaFileCsv.vue";
 
 import { useAuthenticationStore } from "@/stores/useAuthenticationStore";
@@ -74,33 +73,46 @@ const downloadExport = async () => {
     invoice_audit_id: invoice_audit_id,
     user_id: authenticationStore.user.id,
     from: "patients",
-
   })
 }
 
 //ModalUploadGlosaFileCsv
 const refModalUploadGlosaFileCsv = ref()
 const openModalUploadGlosaFileCsv = () => {
-  refModalUploadGlosaFileCsv.value.openModal()
+  refModalUploadGlosaFileCsv.value.openModal({
+    assignment_batch_id: assignment_batch_id,
+    third_id: third_id,
+    invoice_audit_id: invoice_audit_id,
+    user_id: authenticationStore.user.id,
+  })
 }
 
-//ModalErrorsGlosas
-const refModalErrorsGlosas = ref()
-const openModalErrorsGlosas = (data: any) => {
-  refModalErrorsGlosas.value.openModal(data, authenticationStore.user.id)
-}
 
-// Función para iniciar y manejar el canal dinámicamente
-const startEchoChannel = () => {
-  const channel = window.Echo.channel(`glosaModalErrors.${authenticationStore.user.id}`);
-  channel.listen('ModalError', (event: any) => {
-    if (event.errors.length > 0) {
-      openModalErrorsGlosas(event.errors);
-    }
-  });
-};
 
-startEchoChannel()
+
+// const disbaledBtn = ref(false)
+// const channels = reactive({
+//   glosa: `glosa.${authenticationStore.user.id}`,
+// })
+
+// // Función para iniciar y manejar el canal dinámicamente
+// const startEchoChannel = () => {
+//   const channelGlosaModalErrors = window.Echo.channel(channels.glosa);
+//   channelGlosaModalErrors.listen('ProgressCircular', (event: any) => {
+//     const progress = Number(event.progress);
+
+//     if (progress != 100) {
+//       disbaledBtn.value = true;
+//     }
+//     if (progress == 100) {
+//       disbaledBtn.value = false;
+//     }
+//   });
+// };
+
+// startEchoChannel()
+
+
 </script>
 
 <template>
@@ -118,8 +130,10 @@ startEchoChannel()
 
 
             <div class="d-flex justify-end gap-3 flex-wrap ">
-              <ProgressCircularChannel :channel="'glosa.' + authenticationStore.user.id"
-                tooltipText="Cargando glosas" />
+
+              <!-- <ProgressCircularChannel :channel="'glosa.' + authenticationStore.user.id"
+                tooltipText="Cargando glosas" /> -->
+
               <VBtn @click="goViewInvoiceAuditList">
                 Regresar
               </VBtn>
@@ -212,7 +226,6 @@ startEchoChannel()
 
     <ModalUploadGlosaFileCsv ref="refModalUploadGlosaFileCsv" />
 
-    <ModalErrorsGlosas ref="refModalErrorsGlosas" />
 
 
   </div>

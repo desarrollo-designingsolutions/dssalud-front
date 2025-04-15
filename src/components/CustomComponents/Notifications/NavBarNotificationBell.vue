@@ -166,7 +166,7 @@ window.Echo.channel('user.' + authenticationStore.user.id)
 
 
   })
-  .listen('.task-notification', (event) => {
+  .listen('.bell-notification', (event) => {
     notifications.value.unshift(event)
 
     unreadCount.value = event.activeNotificationsCount

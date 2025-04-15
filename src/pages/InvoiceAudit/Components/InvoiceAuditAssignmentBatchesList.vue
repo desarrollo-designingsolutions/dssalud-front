@@ -32,6 +32,7 @@ const optionsTable = {
   },
   paramsGlobal: {
     user_id: authenticationStore.user.id,
+    company_id: authenticationStore.company.id,
   }
 }
 

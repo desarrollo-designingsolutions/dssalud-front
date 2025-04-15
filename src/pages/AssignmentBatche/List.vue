@@ -22,6 +22,9 @@ const refTableFull = ref()
 
 const optionsTable = {
   url: "/assignmentBatche/paginate",
+  paramsGlobal: {
+    company_id: authenticationStore.company.id,
+  },
   headers: [
     { key: 'description', title: 'Descripcion' },
     { key: 'count_invoice', title: 'Cantidad de Facturas', sortable: false },

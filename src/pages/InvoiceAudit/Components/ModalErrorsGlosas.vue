@@ -24,7 +24,7 @@ const inputsTableFilter = [
   { title: 'Fila', key: 'row' },
   { title: 'Valor', key: 'value' },
   // { title: 'Data', key: 'data' },
-  { title: 'Errors', key: 'errors' },
+  { title: 'Mensaje de error', key: 'errors' },
 ]
 
 const options = ref({ page: 1, itemsPerPage: 10, sortBy: [''], sortDesc: [false] })
@@ -56,7 +56,7 @@ const downloadCsv = async () => {
   loading.excel = false;
 
   if (response.status == 200 && data) {
-    downloadExcelBase64(data.excel, "glosas", ".csv")
+    downloadExcelBase64(data.excel, "Glosas", ".csv")
   }
 }
 
@@ -84,7 +84,9 @@ defineExpose({
               <AppTextField v-model="search" density="compact" placeholder="Search ..."
                 append-inner-icon="tabler-search" single-line hide-details dense outlined clearable />
             </VCol>
-            <VCol cols="12" sm="6" class="d-flex justify-end">
+
+
+            <VCol cols="12" sm="6" class="d-flex justify-end gap-3 flex-wrap">
               <VBtn :loading="loading.excel" :disabled="loading.excel" @click="downloadExcel">Exportar a Excel</VBtn>
               <VBtn :loading="loading.excel" :disabled="loading.excel" @click="downloadCsv">Exportar CSV</VBtn>
             </VCol>

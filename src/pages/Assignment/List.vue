@@ -24,6 +24,9 @@ const refTableFull = ref()
 
 const optionsTable = {
   url: "/assignment/paginateThirds/" + assignment_batch_id,
+  paramsGlobal: {
+    company_id: authenticationStore.company.id,
+  },
   headers: [
     { key: 'nit', title: 'Nit' },
     { key: 'name', title: 'Razón Social' },

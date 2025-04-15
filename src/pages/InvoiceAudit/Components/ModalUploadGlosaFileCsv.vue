@@ -38,6 +38,7 @@ const submitForm = async () => {
     formData.append("patient_id", String(dataParams.value.patient_id ?? null));
     formData.append("third_id", String(dataParams.value.third_id ?? null));
     formData.append("assignment_batch_id", String(dataParams.value.assignment_batch_id ?? null));
+    formData.append("company_id", String(authenticationStore.company.id ?? null));
 
 
     isLoading.value = true;

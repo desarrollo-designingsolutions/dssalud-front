@@ -30,6 +30,8 @@ const router = useRouter();
 
 const route = useRoute();
 
+const refModalQuestion = ref()
+
 const assignment_batch_id = route.params.assignment_batch_id;
 const third_id = route.params.third_id;
 const invoice_audit_id = route.params.invoice_audit_id;
@@ -179,24 +181,13 @@ const channels = reactive({
   glosa_service_jobs: `glosa_service_jobs.${authenticationStore.user.id}`,
 })
 
+const channelInvoiceAuditData = window.Echo.channel(channels.invoiceAuditData);
+channelInvoiceAuditData.listen('ChangeInvoiceAuditData', (event: any) => {
 
-// Función para iniciar y manejar el canal dinámicamente
-const startEchoChannel = () => {
-  const channelInvoiceAuditData = window.Echo.channel(channels.invoiceAuditData);
-  channelInvoiceAuditData.listen('ChangeInvoiceAuditData', (event: any) => {
-
-    console.log("event", event)
-    value_glosa.value = event.data.value_glosa
-    value_approved.value = event.data.value_approved
-  });
-
-};
-
-onMounted(() => {
-  startEchoChannel()
-})
-
-
+  console.log("event", event)
+  value_glosa.value = event.data.value_glosa
+  value_approved.value = event.data.value_approved
+});
 </script>
 
 <template>
@@ -397,5 +388,8 @@ onMounted(() => {
 
     <ModalListGlosa ref="refModalListGlosa"></ModalListGlosa>
 
+    <ModalErrorsGlosas ref="refModalErrorsGlosas" />
+
+    <ModalQuestion ref="refModalQuestion" />
   </div>
 </template>

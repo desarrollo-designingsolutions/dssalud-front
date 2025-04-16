@@ -146,11 +146,12 @@ const openModalQuestion = () => {
 
 const showBtnsView = ref(true);
 const patientsIds = ref<Array<string>>([]);
+const refCountAllData = ref()
 
 const successFinalizedAudit = async () => {
   isLoadingSuccessFinalizedAudit.value = true;
   const { data, response } = await useAxios(`/invoiceAudit/successFinalizedAudit`).post({
-    patients_ids: patientsIds.value,    
+    patients_ids: patientsIds.value,
     invoice_audit_id: invoice_audit_id,
     assignment_batch_id: assignment_batch_id,
     company_id: authenticationStore.company.id,
@@ -160,9 +161,9 @@ const successFinalizedAudit = async () => {
 
   if (response.status == 200 && data && data.code == 200) {
     showBtnsView.value = false
+    refCountAllData.value.getData()
   }
 }
-
 
 
 </script>
@@ -170,7 +171,7 @@ const successFinalizedAudit = async () => {
 <template>
   <div>
 
-    <CountAllData :assignment_batch_id="assignment_batch_id" :third_id="third_id" />
+    <CountAllData ref="refCountAllData" :assignment_batch_id="assignment_batch_id" :third_id="third_id" />
 
     <VRow>
       <VCol>

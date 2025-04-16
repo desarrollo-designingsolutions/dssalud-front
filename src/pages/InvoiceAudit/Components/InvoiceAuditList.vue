@@ -121,6 +121,7 @@ const openModalQuestion = () => {
 
 const showBtnsView = ref(true);
 const invoiceAuditIds = ref<Array<string>>([]);
+const refCountAllData = ref()
 
 const successFinalizedAudit = async () => {
   isLoadingSuccessFinalizedAudit.value = true;
@@ -134,14 +135,17 @@ const successFinalizedAudit = async () => {
 
   if (response.status == 200 && data && data.code == 200) {
     showBtnsView.value = false
+    refCountAllData.value.getData()
+
   }
 }
+
 
 </script>
 
 <template>
   <div>
-    <CountAllData :assignment_batch_id="assignment_batch_id" :third_id="third_id"
+    <CountAllData ref="refCountAllData" :assignment_batch_id="assignment_batch_id" :third_id="third_id"
       :user_id="authenticationStore.user.id" />
 
     <VRow>

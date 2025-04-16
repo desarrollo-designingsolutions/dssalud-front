@@ -133,6 +133,7 @@ const successFinalizedAudit = async () => {
   if (response.status == 200 && data && data.code == 200) {
     showBtnsView.value = false
     refCountAllData.value.getData()
+    refreshTable()
   }
 }
 

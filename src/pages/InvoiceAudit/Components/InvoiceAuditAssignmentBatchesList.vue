@@ -78,7 +78,7 @@ const openModalQuestion = () => {
 
 const showBtnsView = ref(true);
 const assignmentsBatchsIds = ref<Array<string>>([]);
-    const refCountAllData = ref()
+const refCountAllData = ref()
 
 const successFinalizedAudit = async () => {
   isLoadingSuccessFinalizedAudit.value = true;
@@ -91,10 +91,11 @@ const successFinalizedAudit = async () => {
 
   if (response.status == 200 && data && data.code == 200) {
     showBtnsView.value = false
-        refCountAllData.value.getData()
+    refCountAllData.value.getData()
+    refreshTable()
   }
 }
- 
+
 </script>
 
 <template>
@@ -128,7 +129,8 @@ const successFinalizedAudit = async () => {
           </VCardText>
 
           <VCardText class="mt-2">
-            <TableFullNew  v-model:selected="assignmentsBatchsIds" ref="refTableFull" :options="optionsTable" @update:loading="tableLoading = $event">
+            <TableFullNew v-model:selected="assignmentsBatchsIds" ref="refTableFull" :options="optionsTable"
+              @update:loading="tableLoading = $event">
 
               <template #item.description="{ item }">
                 <div style="cursor: pointer;" @click="goViewThirds({ id: item.id })">

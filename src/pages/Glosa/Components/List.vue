@@ -10,13 +10,17 @@ const props = defineProps({
   },
   total_value: {
     type: String,
+  },
+  showBtnsView: {
+    type: Boolean,
+    default: true
   }
 })
 
 //TABLE
 const refTableFull = ref()
 
-const optionsTable = {
+const optionsTable = ref({
   url: "/glosa/paginate",
   headers: [
     { key: 'user_full_name', title: 'Usuario' },
@@ -31,10 +35,14 @@ const optionsTable = {
   },
   actions: {
     delete: {
-      url: '/glosa/delete'
-    }
+      url: '/glosa/delete',
+      show: props.showBtnsView // Asignar el valor de props.showBtnsView
+    },
+    edit: { 
+      show: props.showBtnsView // Asignar el valor de props.showBtnsView
+    },
   }
-}
+})
 
 
 //FILTER
@@ -87,7 +95,7 @@ const handleForceSearch = (params) => {
         </span>
 
         <div class="d-flex justify-end gap-3 flex-wrap ">
-          <VBtn @click="openModalFormCreate()">
+          <VBtn v-if="showBtnsView" @click="openModalFormCreate()">
             Crear Glosa
           </VBtn>
         </div>
@@ -101,7 +109,7 @@ const handleForceSearch = (params) => {
 
       <VCardText class="mt-2">
         <TableFullNew ref="refTableFull" :options="optionsTable" @edit="openModalFormEdit" @view="openModalFormView"
-          @update:loading="tableLoading = $event" :disable-url-update="disableUrlUpdate">
+          @update:loading="tableLoading = $event" :disable-url-update="disableUrlUpdate" >
 
         </TableFullNew>
 

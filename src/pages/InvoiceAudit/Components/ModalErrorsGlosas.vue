@@ -23,7 +23,7 @@ const openModal = async (element: any, userId: string) => {
 const openJson = async (url: any) => {
   console.log(url)
   loading.getData = true;
-  const { data, response } = await useAxios("/glosa/getContentJson/").post({
+  const { data, response } = await useAxios("/glosa/getContentJson").post({
       url_json: url
   })
 

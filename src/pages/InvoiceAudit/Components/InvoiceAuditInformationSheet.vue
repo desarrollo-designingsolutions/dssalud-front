@@ -186,12 +186,7 @@ const openModalListGlosa = (data: any) => {
   })
 }
 
-
 const servicesIds = ref<Array<string>>([]);
-
-
-
-
 
 const channels = reactive({
   invoiceAuditData: `invoice_audit.${invoice_audit_id}`,
@@ -215,20 +210,14 @@ const openModalQuestion = () => {
     refModalQuestion.value.componentData.isDialogVisible = true;
     refModalQuestion.value.componentData.btnSuccessText = 'Si';
     refModalQuestion.value.componentData.btnCancelText = 'No';
-    refModalQuestion.value.componentData.title = '¿Esta seguro que deseea finalizar la auditoria?';
-    refModalQuestion.value.componentData.html = 'Una vez finalizada la auditoria no podra realizar cambios en la misma.';
+    refModalQuestion.value.componentData.title = '¿Esta seguro que deseea finalizar la auditoria?'; 
   }
 }
 
 const successFinalizedAudit = async () => {
   isLoadingSuccessFinalizedAudit.value = true;
   const { data, response } = await useAxios("/invoiceAudit/successFinalizedAudit").post({
-    invoice_audit_id: invoice_audit_id,
-    patient_id: patient_id,
-    assignment_batch_id: assignment_batch_id,
-    third_id: third_id,
-    company_id: authenticationStore.company.id,
-    user_id: authenticationStore.user.id,
+    assignments_ids: [assignment.value.id], 
   })
   isLoadingSuccessFinalizedAudit.value = false;
 

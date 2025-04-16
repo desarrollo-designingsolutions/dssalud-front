@@ -160,30 +160,30 @@ const successFinalizedAudit = async () => {
               <VBtn @click="goViewAssignmentList">
                 Regresar
               </VBtn>
-
-              <VBtn @click="openModalQuestion" :disabled="isLoadingSuccessFinalizedAudit"
-                :loading="isLoadingSuccessFinalizedAudit">
-                <template #prepend>
-                  <VIcon start icon="tabler-files" />
-                </template>
-                Finalizar auditoria
-              </VBtn>
+ 
 
               <VBtn color="primary" append-icon="tabler-chevron-down">
                 Más Acciones
                 <VMenu activator="parent" :loading="isLoadingExcel">
                   <VList>
-                    <VListItem @click="openModalUploadGlosaFileCsv()">
+                    <VListItem v-if="showBtnsView" @click="openModalUploadGlosaFileCsv()">
                       <template #prepend>
                         <VIcon start icon="tabler-file-upload" />
                       </template>
                       <span>Importar</span>
                     </VListItem>
-                    <VListItem @click="downloadExport()">
+                    <VListItem v-if="showBtnsView" @click="downloadExport()">
                       <template #prepend>
                         <VIcon start icon="tabler-file-download" />
                       </template>
                       <span>Exportar</span>
+                    </VListItem>
+
+                    <VListItem v-if="showBtnsView" @click="openModalQuestion()">
+                      <template #prepend>
+                        <VIcon start icon="tabler-file-download" />
+                      </template>
+                      <span>Finalizar auditoria</span>
                     </VListItem>
 
                   </VList>

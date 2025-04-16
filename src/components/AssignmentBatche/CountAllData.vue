@@ -1,5 +1,10 @@
 <script setup lang="ts">
 
+import { useAuthenticationStore } from "@/stores/useAuthenticationStore";
+
+const authenticationStore = useAuthenticationStore();
+
+
 const props = defineProps({
   assignment_batch_id: {
     type: String,
@@ -88,7 +93,8 @@ const getData = async()=>{
   const { data, response } = await useAxios(`/assignment/AssignmentCount`).post({
     assignment_batch_id: props.assignment_batch_id,
     third_id: props.third_id,
-    user_id: props.user_id
+    user_id: props.user_id,
+    company_id: authenticationStore.company.id,
   });
   loading.value = false;
   

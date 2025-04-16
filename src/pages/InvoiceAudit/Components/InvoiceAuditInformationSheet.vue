@@ -343,14 +343,7 @@ const successFinalizedAudit = async () => {
 
           <!-- <ProgressCircularChannel :channel="'glosa.' + authenticationStore.user.id" tooltipText="Cargando glosas" /> -->
 
-
-          <VBtn v-if="showBtnsView" @click="openModalQuestion" :disabled="isLoadingSuccessFinalizedAudit" :loading="isLoadingSuccessFinalizedAudit">
-            <template #prepend>
-              <VIcon start icon="tabler-files" />
-            </template>
-            Finalizar auditoria
-          </VBtn>
-          <VBtn v-if="showBtnsView" @click="openModalShowFiles">
+          <VBtn @click="openModalShowFiles">
             <template #prepend>
               <VIcon start icon="tabler-files" />
             </template>
@@ -386,6 +379,13 @@ const successFinalizedAudit = async () => {
                   <span>Descargar</span>
                 </VListItem>
 
+                <VListItem v-if="showBtnsView" @click="openModalQuestion()">
+                      <template #prepend>
+                        <VIcon start icon="tabler-file-download" />
+                      </template>
+                      <span>Finalizar auditoria</span>
+                    </VListItem>
+
               </VList>
             </VMenu>
           </VBtn>
@@ -396,7 +396,6 @@ const successFinalizedAudit = async () => {
         <FilterDialogNew :options-filter="optionsFilter" @force-search="refreshTable" :table-loading="tableLoading">
         </FilterDialogNew>
       </VCardText>
-
 
       <VCardText>
         <TableFullNew v-model:selected="servicesIds" ref="refTableFull" :options="optionsTable"

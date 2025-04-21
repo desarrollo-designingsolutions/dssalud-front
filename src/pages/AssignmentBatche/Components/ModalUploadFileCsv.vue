@@ -36,14 +36,17 @@ const submitForm = async () => {
     formData.append("user_id", String(authenticationStore.user.id));
 
     isLoading.value = true;
-    const { response, data } = await useApi(`/assignment/uploadCsv`).post(formData);
+    const { response, data } = await useAxios(`/assignment/uploadCsv`).post(formData);
     isLoading.value = false;
 
-    if (response.value?.ok && data.value) {
+    if (data.code == 422) {
+      handleDialogVisible();
+      toast('Se encontraron errores con la carga del archivo', '', "danger");
+    } else if (response.status == 200 && data) {
 
       progress.value = 0;
       refLoading.value.startLoading();
-      startEchoChannel(data.value); // Inicia el canal aquí
+      startEchoChannel(data); // Inicia el canal aquí
     }
   } else {
     if (refModalQuestion.value) {
@@ -78,13 +81,11 @@ const startEchoChannel = (data: any) => {
   channel.listen('ProgressCircular', (event: any) => {
 
     progress.value = Number(event.progress);
-    setTimeout(() => {
-      if (progress.value == 100) {
-        refLoading.value.stopLoading();
-        handleDialogVisible();
-        toast('Cargado Exitosamente', '', "success");
-      }
-    }, 1000);
+    if (progress.value == 100) {
+      refLoading.value.stopLoading();
+      handleDialogVisible();
+      toast('Cargado Exitosamente', '', "success");
+    }
   });
 };
 

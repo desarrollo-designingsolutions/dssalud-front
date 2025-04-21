@@ -61,7 +61,6 @@ declare module 'vue' {
     ListGroup: typeof import('./src/components/CustomComponents/Permissions/ListGroup.vue')['default']
     Loading: typeof import('./src/components/CustomComponents/Loading.vue')['default']
     ModalChangePassword: typeof import('./src/components/CustomComponents/ModalChangePassword.vue')['default']
-    ModalChangePhotoProfile: typeof import('./src/components/CustomComponents/ModalChangePhotoProfile.vue')['default']
     ModalFileForm: typeof import('./src/components/CustomComponents/File/ModalFileForm.vue')['default']
     ModalMassUpload: typeof import('./src/components/CustomComponents/File/ModalMassUpload.vue')['default']
     ModalQuestion: typeof import('./src/components/CustomComponents/ModalQuestion.vue')['default']

@@ -92,9 +92,6 @@ const esImagen = computed(() => {
 // Función para seleccionar archivo
 const seleccionarArchivo = async (item) => {
   fileSelected.value = item
-
-  console.log("item",item);
-  
   isLoading.value = true;
   const { data, response } = await useAxios(`/file/getUrlS3`).get({
     params:{

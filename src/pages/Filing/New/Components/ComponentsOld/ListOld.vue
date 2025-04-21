@@ -216,7 +216,7 @@ const refreshTable = () => {
             Más opciones
             <VMenu activator="parent">
               <VList>
-                <VListItem @click="openModalSupportMasiveFiles()" v-if="filingData.status == 'FILING_EST_008'">Subir
+                <VListItem @click="openModalSupportMasiveFiles()" v-if="filingData.status == 'FILINGINVOICE_EST_002'">Subir
                   soportes masivo
                 </VListItem>
                 <VListItem @click="() => { }">Descargar certificacion de radicación</VListItem>

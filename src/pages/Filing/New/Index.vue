@@ -43,6 +43,8 @@ const optionsTable = {
     { key: 'status', title: 'Estado' },
     { key: 'sumVr', title: 'Valor' },
     { key: 'filing_invoice_pre_radicated_count', title: 'Facturas preradicadas' },
+    { key: 'created_at', title: 'Fecha de creación' },
+    { key: 'user_full_name', title: 'Usuario' },
     { key: 'actions', title: 'Acciones' },
   ],
 }

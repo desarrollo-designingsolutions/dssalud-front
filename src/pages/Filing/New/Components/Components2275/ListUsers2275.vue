@@ -14,7 +14,7 @@ definePage({
   },
 });
 
-const { dataUser, servicesCount } = storeToRefs(useFilingInvoiceUserStore());
+const { dataUser, servicesCount ,dataInvoice} = storeToRefs(useFilingInvoiceUserStore());
 
 
 const route = useRoute();
@@ -74,6 +74,7 @@ const fetchUsers = async (opts = {}) => {
 
     if (response.value?.ok && data.value) {
       filingInvoice.value = data.value.filingInvoice;
+      dataInvoice.value = cloneObject(data.value.filingInvoice); 
       users.value = data.value.dataUsers;
       pagination.value = data.value.pagination;
       options.value.page = pagination.value.current_page;
@@ -134,11 +135,11 @@ const goBack = () => {
           <div class="info-box">
             <div class="info-row">
               <span class="info-title">Número de factura:</span>
-              <span class="info-value">FE</span>
+              <span class="info-value">{{ filingInvoice.invoice_number }}</span>
             </div>
             <div class="info-row">
               <span class="info-title">Cant. usuarios:</span>
-              <span class="info-value">1</span>
+              <span class="info-value">{{pagination.total}}</span>
             </div>
           </div>
         </div>

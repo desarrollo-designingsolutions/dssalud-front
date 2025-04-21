@@ -5,6 +5,8 @@ export const useFilingInvoiceUserStore = defineStore('useFilingInvoiceUserStore'
     dataUser: {
       arrayData: [] as Array<object>
     } as object,
+    dataInvoice: { 
+    } as object,
     servicesCount: {
       consultas: 0,
       procedimientos: 0,

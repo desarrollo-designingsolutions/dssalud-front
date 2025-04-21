@@ -7,7 +7,7 @@ const { dataList } = defineProps({
 })
 //table 
 const inputsTableFilter = ref([
-  { key: "num_factura", title: 'Número de la factura', sortable: true },
+  { key: "numFactura", title: 'Número de la factura', sortable: true },
   { key: "Codigo_del_prestador_de_servicios_de_salud", title: 'Código del prestador de servicios de salud', sortable: true },
   { key: "Tipo_de_identificacion_del_usuario", title: 'Tipo de identificación del usuario', sortable: true },
   { key: "numDocumentoIdentificacion", title: 'Número de identificación del usuario en el sistema', sortable: true },

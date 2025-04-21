@@ -138,11 +138,11 @@ const goBack = () => {
           <div class="info-box">
             <div class="info-row">
               <span class="info-title">Número de factura:</span>
-              <span class="info-value">FE</span>
+              <span class="info-value">{{ filingInvoice.invoice_number }}</span>
             </div>
             <div class="info-row">
               <span class="info-title">Cant. usuarios:</span>
-              <span class="info-value">1</span>
+              <span class="info-value">{{pagination.total}}</span>
             </div>
           </div>
         </div>

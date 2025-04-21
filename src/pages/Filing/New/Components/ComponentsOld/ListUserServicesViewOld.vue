@@ -22,7 +22,7 @@ definePage({
 
 
 
-const { dataUser, servicesCount } = storeToRefs(useFilingInvoiceUserStore());
+const { dataUser, servicesCount ,dataInvoice} = storeToRefs(useFilingInvoiceUserStore());
 const route = useRoute();
 onMounted(async () => {
   if (dataUser.value) {
@@ -35,6 +35,10 @@ onMounted(async () => {
     servicesCount.value.otrosServicios = dataUser.value.servicios.otrosServicios?.length ?? 0
   }
 });
+// Computed para sumar todos los valores de servicesCount
+const totalServices = computed(() => {
+  return Object.values(servicesCount.value).reduce((total, count) => total + count, 0);
+})
 
 const currentTab = ref(0);
 
@@ -60,6 +64,18 @@ const goBack = () => {
             <VTooltip location="top" transition="scale-transition" activator="parent" text="Regresar">
             </VTooltip>
           </VBtn>
+
+           <!-- Cuadro estilizado -->
+           <div class="info-box">
+            <div class="info-row">
+              <span class="info-title">Número de factura:</span>
+              <span class="info-value"> {{ dataInvoice.invoice_number }}</span>
+            </div>
+            <div class="info-row">
+              <span class="info-title">Cant. servicios:</span>
+              <span class="info-value">{{ totalServices }} </span>
+            </div>
+          </div>
         </div>
       </VCardTitle>
 
@@ -124,3 +140,57 @@ const goBack = () => {
     </VCard>
   </div>
 </template>
+<style scoped>
+.info-box {
+  /* Bordes redondeados */
+  padding: 10px;
+
+  /* Fondo gris claro */
+  border: 1px solid #e0e0e0;
+
+  /* Borde sutil */
+  border-radius: 8px;
+  background-color: #f5f5f5;
+
+  /* Espacio interno */
+  min-inline-size: 200px;
+
+  /* Ancho mínimo */
+}
+
+.info-row {
+  display: flex;
+
+  /* Título a la izquierda, valor a la derecha */
+  align-items: center;
+  justify-content: space-between;
+
+  /* Espacio vertical entre filas */
+  gap: 20px;
+  padding-block: 5px;
+  padding-inline: 0;
+
+  /* Separación adicional entre título y valor */
+}
+
+.info-title {
+  /* Color del texto */
+  flex-shrink: 0;
+
+  /* Título en negrita */
+  color: #333;
+  font-weight: bold;
+
+  /* Evita que el título se encoja demasiado */
+}
+
+.info-value {
+  color: #007bff;
+
+  /* Color del valor */
+  text-align: end;
+
+  /* Alinea el valor a la derecha */
+}
+</style>
+

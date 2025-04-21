@@ -75,6 +75,7 @@ const getFiles = async () => {
 
 // Estado para el archivo seleccionado
 const fileSelected = ref(null)
+const fileUrlS3 = ref<null | string>(null)
 
 // Determinar tipo de archivo
 const esPDF = computed(() => {
@@ -89,8 +90,22 @@ const esImagen = computed(() => {
 })
 
 // Función para seleccionar archivo
-const seleccionarArchivo = (item) => {
+const seleccionarArchivo = async (item) => {
   fileSelected.value = item
+
+  console.log("item",item);
+  
+  isLoading.value = true;
+  const { data, response } = await useAxios(`/file/getUrlS3`).get({
+    params:{
+      pathname:item.pathname
+    }
+  });
+  isLoading.value = false;
+
+  if (response.status == 200 && data) {
+    fileUrlS3.value = data.fileUrlS3
+  }
 }
 
 const viewFile = (pathname: any) => {
@@ -181,13 +196,13 @@ const paginationData = (tableItems: number) => {
 
             <!-- Área de previsualización -->
             <v-col cols="8">
-              <v-card v-if="fileSelected">
+              <v-card v-if="fileSelected"> 
                 <!-- Previsualización de PDF -->
-                <iframe v-if="esPDF" :src="storageBack(fileSelected.pathname)" width="100%"
+                <iframe v-if="esPDF" :src="fileUrlS3" width="100%"
                   style="block-size: 100vh;"></iframe>
 
                 <!-- Previsualización de Imagen -->
-                <v-img v-else-if="esImagen" :src="storageBack(fileSelected.pathname)" max-height="500" contain></v-img>
+                <v-img v-else-if="esImagen" :src="fileUrlS3" max-height="500" contain></v-img>
 
                 <!-- Mensaje para otros tipos de archivo -->
                 <v-card-text v-else>

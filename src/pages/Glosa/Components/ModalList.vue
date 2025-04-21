@@ -8,6 +8,7 @@ const emit = defineEmits(["execute"])
 
 const titleModal = ref<string>("Listado de Glosas")
 const isDialogVisible = ref<boolean>(false)
+const btnsView = ref<boolean>(false)
 const disabledFiledsView = ref<boolean>(false)
 const showList = ref<boolean>(false)
 
@@ -30,8 +31,9 @@ const handleDialogVisible = () => {
   handleClearForm()
 };
 
-const openModal = async ({ id, description, total_value_origin }: any, disabled: boolean = false) => {
+const openModal = async ({ id, description, total_value_origin, showBtnsView }: any, disabled: boolean = false) => {
   disabledFiledsView.value = disabled
+  btnsView.value = showBtnsView
 
   handleDialogVisible();
 
@@ -60,7 +62,7 @@ defineExpose({
         </div>
 
         <VCardText class="px-0">
-          <ListGlosa v-if="showList" :service_id="form.id" :total_value="form.total_value_origin"></ListGlosa>
+          <ListGlosa v-if="showList" :service_id="form.id" :total_value="form.total_value_origin" :showBtnsView="btnsView"></ListGlosa>
         </VCardText>
       </VCard>
     </VDialog>

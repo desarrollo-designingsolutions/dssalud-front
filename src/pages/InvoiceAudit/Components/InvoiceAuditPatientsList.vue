@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import ModalUploadGlosaFileCsv from "@/pages/InvoiceAudit/Components/ModalUploadGlosaFileCsv.vue";
-
 import { useAuthenticationStore } from "@/stores/useAuthenticationStore";
 import { useRouter } from 'vue-router';
+
+const { toast } = useToast();
 
 definePage({
   path: "invoiceAuditAssignmentList/invoice-audit/:assignment_batch_id/:third_id/:invoice_audit_id",
@@ -27,6 +28,7 @@ const invoice_audit_id = route.params.invoice_audit_id;
 const refTableFull = ref()
 
 const optionsTable = {
+  showSelect: true,
   url: `/invoiceAudit/paginatePatient/${assignment_batch_id}/${third_id}/${invoice_audit_id}`,
   headers: [
     { key: 'identification_number', title: 'Documento' },
@@ -44,6 +46,7 @@ const optionsTable = {
   },
   paramsGlobal: {
     company_id: authenticationStore.company.id,
+    user_id: authenticationStore.user.id,
   }
 }
 
@@ -113,12 +116,62 @@ const openModalUploadGlosaFileCsv = () => {
 // startEchoChannel()
 
 
+const tableLoading = ref(false); // Estado de carga de la tabla
+
+// Método para refrescar los datos
+const refreshTable = () => {
+  if (refTableFull.value) {
+    refTableFull.value.fetchTableData(null, false, true); // Forzamos la búsqueda
+  }
+};
+
+const isLoadingSuccessFinalizedAudit = ref<boolean>(false)
+
+//ModalQuestion
+const refModalQuestion = ref()
+
+const openModalQuestion = () => {
+  if (patientsIds.value.length > 0) {
+    if (refModalQuestion.value) {
+      refModalQuestion.value.componentData.isDialogVisible = true;
+      refModalQuestion.value.componentData.btnSuccessText = 'Si';
+      refModalQuestion.value.componentData.btnCancelText = 'No';
+      refModalQuestion.value.componentData.title = '¿Esta seguro que deseea finalizar la auditoria?';
+      refModalQuestion.value.componentData.subTitle = `Se han seleccionado ${patientsIds.value.length} registros. `;
+    }
+  } else {
+    toast("Debe seleccionar almenos un registro", "", "info")
+  }
+}
+
+const showBtnsView = ref(true);
+const patientsIds = ref<Array<string>>([]);
+const refCountAllData = ref()
+
+const successFinalizedAudit = async () => {
+  isLoadingSuccessFinalizedAudit.value = true;
+  const { data, response } = await useAxios(`/invoiceAudit/successFinalizedAudit`).post({
+    patients_ids: patientsIds.value,
+    invoice_audit_id: invoice_audit_id,
+    assignment_batch_id: assignment_batch_id,
+    company_id: authenticationStore.company.id,
+    user_id: authenticationStore.user.id,
+  })
+  isLoadingSuccessFinalizedAudit.value = false;
+
+  if (response.status == 200 && data && data.code == 200) {
+    showBtnsView.value = false
+    refCountAllData.value.getData()
+  }
+}
+
+
 </script>
 
 <template>
   <div>
 
-    <CountAllData :assignment_batch_id="assignment_batch_id" :third_id="third_id" />
+    <CountAllData ref="refCountAllData" :assignment_batch_id="assignment_batch_id" :third_id="third_id" />
 
     <VRow>
       <VCol>
@@ -136,23 +189,29 @@ const openModalUploadGlosaFileCsv = () => {
 
               <VBtn @click="goViewInvoiceAuditList">
                 Regresar
-              </VBtn>
+              </VBtn> 
 
               <VBtn color="primary" append-icon="tabler-chevron-down">
                 Más Acciones
                 <VMenu activator="parent" :loading="isLoadingExcel">
                   <VList>
-                    <VListItem @click="openModalUploadGlosaFileCsv()">
+                    <VListItem v-if="showBtnsView" @click="openModalUploadGlosaFileCsv()">
                       <template #prepend>
                         <VIcon start icon="tabler-file-upload" />
                       </template>
                       <span>Importar</span>
                     </VListItem>
-                    <VListItem @click="downloadExport()">
+                    <VListItem v-if="showBtnsView" @click="downloadExport()">
                       <template #prepend>
                         <VIcon start icon="tabler-file-download" />
                       </template>
                       <span>Exportar</span>
+                    </VListItem>
+                    <VListItem v-if="showBtnsView" @click="openModalQuestion()">
+                      <template #prepend>
+                        <VIcon start icon="tabler-file-download" />
+                      </template>
+                      <span>Finalizar auditoria</span>
                     </VListItem>
 
                   </VList>
@@ -162,12 +221,13 @@ const openModalUploadGlosaFileCsv = () => {
           </VCardTitle>
 
           <VCardText>
-            <FilterDialogNew :options-filter="optionsFilter">
+            <FilterDialogNew :options-filter="optionsFilter" @force-search="refreshTable" :table-loading="tableLoading">
             </FilterDialogNew>
           </VCardText>
 
           <VCardText class="mt-2">
-            <TableFullNew ref="refTableFull" :options="optionsTable">
+            <TableFullNew v-model:selected="patientsIds" ref="refTableFull" :options="optionsTable"
+              @update:loading="tableLoading = $event">
 
               <template #item.identification_number="{ item }">
                 <div style="cursor: pointer;" @click="goViewInformationSheet({ id: item.id })">
@@ -225,6 +285,9 @@ const openModalUploadGlosaFileCsv = () => {
     </VRow>
 
     <ModalUploadGlosaFileCsv ref="refModalUploadGlosaFileCsv" />
+
+    <ModalQuestion ref="refModalQuestion" @success="successFinalizedAudit" />
+
 
 
 

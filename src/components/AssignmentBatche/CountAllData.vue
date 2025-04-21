@@ -1,5 +1,10 @@
 <script setup lang="ts">
 
+import { useAuthenticationStore } from "@/stores/useAuthenticationStore";
+
+const authenticationStore = useAuthenticationStore();
+
+
 const props = defineProps({
   assignment_batch_id: {
     type: String,
@@ -78,16 +83,22 @@ const countData = ref<CountData[]>([
 
 const loading = ref<boolean>(false)
 
-onMounted(async () => {
+onMounted(() => {
+   getData()
+});
+
+const getData = async()=>{
+  
   loading.value = true;
   const { data, response } = await useAxios(`/assignment/AssignmentCount`).post({
     assignment_batch_id: props.assignment_batch_id,
     third_id: props.third_id,
-    user_id: props.user_id
+    user_id: props.user_id,
+    company_id: authenticationStore.company.id,
   });
   loading.value = false;
-
-
+  
+  
   if (response.status == 200 && data) {
     countData.value[0].value = data.countNumberProviders
     countData.value[1].value = data.outstandingInvoices
@@ -96,7 +107,10 @@ onMounted(async () => {
     countData.value[4].value = data.percentageProgress + '%'
     countData.value[4].progress = data.percentageProgress
   }
-});
+}
+defineExpose({
+  getData
+})
 </script>
 
 <template>

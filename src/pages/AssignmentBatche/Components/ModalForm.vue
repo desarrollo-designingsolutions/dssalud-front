@@ -19,7 +19,6 @@ const isLoading = ref<boolean>(false)
 const form = ref({
   id: null as null | string,
   description: null as null | string,
-  status: null as null | string,
   due_date: null as null | string,
   company_id: null as null | string,
 })
@@ -119,11 +118,6 @@ defineExpose({
                   :rules="[requiredValidator]" v-model="form.description" :error-messages="errorsBack.name"
                   @input="errorsBack.name = ''" />
               </VCol>
-              <VCol cols="12">
-                <AppTextField :requiredField="true" clearable :disabled="disabledFiledsView" label="Estado"
-                  :rules="[requiredValidator]" v-model="form.status" :error-messages="errorsBack.status"
-                  @input="errorsBack.status = ''" />
-              </VCol>
 
               <VCol cols="12">
                 <AppDateTimePicker :requiredField="true" clearable :disabled="disabledFiledsView"
@@ -143,12 +137,7 @@ defineExpose({
             Guardar
           </VBtn>
         </VCardText>
-
-
       </VCard>
     </VDialog>
-
-
-
   </div>
 </template>

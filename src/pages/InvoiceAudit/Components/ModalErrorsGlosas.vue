@@ -14,9 +14,26 @@ const errorMessages = ref([]);
 const user_id = ref<string>("");
 const openModal = async (element: any, userId: string) => {
   handleDialogVisible();
-  errorMessages.value = element
+
   user_id.value = userId
+
+  openJson(element);
 };
+
+const openJson = async (url: any) => {
+  console.log(url)
+  loading.getData = true;
+  const { data, response } = await useAxios("/glosa/getContentJson").post({
+      url_json: url
+  })
+
+  loading.getData = false;
+
+  if (response.status == 200 && data) {
+    errorMessages.value = data.data;
+  }
+}
+
 
 // headers
 const inputsTableFilter = [

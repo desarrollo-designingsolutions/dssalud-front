@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import ModalFormMasiveGlosa from "@/pages/Glosa/Components/ModalFormMasive.vue";
 import ModalListGlosa from "@/pages/Glosa/Components/ModalList.vue";
+import ModalErrorsGlosas from "@/pages/InvoiceAudit/Components/ModalErrorsGlosas.vue";
 import ModalShowFiles from "@/pages/InvoiceAudit/Components/ModalShowFiles.vue";
 import ModalUploadGlosaFileCsv from "@/pages/InvoiceAudit/Components/ModalUploadGlosaFileCsv.vue";
 import { useAuthenticationStore } from "@/stores/useAuthenticationStore";
@@ -18,7 +19,9 @@ definePage({
   },
 });
 
+const showBtnsView = ref(true);
 const invoiceAudit = ref({});
+const assignment = ref({});
 const third = ref({});
 const patient = ref({});
 const value_glosa = ref(0);
@@ -38,6 +41,7 @@ const patient_id = route.params.patient_id;
 //LOADING
 const isLoading = ref<boolean>(false)
 const isLoadingExcelList = ref<boolean>(false)
+const isLoadingSuccessFinalizedAudit = ref<boolean>(false)
 
 //FILTER
 const optionsFilter = ref({
@@ -55,14 +59,26 @@ const fetchData = async () => {
   const url = `/invoiceAudit/getInformationSheet/${third_id}/${invoice_audit_id}/${patient_id}`
 
   isLoading.value = true
-  const { data, response } = await useApi<any>(url).get();
+  const { data, response } = await useAxios(url).get({
+    params: {
+      company_id: authenticationStore.company.id,
+      user_id: authenticationStore.user.id,
+    }
+  });
 
-  if (response.value?.ok && data.value) {
-    invoiceAudit.value = data.value.data.invoice_audit
-    third.value = data.value.data.third
-    patient.value = data.value.data.patient
-    value_glosa.value = data.value.data.value_glosa
-    value_approved.value = data.value.data.value_approved
+  if (response.status == 200 && data) {
+    invoiceAudit.value = data.data.invoice_audit
+    third.value = data.data.third
+    patient.value = data.data.patient
+    value_glosa.value = data.data.value_glosa
+    value_approved.value = data.data.value_approved
+    assignment.value = data.assignment
+
+    if (assignment.value && assignment.value.status == 'ASSIGNMENT_EST_003') {
+      showBtnsView.value = false
+    } else {
+      showBtnsView.value = true
+    }
   }
   isLoading.value = false
 }
@@ -92,6 +108,7 @@ const optionsTable = {
   showSelect: true,
   paramsGlobal: {
     company_id: authenticationStore.company.id,
+    user_id: authenticationStore.user.id,
   },
 }
 
@@ -163,39 +180,51 @@ const openModalFormMasiveGlosa = () => {
 const refModalListGlosa = ref()
 
 const openModalListGlosa = (data: any) => {
-  refModalListGlosa.value.openModal(data)
+  refModalListGlosa.value.openModal({
+    ...data,
+    showBtnsView:showBtnsView.value
+  })
 }
 
-
 const servicesIds = ref<Array<string>>([]);
-
-
-
-
 
 const channels = reactive({
   invoiceAuditData: `invoice_audit.${invoice_audit_id}`,
   glosa_service_jobs: `glosa_service_jobs.${authenticationStore.user.id}`,
 })
 
-
-// Función para iniciar y manejar el canal dinámicamente
-const startEchoChannel = () => {
-  const channelInvoiceAuditData = window.Echo.channel(channels.invoiceAuditData);
-  channelInvoiceAuditData.listen('ChangeInvoiceAuditData', (event: any) => {
-
-    console.log("event", event)
-    value_glosa.value = event.data.value_glosa
-    value_approved.value = event.data.value_approved
-  });
-
-};
-
-onMounted(() => {
-  startEchoChannel()
-})
+const channelInvoiceAuditData = window.Echo.channel(channels.invoiceAuditData);
+channelInvoiceAuditData.listen('ChangeInvoiceAuditData', (event: any) => {
+ 
+  value_glosa.value = event.data.value_glosa
+  value_approved.value = event.data.value_approved
+});
 
 
+
+//ModalQuestion
+const refModalQuestion = ref()
+
+const openModalQuestion = () => {
+  if (refModalQuestion.value) {
+    refModalQuestion.value.componentData.isDialogVisible = true;
+    refModalQuestion.value.componentData.btnSuccessText = 'Si';
+    refModalQuestion.value.componentData.btnCancelText = 'No';
+    refModalQuestion.value.componentData.title = '¿Esta seguro que deseea finalizar la auditoria?'; 
+  }
+}
+
+const successFinalizedAudit = async () => {
+  isLoadingSuccessFinalizedAudit.value = true;
+  const { data, response } = await useAxios("/invoiceAudit/successFinalizedAudit").post({
+    assignments_ids: [assignment.value.id], 
+  })
+  isLoadingSuccessFinalizedAudit.value = false;
+
+  if (response.status == 200 && data && data.code == 200) {
+    showBtnsView.value = false 
+  } 
+}
 </script>
 
 <template>
@@ -314,31 +343,30 @@ onMounted(() => {
 
           <!-- <ProgressCircularChannel :channel="'glosa.' + authenticationStore.user.id" tooltipText="Cargando glosas" /> -->
 
-
           <VBtn @click="openModalShowFiles">
             <template #prepend>
               <VIcon start icon="tabler-files" />
             </template>
             Soportes
           </VBtn>
-          <VBtn @click="openModalFormMasiveGlosa">
+          <VBtn v-if="showBtnsView" @click="openModalFormMasiveGlosa">
             <template #prepend>
               <VIcon start icon="tabler-folder" />
             </template>
             Glosa Masiva
           </VBtn>
-
+ 
           <VBtn color="primary" append-icon="tabler-chevron-down" :loading="isLoadingExcel">
             Más Acciones
             <VMenu activator="parent">
               <VList>
-                <VListItem @click="openModalUploadGlosaFileCsv()">
+                <VListItem  v-if="showBtnsView" @click="openModalUploadGlosaFileCsv()">
                   <template #prepend>
                     <VIcon start icon="tabler-file-upload" />
                   </template>
                   <span>Importar</span>
                 </VListItem>
-                <VListItem @click="downloadExport()" :loading="isLoadingExcel" :disabled="isLoadingExcel">
+                <VListItem  v-if="showBtnsView" @click="downloadExport()" :loading="isLoadingExcel" :disabled="isLoadingExcel">
                   <template #prepend>
                     <VIcon start icon="tabler-file-download" />
                   </template>
@@ -351,6 +379,13 @@ onMounted(() => {
                   <span>Descargar</span>
                 </VListItem>
 
+                <VListItem v-if="showBtnsView" @click="openModalQuestion()">
+                      <template #prepend>
+                        <VIcon start icon="tabler-file-download" />
+                      </template>
+                      <span>Finalizar auditoria</span>
+                    </VListItem>
+
               </VList>
             </VMenu>
           </VBtn>
@@ -361,7 +396,6 @@ onMounted(() => {
         <FilterDialogNew :options-filter="optionsFilter" @force-search="refreshTable" :table-loading="tableLoading">
         </FilterDialogNew>
       </VCardText>
-
 
       <VCardText>
         <TableFullNew v-model:selected="servicesIds" ref="refTableFull" :options="optionsTable"
@@ -396,5 +430,8 @@ onMounted(() => {
 
     <ModalListGlosa ref="refModalListGlosa"></ModalListGlosa>
 
+    <ModalErrorsGlosas ref="refModalErrorsGlosas" />
+
+    <ModalQuestion ref="refModalQuestion" @success="successFinalizedAudit" />
   </div>
 </template>

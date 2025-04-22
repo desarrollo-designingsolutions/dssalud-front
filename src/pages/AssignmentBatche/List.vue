@@ -83,6 +83,16 @@ const refreshTable = () => {
     refTableFull.value.fetchTableData(null, false, true); // Forzamos la búsqueda
   }
 };
+
+const { downloadExcel, isLoadingExcel } = useAssignmentInportExport();
+
+const downloadExport = async () => {
+  downloadExcel({
+    company_id: authenticationStore.company.id,
+    user_id: authenticationStore.user.id,
+  })
+}
+
 </script>
 
 <template>
@@ -100,11 +110,26 @@ const refreshTable = () => {
             </span>
 
             <div class="d-flex justify-end gap-3 flex-wrap ">
-              <ProgressCircularChannel :channel="'assignment.' + authenticationStore.user.id"
-                tooltipText="Cargando asignaciones" />
-              <VBtn @click="openModalUploadFileCsv()">
-                Importar Csv
+                <VBtn color="primary" append-icon="tabler-chevron-down" :loading="isLoadingExcel">
+                Más Acciones
+                <VMenu activator="parent" :loading="isLoadingExcel">
+                  <VList>
+                    <VListItem @click="openModalUploadFileCsv()">
+                      <template #prepend>
+                        <VIcon start icon="tabler-file-upload" />
+                      </template>
+                      <span>Importar Csv</span>
+                    </VListItem>
+                    <VListItem @click="downloadExport()">
+                      <template #prepend>
+                        <VIcon start icon="tabler-file-download" />
+                      </template>
+                      <span>Exportar</span>
+                    </VListItem>
+                  </VList>
+                </VMenu>
               </VBtn>
+
               <VBtn @click="openModalForm()">
                 Crear Paquete
               </VBtn>

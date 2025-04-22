@@ -35,18 +35,21 @@ const submitForm = async () => {
     formData.append("company_id", String(authenticationStore.company.id));
     formData.append("user_id", String(authenticationStore.user.id));
 
+    progress.value = 0;
+    refLoading.value.startLoading();
+    startValidationStructureEchoChannel();
+
     isLoading.value = true;
     const { response, data } = await useAxios(`/assignment/uploadCsv`).post(formData);
     isLoading.value = false;
 
     if (data.code == 422) {
-      handleDialogVisible();
       toast('Se encontraron errores con la carga del archivo', '', "danger");
     } else if (response.status == 200 && data) {
-
+      toast('Validacion de estructura completa exitosamente', '', "success");
       progress.value = 0;
       refLoading.value.startLoading();
-      startEchoChannel(data); // Inicia el canal aquí
+      startValidationEchoChannel();
     }
   } else {
     if (refModalQuestion.value) {
@@ -76,14 +79,26 @@ watch(error, (newError) => {
 });
 
 // Función para iniciar y manejar el canal dinámicamente
-const startEchoChannel = (data: any) => {
-  const channel = window.Echo.channel(`assignment.${authenticationStore.user.id}`);
+const startValidationStructureEchoChannel = () => {
+  const channel = window.Echo.channel(`csv_import_progress.${authenticationStore.user.id}`);
   channel.listen('ProgressCircular', (event: any) => {
 
     progress.value = Number(event.progress);
     if (progress.value == 100) {
       refLoading.value.stopLoading();
       handleDialogVisible();
+    }
+  });
+};
+
+// Función para iniciar y manejar el canal dinámicamente
+const startValidationEchoChannel = () => {
+  const channel = window.Echo.channel(`assignment.${authenticationStore.user.id}`);
+  channel.listen('ProgressCircular', (event: any) => {
+
+    progress.value = Number(event.progress);
+    if (progress.value == 100) {
+      refLoading.value.stopLoading();
       toast('Cargado Exitosamente', '', "success");
     }
   });

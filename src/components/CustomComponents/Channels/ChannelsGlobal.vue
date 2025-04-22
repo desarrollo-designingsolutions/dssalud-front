@@ -5,5 +5,7 @@
 <template>
   <div>
     <ChannelsGlosaModalErrors />
+    <ChannelsAssignmentModalErrors />
+    <ChannelsAssignmentStructureModalErrors />
   </div>
 </template>

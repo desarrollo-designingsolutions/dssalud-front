@@ -79,6 +79,7 @@ declare module 'vue-router/auto-routes' {
     'invoice-audit-components-modal-errors-assignments': RouteRecordInfo<'invoice-audit-components-modal-errors-assignments', '/InvoiceAudit/Components/ModalErrorsAssignments', Record<never, never>, Record<never, never>>,
     'invoice-audit-components-modal-errors-assignment-structure': RouteRecordInfo<'invoice-audit-components-modal-errors-assignment-structure', '/InvoiceAudit/Components/ModalErrorsAssignmentStructure', Record<never, never>, Record<never, never>>,
     'invoice-audit-components-modal-errors-glosas': RouteRecordInfo<'invoice-audit-components-modal-errors-glosas', '/InvoiceAudit/Components/ModalErrorsGlosas', Record<never, never>, Record<never, never>>,
+    'invoice-audit-components-modal-errors-glosa-structure': RouteRecordInfo<'invoice-audit-components-modal-errors-glosa-structure', '/InvoiceAudit/Components/ModalErrorsGlosaStructure', Record<never, never>, Record<never, never>>,
     'invoice-audit-components-modal-show-files': RouteRecordInfo<'invoice-audit-components-modal-show-files', '/InvoiceAudit/Components/ModalShowFiles', Record<never, never>, Record<never, never>>,
     'invoice-audit-components-modal-upload-glosa-file-csv': RouteRecordInfo<'invoice-audit-components-modal-upload-glosa-file-csv', '/InvoiceAudit/Components/ModalUploadGlosaFileCsv', Record<never, never>, Record<never, never>>,
     'InvoiceAudit-List': RouteRecordInfo<'InvoiceAudit-List', '/InvoiceAudit/List', Record<never, never>, Record<never, never>>,

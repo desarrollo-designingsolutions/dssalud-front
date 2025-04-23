@@ -80,7 +80,7 @@ watch(error, (newError) => {
 
 // Función para iniciar y manejar el canal dinámicamente
 const startValidationStructureEchoChannel = () => {
-  const channel = window.Echo.channel(`csv_import_progress.${authenticationStore.user.id}`);
+  const channel = window.Echo.channel(`csv_import_progress_assignment.${authenticationStore.user.id}`);
   channel.listen('ProgressCircular', (event: any) => {
 
     progress.value = Number(event.progress);

@@ -31,6 +31,7 @@ const optionsTable = {
     { key: 'glosas', title: 'Glosas', sortable: false },
     { key: 'value_glosa', title: 'Valor Glosado', sortable: false },
     { key: 'spent', title: 'Gastado', sortable: false },
+    { key: 'status', title: 'Estado', sortable: false },
     // { key: 'actions', title: 'Acciones', sortable: false, width: 100 },
   ],
   actions: {
@@ -134,6 +135,12 @@ const refreshTable = () => {
                 {{ item.spent }}
               </div>
             </template>
+
+            <template #item.status="{ item }">
+                <div style="cursor: pointer;" @click="goViewPatients({ id: item.id })">
+                  {{ getInvoiceAuditStatus(item.status).title }}
+                </div>
+              </template>
 
           </TableFullNew>
         </VCardText>

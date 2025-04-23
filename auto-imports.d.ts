@@ -11,6 +11,8 @@ declare global {
   const COOKIE_MAX_AGE_1_YEAR: typeof import('./src/utils/constants')['COOKIE_MAX_AGE_1_YEAR']
   const CreateUrl: typeof import('./src/@core/composable/CreateUrl')['CreateUrl']
   const EffectScope: typeof import('vue')['EffectScope']
+  const INVOICE_AUDIT_STATUS_MAP: typeof import('./src/utils/constants')['INVOICE_AUDIT_STATUS_MAP']
+  const REVIEW_STATUS_MAP: typeof import('./src/utils/constants')['REVIEW_STATUS_MAP']
   const ROLE_SUPERADMIN_UUID: typeof import('./src/utils/constants')['ROLE_SUPERADMIN_UUID']
   const StatusFilingEnum: typeof import('./src/utils/constants')['StatusFilingEnum']
   const StatusFilingInvoiceEnum: typeof import('./src/utils/constants')['StatusFilingInvoiceEnum']
@@ -70,6 +72,7 @@ declare global {
   const getActivePinia: typeof import('pinia')['getActivePinia']
   const getCurrentInstance: typeof import('vue')['getCurrentInstance']
   const getCurrentScope: typeof import('vue')['getCurrentScope']
+  const getInvoiceAuditStatus: typeof import('./src/@core/utils/helpers')['getInvoiceAuditStatus']
   const h: typeof import('vue')['h']
   const hexToRgb: typeof import('./src/@core/utils/colorConverter')['hexToRgb']
   const ignorableWatch: typeof import('@vueuse/core')['ignorableWatch']
@@ -407,6 +410,7 @@ declare module 'vue' {
     readonly BASE_BACK_STORAGE: UnwrapRef<typeof import('./src/utils/constants')['BASE_BACK_STORAGE']>
     readonly COOKIE_MAX_AGE_1_YEAR: UnwrapRef<typeof import('./src/utils/constants')['COOKIE_MAX_AGE_1_YEAR']>
     readonly EffectScope: UnwrapRef<typeof import('vue')['EffectScope']>
+    readonly INVOICE_AUDIT_STATUS_MAP: UnwrapRef<typeof import('./src/utils/constants')['INVOICE_AUDIT_STATUS_MAP']>
     readonly ROLE_SUPERADMIN_UUID: UnwrapRef<typeof import('./src/utils/constants')['ROLE_SUPERADMIN_UUID']>
     readonly StatusRipsEnum: UnwrapRef<typeof import('./src/utils/constants')['StatusRipsEnum']>
     readonly acceptHMRUpdate: UnwrapRef<typeof import('pinia')['acceptHMRUpdate']>
@@ -460,6 +464,7 @@ declare module 'vue' {
     readonly getActivePinia: UnwrapRef<typeof import('pinia')['getActivePinia']>
     readonly getCurrentInstance: UnwrapRef<typeof import('vue')['getCurrentInstance']>
     readonly getCurrentScope: UnwrapRef<typeof import('vue')['getCurrentScope']>
+    readonly getInvoiceAuditStatus: UnwrapRef<typeof import('./src/@core/utils/helpers')['getInvoiceAuditStatus']>
     readonly h: UnwrapRef<typeof import('vue')['h']>
     readonly hexToRgb: UnwrapRef<typeof import('./src/@core/utils/colorConverter')['hexToRgb']>
     readonly ignorableWatch: UnwrapRef<typeof import('@vueuse/core')['ignorableWatch']>

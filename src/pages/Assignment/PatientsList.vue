@@ -91,6 +91,13 @@ const refreshTable = () => {
 
           <VCardText class="mt-2">
             <TableFullNew ref="refTableFull" :options="optionsTable" @update:loading="tableLoading = $event">
+
+              <template #item.status="{ item }">
+                <div>
+                  {{ getInvoiceAuditStatus(item.status).title }}
+                </div>
+              </template>
+
             </TableFullNew>
           </VCardText>
         </VCard>

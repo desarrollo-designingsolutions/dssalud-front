@@ -20,3 +20,8 @@ export const ROLE_SUPERADMIN_UUID = "21626ff9-4940-4143-879a-0f75b46eadb7";
   ERROR_NIT: 'NIT ERROR',
   ERROR_XML: 'XML ERROR',
 };
+
+export const INVOICE_AUDIT_STATUS_MAP = {
+  pending: { title: 'Pendiente' },
+  finished: { title: 'Finalizado' },
+};

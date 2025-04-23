@@ -34,6 +34,7 @@ const optionsTable = {
     { key: 'count_invoice_pending', title: 'Cant Fact Pendientes', sortable: false },
     { key: 'count_invoice_finish', title: 'Finalizar', sortable: false },
     { key: 'total_value_sum', title: 'Valores', sortable: false },
+    { key: 'status', title: 'Estado', sortable: false },
     // { key: 'actions', title: 'Acciones', sortable: false, width: 100 },
   ],
   actions: {
@@ -131,6 +132,12 @@ const refreshTable = () => {
                 {{ item.values }}
               </div>
             </template>
+
+            <template #item.status="{ item }">
+                <div style="cursor: pointer;" @click="goViewInvoiceAudit({ id: item.id })">
+                  {{ getInvoiceAuditStatus(item.status).title }}
+                </div>
+              </template>
 
           </TableFullNew>
         </VCardText>

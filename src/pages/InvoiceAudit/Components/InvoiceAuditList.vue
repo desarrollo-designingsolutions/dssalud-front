@@ -38,6 +38,7 @@ const optionsTable = {
     { key: 'glosas', title: 'Glosas', sortable: false },
     { key: 'value_glosa', title: 'Valor Glosado', sortable: false },
     { key: 'spent', title: 'Gastado', sortable: false },
+    { key: 'status', title: 'Estado', sortable: false },
     // { key: 'actions', title: 'Acciones', sortable: false, width: 100 },
   ],
   actions: {
@@ -140,6 +141,15 @@ const successFinalizedAudit = async () => {
   }
 }
 
+const isLoading = computed(() => {
+
+let loading = [
+isLoadingExcel.value,
+isLoadingSuccessFinalizedAudit.value
+]
+
+return Object.values(loading).some(value => value);
+});
 
 </script>
 
@@ -162,7 +172,7 @@ const successFinalizedAudit = async () => {
               </VBtn>
  
 
-              <VBtn color="primary" append-icon="tabler-chevron-down">
+              <VBtn color="primary" append-icon="tabler-chevron-down" :loading="isLoading">
                 Más Acciones
                 <VMenu activator="parent" :loading="isLoadingExcel">
                   <VList>
@@ -240,6 +250,12 @@ const successFinalizedAudit = async () => {
               <template #item.spent="{ item }">
                 <div style="cursor: pointer;" @click="goViewPatients({ id: item.id })">
                   {{ item.spent }}
+                </div>
+              </template>
+
+              <template #item.status="{ item }">
+                <div style="cursor: pointer;" @click="goViewPatients({ id: item.id })">
+                  {{ getInvoiceAuditStatus(item.status).title }}
                 </div>
               </template>
 

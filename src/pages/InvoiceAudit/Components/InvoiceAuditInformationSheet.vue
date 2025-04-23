@@ -225,6 +225,17 @@ const successFinalizedAudit = async () => {
     showBtnsView.value = false 
   } 
 }
+
+const isLoadingBtn = computed(() => {
+
+let loading = [
+isLoadingExcel.value,
+isLoadingSuccessFinalizedAudit.value,
+isLoadingExcelList.value,
+]
+
+return Object.values(loading).some(value => value);
+});
 </script>
 
 <template>
@@ -356,7 +367,7 @@ const successFinalizedAudit = async () => {
             Glosa Masiva
           </VBtn>
  
-          <VBtn color="primary" append-icon="tabler-chevron-down" :loading="isLoadingExcel">
+          <VBtn color="primary" append-icon="tabler-chevron-down" :loading="isLoadingBtn">
             Más Acciones
             <VMenu activator="parent">
               <VList>

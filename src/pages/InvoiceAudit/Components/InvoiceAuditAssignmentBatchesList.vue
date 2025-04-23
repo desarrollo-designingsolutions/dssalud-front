@@ -28,6 +28,7 @@ const optionsTable = {
     { key: 'count_invoice', title: 'Facturas Totales', sortable: false },
     { key: 'count_invoice_pending', title: 'Facturas Pendientes', sortable: false },
     { key: 'count_invoice_completed', title: 'Facturas Completadas', sortable: false },
+    { key: 'status', title: 'Estado', sortable: false },
     // { key: 'actions', title: 'Acciones', sortable: false, width: 100 },
   ],
   actions: {
@@ -153,6 +154,12 @@ const successFinalizedAudit = async () => {
               <template #item.count_invoice_completed="{ item }">
                 <div style="cursor: pointer;" @click="goViewThirds({ id: item.id })">
                   {{ item.count_invoice_completed }}
+                </div>
+              </template>
+
+              <template #item.status="{ item }">
+                <div style="cursor: pointer;" @click="goViewThirds({ id: item.id })">
+                  {{ getInvoiceAuditStatus(item.status).title }}
                 </div>
               </template>
 

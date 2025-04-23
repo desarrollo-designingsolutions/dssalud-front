@@ -36,6 +36,7 @@ const optionsTable = {
     { key: 'count_invoice_pending', title: 'Cant Fact Pendientes', sortable: false },
     { key: 'count_invoice_finish', title: 'Cant Fact Finalizadas', sortable: false },
     { key: 'values', title: 'Valores', sortable: false },
+    { key: 'status', title: 'Estado', sortable: false },
     // { key: 'actions', title: 'Acciones', sortable: false, width: 100 },
   ],
   actions: {
@@ -137,6 +138,15 @@ const successFinalizedAudit = async () => {
   }
 }
 
+const isLoading = computed(() => {
+
+  let loading = [
+  isLoadingExcel.value,
+  isLoadingSuccessFinalizedAudit.value
+  ]
+
+  return Object.values(loading).some(value => value);
+});
 
 </script>
 
@@ -161,7 +171,7 @@ const successFinalizedAudit = async () => {
               </VBtn>
  
 
-              <VBtn color="primary" append-icon="tabler-chevron-down">
+              <VBtn color="primary" append-icon="tabler-chevron-down" :loading="isLoading">
                 Más Acciones
                 <VMenu activator="parent" :loading="isLoadingExcel">
                   <VList>
@@ -233,6 +243,12 @@ const successFinalizedAudit = async () => {
               <template #item.values="{ item }">
                 <div style="cursor: pointer;" @click="goViewInvoiceAudit({ id: item.id })">
                   {{ item.values }}
+                </div>
+              </template>
+
+              <template #item.status="{ item }">
+                <div style="cursor: pointer;" @click="goViewInvoiceAudit({ id: item.id })">
+                  {{ getInvoiceAuditStatus(item.status).title }}
                 </div>
               </template>
 

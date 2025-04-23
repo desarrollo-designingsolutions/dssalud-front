@@ -165,6 +165,15 @@ const successFinalizedAudit = async () => {
   }
 }
 
+const isLoading = computed(() => {
+
+let loading = [
+isLoadingExcel.value,
+isLoadingSuccessFinalizedAudit.value
+]
+
+return Object.values(loading).some(value => value);
+});
 
 </script>
 
@@ -191,7 +200,7 @@ const successFinalizedAudit = async () => {
                 Regresar
               </VBtn> 
 
-              <VBtn color="primary" append-icon="tabler-chevron-down">
+              <VBtn color="primary" append-icon="tabler-chevron-down" :loading="isLoading">
                 Más Acciones
                 <VMenu activator="parent" :loading="isLoadingExcel">
                   <VList>
@@ -273,7 +282,7 @@ const successFinalizedAudit = async () => {
 
               <template #item.status="{ item }">
                 <div style="cursor: pointer;" @click="goViewInformationSheet({ id: item.id })">
-                  {{ item.status }}
+                  {{ getInvoiceAuditStatus(item.status).title }}
                 </div>
               </template>
 

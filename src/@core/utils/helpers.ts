@@ -118,3 +118,8 @@ export function cloneObject(data: any) {
   }
   return JSON.parse(JSON.stringify(data));
 }
+
+export function getInvoiceAuditStatus(value: string) {
+  // Retornar el título y el color, o un valor predeterminado si no coincide
+  return INVOICE_AUDIT_STATUS_MAP[value] || { title: 'Desconocido' };
+}

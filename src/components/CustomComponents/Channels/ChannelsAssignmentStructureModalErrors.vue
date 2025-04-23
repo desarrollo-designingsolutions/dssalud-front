@@ -21,7 +21,6 @@ const startEchoChannel = () => {
   const channelAssignmentStructureModalErrors = window.Echo.channel(channels.assignmentStructureModalErrors);
   channelAssignmentStructureModalErrors.listen('ModalError', (event: any) => {
 
-    console.log(event)
     if (event.errors != null) {
       openModalErrorsAssignmentStructure(event.errors);
     }  else {

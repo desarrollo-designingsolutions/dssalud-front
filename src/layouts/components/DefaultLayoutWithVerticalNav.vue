@@ -37,7 +37,13 @@ const authenticationStore = useAuthenticationStore();
           <ProgressCircularChannel :channel="'assignment.' + authenticationStore.user.id"
             tooltipText="Cargando asignaciones" />
 
-          <ProgressCircularChannel :channel="'glosa.' + authenticationStore.user.id" tooltipText="Cargando glosas" />
+          <ProgressCircularChannel :channel="'csv_import_progress_assignment.' + authenticationStore.user.id"
+            tooltipText="Cargando Validacion de estructura en Csv de asignaciones" />
+            
+            <ProgressCircularChannel :channel="'glosa.' + authenticationStore.user.id" tooltipText="Cargando glosas" />
+            
+            <ProgressCircularChannel :channel="'csv_import_progress_glosa.' + authenticationStore.user.id"
+              tooltipText="Cargando Validacion de estructura en Csv de glosas" />
 
           <ProgressCircularChannel :channel="'glosa_service_jobs.' + authenticationStore.user.id"
             tooltipText="Cargando servicios" />

@@ -40,16 +40,21 @@ const submitForm = async () => {
     formData.append("assignment_batch_id", String(dataParams.value.assignment_batch_id ?? null));
     formData.append("company_id", String(authenticationStore.company.id ?? null));
 
+    progress.value = 0;
+    refLoading.value.startLoading();
+    startValidationStructureEchoChannel();
 
     isLoading.value = true;
     const { response, data } = await useAxios(`/glosa/uploadCsvGlosa`).post(formData);
     isLoading.value = false;
 
-    if (response.status == 200 && data) {
+    if (data.code == 422) {
+      toast('Se encontraron errores con la carga del archivo', '', "danger");
+    } else if (response.status == 200 && data) {
+      toast('Validacion de estructura completa exitosamente', '', "success");
       progress.value = 0;
       refLoading.value.startLoading();
-      startEchoChannel(); // Inicia el canal aquí
-
+      startEchoChannel();
     }
   } else {
     if (refModalQuestion.value) {
@@ -78,6 +83,20 @@ watch(error, (newError) => {
   }
 });
 
+// Función para iniciar y manejar el canal dinámicamente
+const startValidationStructureEchoChannel = () => {
+  const channel = window.Echo.channel(`csv_import_progress_glosa.${authenticationStore.user.id}`);
+  channel.listen('ProgressCircular', (event: any) => {
+
+    progress.value = Number(event.progress);
+    if (progress.value == 100) {
+      refLoading.value.stopLoading();
+      handleDialogVisible();
+    }
+  });
+};
+
+
 let channel = null;
 // Función para iniciar y manejar el canal dinámicamente
 const startEchoChannel = () => {
@@ -96,7 +115,6 @@ const startEchoChannel = () => {
         if (refLoading.value) {
           refLoading.value.stopLoading();
         }
-        handleDialogVisible();
       }, 1000);
     }
   });

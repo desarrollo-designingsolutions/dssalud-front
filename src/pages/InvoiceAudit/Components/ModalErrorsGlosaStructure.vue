@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const titleModal = ref<string>("Errores en la validación de estructura en asignaciones")
+const titleModal = ref<string>("Errores en la validación de estructura en glosas")
 const isDialogVisible = ref<boolean>(false)
 const loading = reactive({
   excel: false,
@@ -23,7 +23,7 @@ const openModal = async (element: any, userId: string) => {
 const openJson = async (url: any) => {
   loading.getData = true;
   errorMessages.value = [];
-  const { data, response } = await useAxios("/assignment/getContentJson").post({
+  const { data, response } = await useAxios("/glosa/getContentJson").post({
       url_json: url
   })
 

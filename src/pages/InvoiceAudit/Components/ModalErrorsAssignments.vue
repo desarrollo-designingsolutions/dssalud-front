@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const titleModal = ref<string>("Errores en la validación")
+const titleModal = ref<string>("Errores en la validación de asignaciones")
 const isDialogVisible = ref<boolean>(false)
 const loading = reactive({
   excel: false,

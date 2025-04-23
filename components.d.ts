@@ -41,7 +41,6 @@ declare module 'vue' {
     ChannelsGlosaModalErrors: typeof import('./src/components/CustomComponents/Channels/ChannelsGlosaModalErrors.vue')['default']
     ChannelsGlosaStructureModalErrors: typeof import('./src/components/CustomComponents/Channels/ChannelsGlosaStructureModalErrors.vue')['default']
     ConfirmDialog: typeof import('./src/components/dialogs/ConfirmDialog.vue')['default']
-    copy: typeof import('./src/components/CustomComponents/Channels/ChannelsAssignmentStructureModalErrors copy.vue')['default']
     CountAllData: typeof import('./src/components/AssignmentBatche/CountAllData.vue')['default']
     CreateAppDialog: typeof import('./src/components/dialogs/CreateAppDialog.vue')['default']
     CustomCheckboxes: typeof import('./src/@core/components/app-form-elements/CustomCheckboxes.vue')['default']

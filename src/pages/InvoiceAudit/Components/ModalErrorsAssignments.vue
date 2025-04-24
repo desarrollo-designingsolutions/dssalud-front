@@ -41,7 +41,7 @@ const inputsTableFilter = [
   { title: 'Fila', key: 'row' },
   { title: 'Valor', key: 'value' },
   // { title: 'Data', key: 'data' },
-  { title: 'Mensaje de error', key: 'errors' },
+  { title: 'Mensaje de error', key: 'error' },
 ]
 
 const options = ref({ page: 1, itemsPerPage: 10, sortBy: [''], sortDesc: [false] })

@@ -42,15 +42,6 @@ const submitForm = async () => {
     isLoading.value = true;
     const { response, data } = await useAxios(`/assignment/uploadCsv`).post(formData);
     isLoading.value = false;
-
-    if (data.code == 422) {
-      toast('Se encontraron errores con la carga del archivo', '', "danger");
-    } else if (response.status == 200 && data) {
-      toast('Validacion de estructura completa exitosamente', '', "success");
-      progress.value = 0;
-      refLoading.value.startLoading();
-      startValidationEchoChannel();
-    }
   } else {
     if (refModalQuestion.value) {
       refModalQuestion.value.componentData.isDialogVisible = true;
@@ -78,23 +69,44 @@ watch(error, (newError) => {
   }
 });
 
+
+let channel1 = null;
 // Función para iniciar y manejar el canal dinámicamente
 const startValidationStructureEchoChannel = () => {
-  const channel = window.Echo.channel(`csv_import_progress_assignment.${authenticationStore.user.id}`);
-  channel.listen('ProgressCircular', (event: any) => {
+
+  if (channel1) {
+    stopEchoChannel(channel1); // Limpia los eventos específicos antes de volver a suscribirse
+  }
+
+  channel1 = window.Echo.channel(`csv_import_progress_assignment.${authenticationStore.user.id}`);
+  channel1.listen('ProgressCircular', (event: any) => {
 
     progress.value = Number(event.progress);
     if (progress.value == 100) {
       refLoading.value.stopLoading();
       handleDialogVisible();
+      toast('Validacion de estructura completa exitosamente', '', "success");
+
+      if (event.success == true) {
+        progress.value = 0;
+        refLoading.value.startLoading();
+        startValidationEchoChannel();
+      }
     }
   });
 };
 
+let channel2 = null;
+
 // Función para iniciar y manejar el canal dinámicamente
 const startValidationEchoChannel = () => {
-  const channel = window.Echo.channel(`assignment.${authenticationStore.user.id}`);
-  channel.listen('ProgressCircular', (event: any) => {
+
+  if (channel2) {
+    stopEchoChannel(channel2); // Limpia los eventos específicos antes de volver a suscribirse
+  }
+
+  channel2 = window.Echo.channel(`assignment.${authenticationStore.user.id}`);
+  channel2.listen('ProgressCircular', (event: any) => {
 
     progress.value = Number(event.progress);
     if (progress.value == 100) {
@@ -108,6 +120,20 @@ const openFileDialog = () => {
   error.value = null;
   open();
 };
+
+const stopEchoChannel = (channel) => {
+  if (channel) {
+    // Deja de escuchar eventos específicos sin cerrar el canal 
+    channel.stopListening('.ProgressCircular');
+    channel = null; // Limpia la referencia local
+  }
+  // NO usamos window.Echo.leave aquí para no afectar otras suscripciones
+};
+
+// Limpia el canal cuando el componente se desmonta
+onUnmounted(() => {
+  stopEchoChannel(); // Limpia solo los eventos de este componente
+});
 </script>
 
 <template>

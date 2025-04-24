@@ -38,7 +38,7 @@ const openJson = async (url: any) => {
 // headers
 const inputsTableFilter = [
   { title: 'Fila', key: 'row' },
-  { title: 'Valor', key: 'column' },
+  { title: 'Valor', key: 'value' },
   // { title: 'Data', key: 'data' },
   { title: 'Mensaje de error', key: 'error' },
 ]

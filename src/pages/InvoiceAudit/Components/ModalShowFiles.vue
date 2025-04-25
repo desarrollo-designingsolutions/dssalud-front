@@ -107,7 +107,7 @@ const seleccionarArchivo = async (item) => {
 
 const viewFile = (pathname: any) => {
   window.open(
-    `${import.meta.env.VITE_API_BASE_BACK}/storage/${pathname}`,
+    `${pathname}`,
     "_blank"
   );
 };
@@ -193,7 +193,7 @@ const paginationData = (tableItems: number) => {
 
             <!-- Área de previsualización -->
             <v-col cols="8">
-              <v-card v-if="fileSelected"> 
+              <v-card v-if="fileUrlS3"> 
                 <!-- Previsualización de PDF -->
                 <iframe v-if="esPDF" :src="fileUrlS3" width="100%"
                   style="block-size: 100vh;"></iframe>
@@ -204,7 +204,7 @@ const paginationData = (tableItems: number) => {
                 <!-- Mensaje para otros tipos de archivo -->
                 <v-card-text v-else>
                   No hay previsualización disponible para este tipo de archivo
-                  <VBtn @click="viewFile(fileSelected.pathname)">
+                  <VBtn @click="viewFile(fileUrlS3)">
                     descargar
                     <template #append>
                       <VIcon icon="tabler-download"></VIcon>

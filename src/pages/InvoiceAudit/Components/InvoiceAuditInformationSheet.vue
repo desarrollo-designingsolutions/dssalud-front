@@ -262,46 +262,46 @@ const isLoadingBtn = computed(() => {
         <div class="mb-4">
           <VRow>
             <VCol cols="12" sm="6" md="3">
-              <div class="text-caption text-grey">N° de radicación</div>
+              <div class="text-caption">N° de radicación</div>
               <div></div>
             </VCol>
             <VCol cols="12" sm="6" md="3">
-              <div class="text-caption text-grey">Fecha Radicación</div>
+              <div class="text-caption">Fecha Radicación</div>
               <div></div>
             </VCol>
             <VCol cols="12" sm="6" md="3">
-              <div class="text-caption text-grey">N° Factura</div>
+              <div class="text-caption">N° Factura</div>
               <div>{{ invoiceAudit.invoice_number }}</div>
             </VCol>
             <VCol cols="12" sm="6" md="3">
-              <div class="text-caption text-grey">Fecha Factura</div>
+              <div class="text-caption">Fecha Factura</div>
               <div>{{ invoiceAudit.date_entry }}</div>
             </VCol>
           </VRow>
 
           <VRow>
             <VCol cols="12" sm="6" md="3">
-              <div class="text-caption text-grey">Nota Credito</div>
+              <div class="text-caption">Nota Credito</div>
               <div></div>
             </VCol>
             <VCol cols="12" sm="6" md="3">
-              <div class="text-caption text-grey">Valor Copago</div>
+              <div class="text-caption">Valor Copago</div>
               <div></div>
             </VCol>
             <VCol cols="12" sm="6" md="3">
-              <div class="text-caption text-grey">Valor Cuota Moderada</div>
+              <div class="text-caption">Valor Cuota Moderada</div>
               <div></div>
             </VCol>
             <VCol cols="12" sm="6" md="3">
-              <div class="text-caption text-grey">Valor Pago Moderador</div>
+              <div class="text-caption">Valor Pago Moderador</div>
               <div></div>
             </VCol>
             <VCol cols="12" sm="6" md="3">
-              <div class="text-caption text-grey">Valor Aprobado</div>
+              <div class="text-caption">Valor Aprobado</div>
               <div>{{ value_approved }}</div>
             </VCol>
             <VCol cols="12" sm="6" md="3">
-              <div class="text-caption text-grey">Valor Glosado</div>
+              <div class="text-caption">Valor Glosado</div>
               <div>{{ value_glosa }}</div>
             </VCol>
           </VRow>
@@ -317,19 +317,19 @@ const isLoadingBtn = computed(() => {
         <VExpansionPanelText>
           <VRow>
             <VCol cols="12" sm="6" md="3">
-              <div class="text-caption text-grey">Razón Social</div>
+              <div class="text-caption">Razón Social</div>
               <div>{{ third.name }}</div>
             </VCol>
             <VCol cols="12" sm="6" md="3">
-              <div class="text-caption text-grey">NIT</div>
+              <div class="text-caption">NIT</div>
               <div>{{ third.nit }}</div>
             </VCol>
             <VCol cols="12" sm="6" md="3">
-              <div class="text-caption text-grey">Código Habilitación</div>
+              <div class="text-caption">Código Habilitación</div>
               <div></div>
             </VCol>
             <VCol cols="12" sm="6" md="3">
-              <div class="text-caption text-grey">Sede</div>
+              <div class="text-caption">Sede</div>
               <div></div>
             </VCol>
           </VRow>
@@ -343,27 +343,27 @@ const isLoadingBtn = computed(() => {
         <VExpansionPanelText>
           <VRow>
             <VCol cols="12" sm="6" md="3">
-              <div class="text-caption text-grey">Nombre</div>
+              <div class="text-caption">Nombre</div>
               <div>{{ patient.full_name }}</div>
             </VCol>
             <VCol cols="12" sm="6" md="3">
-              <div class="text-caption text-grey">Documento</div>
+              <div class="text-caption">Documento</div>
               <div>{{ patient.identification_number }}</div>
             </VCol>
             <VCol cols="12" sm="6" md="3">
-              <div class="text-caption text-grey">Edad</div>
+              <div class="text-caption">Edad</div>
               <div></div>
             </VCol>
             <VCol cols="12" sm="6" md="3">
-              <div class="text-caption text-grey">Fecha de Ingreso</div>
+              <div class="text-caption">Fecha de Ingreso</div>
               <div></div>
             </VCol>
             <VCol cols="12" sm="6" md="3">
-              <div class="text-caption text-grey">Fecha de Egreso</div>
+              <div class="text-caption">Fecha de Egreso</div>
               <div></div>
             </VCol>
             <VCol cols="12" sm="6" md="3">
-              <div class="text-caption text-grey">Días Estancia</div>
+              <div class="text-caption">Días Estancia</div>
               <div></div>
             </VCol>
           </VRow>

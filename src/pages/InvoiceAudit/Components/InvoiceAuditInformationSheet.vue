@@ -182,7 +182,7 @@ const refModalListGlosa = ref()
 const openModalListGlosa = (data: any) => {
   refModalListGlosa.value.openModal({
     ...data,
-    showBtnsView:showBtnsView.value
+    showBtnsView: showBtnsView.value
   })
 }
 
@@ -195,7 +195,7 @@ const channels = reactive({
 
 const channelInvoiceAuditData = window.Echo.channel(channels.invoiceAuditData);
 channelInvoiceAuditData.listen('ChangeInvoiceAuditData', (event: any) => {
- 
+
   value_glosa.value = event.data.value_glosa
   value_approved.value = event.data.value_approved
 });
@@ -210,205 +210,230 @@ const openModalQuestion = () => {
     refModalQuestion.value.componentData.isDialogVisible = true;
     refModalQuestion.value.componentData.btnSuccessText = 'Si';
     refModalQuestion.value.componentData.btnCancelText = 'No';
-    refModalQuestion.value.componentData.title = '¿Esta seguro que deseea finalizar la auditoria?'; 
+    refModalQuestion.value.componentData.title = '¿Esta seguro que deseea finalizar la auditoria?';
   }
 }
 
 const successFinalizedAudit = async () => {
   isLoadingSuccessFinalizedAudit.value = true;
   const { data, response } = await useAxios("/invoiceAudit/successFinalizedAudit").post({
-    assignments_ids: [assignment.value.id], 
+    assignments_ids: [assignment.value.id],
   })
   isLoadingSuccessFinalizedAudit.value = false;
 
   if (response.status == 200 && data && data.code == 200) {
-    showBtnsView.value = false 
-  } 
+    showBtnsView.value = false
+  }
 }
 
 const isLoadingBtn = computed(() => {
 
-let loading = [
-isLoadingExcel.value,
-isLoadingSuccessFinalizedAudit.value,
-isLoadingExcelList.value,
-]
+  let loading = [
+    isLoadingExcel.value,
+    isLoadingSuccessFinalizedAudit.value,
+    isLoadingExcelList.value,
+  ]
 
-return Object.values(loading).some(value => value);
+  return Object.values(loading).some(value => value);
 });
 </script>
 
 <template>
   <div>
-    <VCard :loading="isLoading">
-      <VCardTitle class="d-flex justify-space-between">
-        <h1>
-          <p><strong>N° de Factura: </strong>{{ invoiceAudit.invoice_number }}</p>
-        </h1>
-        <div class="d-flex justify-end gap-3 flex-wrap">
-          <VBtn @click="goViewPatient">Regresar</VBtn>
-        </div>
-      </VCardTitle>
+    <VRow class="mb-4">
+      <VCol cols="12" sm="8">
+        <h1 class="text-h2 font-weight-bold">Factura: {{ invoiceAudit.invoice_number }}</h1>
+      </VCol>
+      <VCol cols="12" sm="4" class="d-flex justify-sm-end">
+        <VBtn @click="goViewPatient">Regresar</VBtn>
+      </VCol>
+    </VRow>
 
+    <VCard :loading="isLoading">
+      <template v-slot:prepend>
+        <div class="text-h6">Información de Factura</div>
+      </template>
+      <template v-slot:append>
+        <div class="text-h5 font-weight-bold text-primary">
+          {{ invoiceAudit.total_value }}
+        </div>
+      </template>
       <VCardText class="mt-2">
         <div class="mb-4">
           <VRow>
-            <VCol cols="12" md="2">
-              <p><strong>N° de radicación</strong> <br> </p>
+            <VCol cols="12" sm="6" md="3">
+              <div class="text-caption text-grey">N° de radicación</div>
+              <div></div>
             </VCol>
-            <VCol cols="12" md="2">
-              <p><strong>Fecha Radicación</strong> <br> </p>
+            <VCol cols="12" sm="6" md="3">
+              <div class="text-caption text-grey">Fecha Radicación</div>
+              <div></div>
             </VCol>
-            <VCol cols="12" md="2">
-              <p><strong>N° Factura</strong> <br> {{ invoiceAudit.invoice_number }}</p>
+            <VCol cols="12" sm="6" md="3">
+              <div class="text-caption text-grey">N° Factura</div>
+              <div>{{ invoiceAudit.invoice_number }}</div>
             </VCol>
-            <VCol cols="12" md="2">
-              <p><strong>Fecha Factura</strong> <br> {{ invoiceAudit.date_entry }}</p>
+            <VCol cols="12" sm="6" md="3">
+              <div class="text-caption text-grey">Fecha Factura</div>
+              <div>{{ invoiceAudit.date_entry }}</div>
             </VCol>
-            <VCol cols="12" md="2">
-              <p><strong>Valor Factura</strong> <br> {{ invoiceAudit.total_value }}</p>
+          </VRow>
+
+          <VRow>
+            <VCol cols="12" sm="6" md="3">
+              <div class="text-caption text-grey">Nota Credito</div>
+              <div></div>
             </VCol>
-            <VCol cols="12" md="2">
-              <p><strong>Nota Credito</strong> <br> </p>
+            <VCol cols="12" sm="6" md="3">
+              <div class="text-caption text-grey">Valor Copago</div>
+              <div></div>
             </VCol>
-            <VCol cols="12" md="2">
-              <p><strong>Valor Copago</strong> <br> </p>
+            <VCol cols="12" sm="6" md="3">
+              <div class="text-caption text-grey">Valor Cuota Moderada</div>
+              <div></div>
             </VCol>
-            <VCol cols="12" md="2">
-              <p><strong>Valor Cuota Moderada</strong> <br> </p>
+            <VCol cols="12" sm="6" md="3">
+              <div class="text-caption text-grey">Valor Pago Moderador</div>
+              <div></div>
             </VCol>
-            <VCol cols="12" md="2">
-              <p><strong>Valor Pago Moderador</strong> <br> </p>
+            <VCol cols="12" sm="6" md="3">
+              <div class="text-caption text-grey">Valor Aprobado</div>
+              <div>{{ value_approved }}</div>
             </VCol>
-            <VCol cols="12" md="2">
-              <p><strong>Valor Aprobado</strong> <br> {{ value_approved }}</p>
-            </VCol>
-            <VCol cols="12" md="2">
-              <p><strong>Valor Glosado</strong> <br>{{ value_glosa }} </p>
+            <VCol cols="12" sm="6" md="3">
+              <div class="text-caption text-grey">Valor Glosado</div>
+              <div>{{ value_glosa }}</div>
             </VCol>
           </VRow>
         </div>
-
-        <VExpansionPanels variant="accordion">
-          <VExpansionPanel>
-            <VExpansionPanelTitle>
-              Información Prestador
-            </VExpansionPanelTitle>
-            <VExpansionPanelText>
-              <VRow>
-                <VCol cols="12" md="2">
-                  <p><strong>Razón Social</strong> <br> {{ third.name }} </p>
-                </VCol>
-                <VCol cols="12" md="2">
-                  <p><strong>NIT</strong> <br> {{ third.nit }} </p>
-                </VCol>
-                <VCol cols="12" md="2">
-                  <p><strong>Código Habilitación</strong> <br> </p>
-                </VCol>
-                <VCol cols="12" md="2">
-                  <p><strong>Sede</strong> <br> </p>
-                </VCol>
-              </VRow>
-            </VExpansionPanelText>
-          </VExpansionPanel>
-        </VExpansionPanels>
-
-        <VExpansionPanels variant="accordion">
-          <VExpansionPanel>
-            <VExpansionPanelTitle>
-              Información Paciente
-            </VExpansionPanelTitle>
-            <VExpansionPanelText>
-              <VRow>
-                <VCol cols="12" md="2">
-                  <p><strong>Nombre</strong> <br> {{ patient.full_name }} </p>
-                </VCol>
-                <VCol cols="12" md="2">
-                  <p><strong>Documento</strong> <br> {{ patient.identification_number }} </p>
-                </VCol>
-                <VCol cols="12" md="2">
-                  <p><strong>Edad</strong> <br> </p>
-                </VCol>
-                <VCol cols="12" md="2">
-                  <p><strong>Fecha de Ingreso</strong> <br> </p>
-                </VCol>
-                <VCol cols="12" md="2">
-                  <p><strong>Fecha de Egreso</strong> <br> </p>
-                </VCol>
-                <VCol cols="12" md="2">
-                  <p><strong>Días Estancia</strong> <br> </p>
-                </VCol>
-              </VRow>
-            </VExpansionPanelText>
-          </VExpansionPanel>
-        </VExpansionPanels>
       </VCardText>
+    </VCard>
 
+    <VExpansionPanels variant="accordion" class="my-6">
+      <VExpansionPanel>
+        <VExpansionPanelTitle>
+          Información Prestador
+        </VExpansionPanelTitle>
+        <VExpansionPanelText>
+          <VRow>
+            <VCol cols="12" sm="6" md="3">
+              <div class="text-caption text-grey">Razón Social</div>
+              <div>{{ third.name }}</div>
+            </VCol>
+            <VCol cols="12" sm="6" md="3">
+              <div class="text-caption text-grey">NIT</div>
+              <div>{{ third.nit }}</div>
+            </VCol>
+            <VCol cols="12" sm="6" md="3">
+              <div class="text-caption text-grey">Código Habilitación</div>
+              <div></div>
+            </VCol>
+            <VCol cols="12" sm="6" md="3">
+              <div class="text-caption text-grey">Sede</div>
+              <div></div>
+            </VCol>
+          </VRow>
+        </VExpansionPanelText>
+      </VExpansionPanel>
 
-      <VCardTitle class="d-flex justify-space-between">
-        <span>
-          Gestión Cuenta
-        </span>
+      <VExpansionPanel>
+        <VExpansionPanelTitle>
+          Información Paciente
+        </VExpansionPanelTitle>
+        <VExpansionPanelText>
+          <VRow>
+            <VCol cols="12" sm="6" md="3">
+              <div class="text-caption text-grey">Nombre</div>
+              <div>{{ patient.full_name }}</div>
+            </VCol>
+            <VCol cols="12" sm="6" md="3">
+              <div class="text-caption text-grey">Documento</div>
+              <div>{{ patient.identification_number }}</div>
+            </VCol>
+            <VCol cols="12" sm="6" md="3">
+              <div class="text-caption text-grey">Edad</div>
+              <div></div>
+            </VCol>
+            <VCol cols="12" sm="6" md="3">
+              <div class="text-caption text-grey">Fecha de Ingreso</div>
+              <div></div>
+            </VCol>
+            <VCol cols="12" sm="6" md="3">
+              <div class="text-caption text-grey">Fecha de Egreso</div>
+              <div></div>
+            </VCol>
+            <VCol cols="12" sm="6" md="3">
+              <div class="text-caption text-grey">Días Estancia</div>
+              <div></div>
+            </VCol>
+          </VRow>
+        </VExpansionPanelText>
+      </VExpansionPanel>
+    </VExpansionPanels>
 
-        <div class="d-flex justify-end gap-3 flex-wrap ">
-
-          <!-- <ProgressCircularChannel :channel="'glosa.' + authenticationStore.user.id" tooltipText="Cargando glosas" /> -->
-
-          <VBtn @click="openModalShowFiles">
-            <template #prepend>
-              <VIcon start icon="tabler-files" />
-            </template>
-            Soportes
-          </VBtn>
-          <VBtn v-if="showBtnsView" @click="openModalFormMasiveGlosa">
-            <template #prepend>
-              <VIcon start icon="tabler-folder" />
-            </template>
-            Glosa Masiva
-          </VBtn>
- 
-          <VBtn color="primary" append-icon="tabler-chevron-down" :loading="isLoadingBtn">
-            Más Acciones
-            <VMenu activator="parent">
-              <VList>
-                <VListItem  v-if="showBtnsView" @click="openModalUploadGlosaFileCsv()">
-                  <template #prepend>
-                    <VIcon start icon="tabler-file-upload" />
-                  </template>
-                  <span>Importar</span>
-                </VListItem>
-                <VListItem  v-if="showBtnsView" @click="downloadExport()" :loading="isLoadingExcel" :disabled="isLoadingExcel">
-                  <template #prepend>
-                    <VIcon start icon="tabler-file-download" />
-                  </template>
-                  <span>Exportar</span>
-                </VListItem>
-                <VListItem @click="downloadExcelList()" :loading="isLoadingExcelList" :disabled="isLoadingExcelList">
-                  <template #prepend>
-                    <VIcon start icon="tabler-download" />
-                  </template>
-                  <span>Descargar</span>
-                </VListItem>
-
-                <VListItem v-if="showBtnsView" @click="openModalQuestion()">
-                      <template #prepend>
-                        <VIcon start icon="tabler-file-download" />
-                      </template>
-                      <span>Finalizar auditoria</span>
-                    </VListItem>
-
-              </VList>
-            </VMenu>
-          </VBtn>
-        </div>
-      </VCardTitle>
+    <VCard>
+      <VCardItem class="d-flex justify-center">
+        <div class="text-h4">Gestión Cuenta</div>
+      </VCardItem>
 
       <VCardText>
+        <VRow class="mb-2">
+          <VCol cols="12" class="d-flex justify-center">
+
+            <VBtn class="me-2 mb-2" @click="openModalShowFiles">
+              <template #prepend>
+                <VIcon start icon="tabler-files" />
+              </template>
+              Soportes
+            </VBtn>
+            <VBtn class="me-2 mb-2" v-if="showBtnsView" @click="openModalFormMasiveGlosa">
+              <template #prepend>
+                <VIcon start icon="tabler-folder" />
+              </template>
+              Glosa Masiva
+            </VBtn>
+
+            <VBtn color="primary" class="mb-2" append-icon="tabler-chevron-down" :loading="isLoadingBtn">
+              Más Acciones
+              <VMenu activator="parent">
+                <VList>
+                  <VListItem v-if="showBtnsView" @click="openModalUploadGlosaFileCsv()">
+                    <template #prepend>
+                      <VIcon start icon="tabler-file-upload" />
+                    </template>
+                    <span>Importar</span>
+                  </VListItem>
+                  <VListItem v-if="showBtnsView" @click="downloadExport()" :loading="isLoadingExcel"
+                    :disabled="isLoadingExcel">
+                    <template #prepend>
+                      <VIcon start icon="tabler-file-download" />
+                    </template>
+                    <span>Exportar</span>
+                  </VListItem>
+                  <VListItem @click="downloadExcelList()" :loading="isLoadingExcelList" :disabled="isLoadingExcelList">
+                    <template #prepend>
+                      <VIcon start icon="tabler-download" />
+                    </template>
+                    <span>Descargar</span>
+                  </VListItem>
+
+                  <VListItem v-if="showBtnsView" @click="openModalQuestion()">
+                    <template #prepend>
+                      <VIcon start icon="tabler-file-download" />
+                    </template>
+                    <span>Finalizar auditoria</span>
+                  </VListItem>
+
+                </VList>
+              </VMenu>
+            </VBtn>
+
+          </VCol>
+        </VRow>
+
         <FilterDialogNew :options-filter="optionsFilter" @force-search="refreshTable" :table-loading="tableLoading">
         </FilterDialogNew>
-      </VCardText>
 
-      <VCardText>
         <TableFullNew v-model:selected="servicesIds" ref="refTableFull" :options="optionsTable"
           @update:loading="tableLoading = $event">
 
@@ -430,6 +455,7 @@ return Object.values(loading).some(value => value);
           </template>
 
         </TableFullNew>
+
       </VCardText>
     </VCard>
 

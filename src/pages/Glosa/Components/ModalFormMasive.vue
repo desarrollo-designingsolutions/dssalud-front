@@ -27,7 +27,8 @@ const form = ref({
     user_id: string | number | null,
     service_id: string | number | null,
   }>,
-  servicesIds: null as Array<string> | null
+  servicesIds: null as Array<string> | null,
+  company_id: null as string | null
 })
 
 const handleClearForm = () => {
@@ -60,6 +61,8 @@ const submitForm = async (isCreateAndNew: boolean = false) => {
       element.partialValue = parseEuropeanNumber(element.partialValue);
       element.user_id = authenticationStore.user.id;
     });
+
+    form.value.company_id = authenticationStore.company.id;
 
     const url = `/glosa/storeMasive`
 

@@ -35,10 +35,10 @@ const optionsTable = {
     { key: 'full_name', title: 'Nombre' },
     { key: 'gender', title: 'Genero' },
     { key: 'glosas', title: 'Glosas', sortable: false },
-    { key: 'value_glosa', title: 'Valor Glosado', sortable: false },
-    { key: 'value_borrowed', title: 'Valor Prestado', sortable: false },
-    { key: 'total_value', title: 'Valor Total', sortable: false },
-    { key: 'status', title: 'Estado', sortable: false },
+    { key: 'value_glosa', title: 'Valor Glosado' },
+    { key: 'value_approved', title: 'Valor Aprobado' },
+    { key: 'total_value', title: 'Valor Total' },
+    { key: 'status', title: 'Estado', sortable: false  },
     // { key: 'actions', title: 'Acciones', sortable: false, width: 100 },
   ],
   actions: {
@@ -268,9 +268,9 @@ return Object.values(loading).some(value => value);
                 </div>
               </template>
 
-              <template #item.value_borrowed="{ item }">
+              <template #item.value_approved="{ item }">
                 <div style="cursor: pointer;" @click="goViewInformationSheet({ id: item.id })">
-                  {{ item.value_borrowed }}
+                  {{ item.value_approved }}
                 </div>
               </template>
 

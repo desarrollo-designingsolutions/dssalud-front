@@ -34,11 +34,12 @@ const optionsTable = {
     { key: 'invoice_number', title: 'Factura' },
     { key: 'count_patients', title: 'Cantidad Usuarios', sortable: false },
     { key: 'count_services', title: 'Cant Servicios', sortable: false },
-    { key: 'total_value_services', title: 'Valor Factura', sortable: false },
+    { key: 'total_value', title: 'Valor Factura'},
     { key: 'glosas', title: 'Glosas', sortable: false },
-    { key: 'value_glosa', title: 'Valor Glosado', sortable: false },
-    { key: 'spent', title: 'Gastado', sortable: false },
+    { key: 'value_glosa', title: 'Valor Glosado' },
+    { key: 'value_approved', title: 'Valor Aprobado' },
     { key: 'status', title: 'Estado', sortable: false },
+    { key: 'user_names', title: 'Usuario' },
     // { key: 'actions', title: 'Acciones', sortable: false, width: 100 },
   ],
   actions: {
@@ -229,9 +230,9 @@ return Object.values(loading).some(value => value);
                 </div>
               </template>
 
-              <template #item.total_value_services="{ item }">
+              <template #item.total_value="{ item }">
                 <div style="cursor: pointer;" @click="goViewPatients({ id: item.id })">
-                  {{ item.total_value_services }}
+                  {{ item.total_value }}
                 </div>
               </template>
 

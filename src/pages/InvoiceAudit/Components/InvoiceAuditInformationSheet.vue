@@ -281,10 +281,10 @@ return Object.values(loading).some(value => value);
               <p><strong>Valor Pago Moderador</strong> <br> </p>
             </VCol>
             <VCol cols="12" md="2">
-              <p><strong>Valor Aprobado</strong> <br> {{ value_glosa }}</p>
+              <p><strong>Valor Aprobado</strong> <br> {{ value_approved }}</p>
             </VCol>
             <VCol cols="12" md="2">
-              <p><strong>Valor Glosado</strong> <br>{{ value_approved }} </p>
+              <p><strong>Valor Glosado</strong> <br>{{ value_glosa }} </p>
             </VCol>
           </VRow>
         </div>

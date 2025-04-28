@@ -432,8 +432,10 @@ defineExpose({
         <VSkeletonLoader type="table-row@10, divider" />
       </template>
       <template #no-data>
-        <VIcon icon="tabler-alert-circle" size="x-large" color="grey" class="mb-4"></VIcon>
-        <span>No se encontraron resultados</span>
+        <div class="d-flex flex-column">
+          <VIcon icon="tabler-alert-circle" size="x-large" color="grey" class="mb-4"></VIcon>
+          <span>No se encontraron resultados</span>
+        </div>
       </template>
     </VDataTable>
 

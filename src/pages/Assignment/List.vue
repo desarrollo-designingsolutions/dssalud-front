@@ -28,13 +28,14 @@ const optionsTable = {
     company_id: authenticationStore.company.id,
   },
   headers: [
-    { key: 'nit', title: 'Nit' },
-    { key: 'name', title: 'Razón Social' },
-    { key: 'count_invoice_total', title: 'Cant Fact' },
-    { key: 'count_invoice_pending', title: 'Cant Fact Pendientes' },
-    { key: 'count_invoice_finish', title: 'Finalizar' },
-    { key: 'total_value_sum', title: 'Valores' },
-    { key: 'status', title: 'Estado', sortable: false },
+    { key: 'nit', title: 'Nit', width: 100  },
+    { key: 'name', title: 'Razón Social', width: 250 },
+    { key: 'count_invoice_total', title: 'Cant Facturas' , width: 100},
+    { key: 'count_invoice_pending', title: 'Cant Fact Pendientes' , width: 100},
+    { key: 'count_invoice_finish', title: 'Cant Fact Finalizadas', width: 100 },
+    { key: 'total_value_sum', title: 'Valores', width: 170 },
+    { key: 'status', title: 'Estado', sortable: false, width: 100 },
+    { key: 'user_names', title: 'Usuarios' , width: 250 },
     // { key: 'actions', title: 'Acciones', sortable: false, width: 100 },
   ],
   actions: {
@@ -68,6 +69,41 @@ const refreshTable = () => {
     refTableFull.value.fetchTableData(null, false, true); // Forzamos la búsqueda
   }
 };
+
+
+const formatNames = (names: string | null) => {
+  // Si names es null o una cadena vacía, devolver valores por defecto
+  if (!names) {
+    return {
+      firstName: null,
+      restNames: [],
+    };
+  }
+
+  // Dividir la cadena por ", " para obtener un array de nombres
+  const nameArray = names.split(', ').filter(name => name.trim() !== '');
+
+  if (nameArray.length === 1) {
+    // Si solo hay un nombre, devolverlo como firstName y restNames vacío
+    return {
+      firstName: nameArray[0],
+      restNames: [],
+    };
+  } else if (nameArray.length > 1) {
+    // Si hay más de un nombre, devolver el primero y el resto en un array
+    return {
+      firstName: nameArray[0],
+      restNames: nameArray.slice(1),
+    };
+  } else {
+    // Si el array está vacío después de dividir (caso improbable pero manejado)
+    return {
+      firstName: null,
+      restNames: [],
+    };
+  }
+};
+
 </script>
 
 <template>
@@ -134,10 +170,38 @@ const refreshTable = () => {
             </template>
 
             <template #item.status="{ item }">
-                <div style="cursor: pointer;" @click="goViewInvoiceAudit({ id: item.id })">
-                  {{ getInvoiceAuditStatus(item.status).title }}
-                </div>
-              </template>
+              <div style="cursor: pointer;" @click="goViewInvoiceAudit({ id: item.id })">
+                {{ getInvoiceAuditStatus(item.status).title }}
+              </div>
+            </template>
+
+
+            <template #item.user_names="{ item }">
+              <div>
+                <template v-if="item.count_users > 1">
+                  {{ formatNames(item.user_names).firstName }}
+
+                  <VBtn color="primary" variant="outlined"
+                    v-if="formatNames(item.user_names).restNames.length > 0">
+                    <template #prepend>
+                      <VIcon icon="tabler-plus"></VIcon>
+                    </template>
+                    {{ item.count_users - 1 }}
+                    <VMenu activator="parent">
+                      <VList>
+                        <VListItem v-for="(insurance, i) in formatNames(item.user_names).restNames" :key="i">
+                          <span>{{ insurance }}</span>
+                        </VListItem>
+                      </VList>
+                    </VMenu>
+                  </VBtn>
+                </template>
+
+                <template v-if="item.count_users == 1">
+                  {{ formatNames(item.user_names).firstName }}
+                </template>
+              </div>
+            </template>
 
           </TableFullNew>
         </VCardText>

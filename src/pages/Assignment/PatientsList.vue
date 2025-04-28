@@ -32,7 +32,7 @@ const optionsTable = {
     { key: 'gender', title: 'Genero' },
     { key: 'glosas', title: 'Glosas', sortable: false },
     { key: 'value_glosa', title: 'Valor Glosado', sortable: false },
-    { key: 'value_borrowed', title: 'Valor Aprobado', sortable: false },
+    { key: 'value_approved', title: 'Valor Aprobado', sortable: false },
     { key: 'total_value', title: 'Valor Total', sortable: false },
     { key: 'status', title: 'Estado', sortable: false },
     // { key: 'actions', title: 'Acciones', sortable: false, width: 100 },

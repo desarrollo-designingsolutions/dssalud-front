@@ -132,6 +132,7 @@ const filingData = ref({
   id: "" as string,
   type: "" as string,
   contract_id: "" as string,
+  status: "" as string,
 })
 
 const getData = async () => {
@@ -270,6 +271,13 @@ const refreshTable = () => {
     refTableFull.value.fetchTableData(null, false, true); // Forzamos la búsqueda
   }
 };
+
+window.Echo.channel(`filing.${filing_id}`)
+  .listen('FilingRowUpdatedNow', (event: any) => {
+    console.log("event", event);
+
+    filingData.value.status = event.status
+  });
 </script>
 
 <template>
@@ -286,7 +294,7 @@ const refreshTable = () => {
           <ProgressCircularChannel :channel="'filingSupport.' + filing_id" tooltipText="Subiendo soportes masivos" />
           <ProgressCircularChannel :channel="'filingXml.' + filing_id" tooltipText="Subiendo XML masivos" />
 
-          <VBtn :loading="loading.finishFiling" :disabled="loading.finishFiling" color="primary" @click="finishFiling">
+          <VBtn :loading="loading.finishFiling" :disabled="loading.finishFiling" color="primary" @click="finishFiling" v-if="filingData.status == 'FILING_EST_008'">
             Finalizar radicación
           </VBtn>
           <VBtn color="primary">
@@ -296,9 +304,9 @@ const refreshTable = () => {
             Más opciones
             <VMenu activator="parent">
               <VList>
-                <VListItem @click="uploadMoreInvoices()">Subir más facturas</VListItem>
-                <VListItem @click="openModalSupportMasiveFiles()">Subir soportes masivo</VListItem>
-                <VListItem @click="openModalXmlMasiveFiles()">Subir XML masivo</VListItem>
+                <VListItem @click="uploadMoreInvoices()" v-if="filingData.status == 'FILING_EST_008'">Subir más facturas</VListItem>
+                <VListItem @click="openModalSupportMasiveFiles()" v-if="filingData.status == 'FILING_EST_008'">Subir soportes masivo</VListItem>
+                <VListItem @click="openModalXmlMasiveFiles()" v-if="filingData.status == 'FILING_EST_008'">Subir XML masivo</VListItem>
                 <VListItem @click="() => { }">Descargar certificacion de radicación</VListItem>
                 <VListItem @click="() => { }">Descargar CSV de radicación</VListItem>
                 <VListItem @click="openModalErrorsFiling()">Ver inconsistencias</VListItem>

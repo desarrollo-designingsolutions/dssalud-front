@@ -79,10 +79,10 @@ const refModalQuestionResponseFinishFiling = ref()
 
 const finishFiling = async () => {
   loading.finishFiling = true
-  const { data, response } = await useApi(`/filing/getCountFilingInvoicePreRadicated/${filing_id}`).get()
-  if (response.value?.ok && data.value) {
-    const countData = data.value.countData ?? 0
-    const countDataWithOutSupports = data.value.countDataWithOutSupports ?? 0
+  const { data, response } = await useAxios(`/filing/getCountFilingInvoicePreRadicated/${filing_id}`).get()
+  if (response.status==200 && data) {
+    const countData = data.countData ?? 0
+    const countDataWithOutSupports = data.countDataWithOutSupports ?? 0
     if (countData > 0) {
       refModalQuestion.value.componentData.isDialogVisible = true
       refModalQuestion.value.componentData.principalIcon = 'tabler-help-hexagon'
@@ -96,8 +96,8 @@ const finishFiling = async () => {
 }
 const responseFinishFiling = async () => {
   loading.finishFiling = true
-  const { data, response } = await useApi(`/filing/changeStatusFilingInvoicePreRadicated/${filing_id}`).get()
-  if (response.value?.ok && data.value) {
+  const { data, response } = await useAxios(`/filing/changeStatusFilingInvoicePreRadicated/${filing_id}`).get()
+  if (response.status==200 && data) {
     refModalQuestionResponseFinishFiling.value.componentData.isDialogVisible = true
     refModalQuestionResponseFinishFiling.value.componentData.showBtnCancel = false
     refModalQuestionResponseFinishFiling.value.componentData.principalIcon = 'tabler-circle-check'
@@ -124,9 +124,9 @@ const filingData = ref({
 
 const getData = async () => {
   loading.getData = true
-  const { data, response } = await useApi(`/filing/showData/${filing_id}`).get()
-  if (response.value?.ok && data.value) {
-    filingData.value = data.value
+  const { data, response } = await useAxios(`/filing/showData/${filing_id}`).get()
+  if (response.status==200 && data) {
+    filingData.value = data
   }
   loading.getData = false
 }
@@ -148,18 +148,17 @@ const openModalShowFiles = (item: any) => {
 }
 
 const echoChannel = () => {
-
   refTableFull.value.options.tableData.forEach(element => {
-    window.Echo.channel(`filing_invoice.${element.id}`)
-      .listen('.FilingInvoiceRowUpdated', (event: any) => {
+    // window.Echo.channel(`filing_invoice.${element.id}`)
+    //   .listen('.FilingInvoiceRowUpdated', (event: any) => {
 
-        element.files_count = event.files_count
+    //     element.files_count = event.files_count
 
-        element.status_xml = event.status_xml
-        element.status_xml_backgroundColor = event.status_xml_backgroundColor
-        element.status_xml_description = event.status_xml_description
+    //     element.status_xml = event.status_xml
+    //     element.status_xml_backgroundColor = event.status_xml_backgroundColor
+    //     element.status_xml_description = event.status_xml_description
 
-      });
+    //   });
   });
 }
 
@@ -189,6 +188,14 @@ const refreshTable = () => {
     refTableFull.value.fetchTableData(null, false, true); // Forzamos la búsqueda
   }
 };
+
+
+window.Echo.channel(`filing.${filing_id}`)
+  .listen('FilingRowUpdatedNow', (event: any) => {
+    console.log("event", event);
+
+    filingData.value.status = event.status
+  });
 </script>
 
 <template>
@@ -232,7 +239,8 @@ const refreshTable = () => {
           <template #default="{ extraFilters }">
             <VCol cols="3">
               <AppTextField prepend-inner-icon="tabler-search" v-model="extraFilters.files_count.value"
-                label="Soportes cargados" placeholder="Filtrar por soportes cargados" type="text" name="files_count" clearable />
+                label="Soportes cargados" placeholder="Filtrar por soportes cargados" type="text" name="files_count"
+                clearable />
             </VCol>
           </template>
         </FilterDialogNew>

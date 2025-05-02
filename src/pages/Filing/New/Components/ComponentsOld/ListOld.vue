@@ -80,7 +80,7 @@ const refModalQuestionResponseFinishFiling = ref()
 const finishFiling = async () => {
   loading.finishFiling = true
   const { data, response } = await useAxios(`/filing/getCountFilingInvoicePreRadicated/${filing_id}`).get()
-  if (response.status==200 && data) {
+  if (response.status == 200 && data) {
     const countData = data.countData ?? 0
     const countDataWithOutSupports = data.countDataWithOutSupports ?? 0
     if (countData > 0) {
@@ -96,8 +96,12 @@ const finishFiling = async () => {
 }
 const responseFinishFiling = async () => {
   loading.finishFiling = true
-  const { data, response } = await useAxios(`/filing/changeStatusFilingInvoicePreRadicated/${filing_id}`).get()
-  if (response.status==200 && data) {
+  const { data, response } = await useAxios(`/filing/changeStatusFilingInvoicePreRadicated`).post({
+    filing_id: filing_id,
+    user_id: authenticationStore.user.id,
+    company_id: authenticationStore.company.id,
+  })
+  if (response.status == 200 && data) {
     refModalQuestionResponseFinishFiling.value.componentData.isDialogVisible = true
     refModalQuestionResponseFinishFiling.value.componentData.showBtnCancel = false
     refModalQuestionResponseFinishFiling.value.componentData.principalIcon = 'tabler-circle-check'
@@ -125,7 +129,7 @@ const filingData = ref({
 const getData = async () => {
   loading.getData = true
   const { data, response } = await useAxios(`/filing/showData/${filing_id}`).get()
-  if (response.status==200 && data) {
+  if (response.status == 200 && data) {
     filingData.value = data
   }
   loading.getData = false

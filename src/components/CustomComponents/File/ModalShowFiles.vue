@@ -1,7 +1,7 @@
 <script setup lang="ts">
 const emits = defineEmits(["execute"]);
 
-const titleModal = ref<string>("Visualizar soportes");
+const titleModal = ref<string>("Visualizar soportes.");
 const isDialogVisible = ref<boolean>(false);
 const isLoading = ref<boolean>(false);
 

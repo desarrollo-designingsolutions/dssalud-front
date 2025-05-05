@@ -153,16 +153,16 @@ const openModalShowFiles = (item: any) => {
 
 const echoChannel = () => {
   refTableFull.value.options.tableData.forEach(element => {
-    // window.Echo.channel(`filing_invoice.${element.id}`)
-    //   .listen('.FilingInvoiceRowUpdated', (event: any) => {
+    window.Echo.channel(`filing_invoice.${element.id}`)
+      .listen('.FilingInvoiceRowUpdated', (event: any) => {
 
-    //     element.files_count = event.files_count
+        element.files_count = event.files_count
 
-    //     element.status_xml = event.status_xml
-    //     element.status_xml_backgroundColor = event.status_xml_backgroundColor
-    //     element.status_xml_description = event.status_xml_description
+        element.status_xml = event.status_xml
+        element.status_xml_backgroundColor = event.status_xml_backgroundColor
+        element.status_xml_description = event.status_xml_description
 
-    //   });
+      });
   });
 }
 

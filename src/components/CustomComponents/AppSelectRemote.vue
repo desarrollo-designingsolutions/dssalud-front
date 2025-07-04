@@ -33,7 +33,21 @@ const props = defineProps({
   arrayInfo: {
     type: String,
     required: true,
-  }
+  },
+  disabled: {
+    type: Boolean,
+    required: false,
+  },
+  itemsData: {
+    type: Array,
+    required: false,
+    default: () => [],
+  },
+  firstFetch: {
+    type: Boolean,
+    required: false,
+    default: true,
+  },
 });
 
 const emit = defineEmits(['update:modelValue']);
@@ -51,7 +65,8 @@ const page = ref(1);
 const loading = ref(false);
 const hasMore = ref(true);
 const error = ref('');
-
+const isSearching = ref(false); // Nueva variable para controlar si estamos en modo búsqueda
+const fetching = ref(false);
 
 // Debounce para la búsqueda
 let searchTimeout: ReturnType<typeof setTimeout>;
@@ -60,18 +75,19 @@ let searchTimeout: ReturnType<typeof setTimeout>;
 const loadItems = async (newSearch = false) => {
   error.value = '';
   if (loading.value) return;
-  // if (loading.value || !hasMore.value) return;
 
   loading.value = true;
+  fetching.value = true;
 
   try {
     if (newSearch) {
       page.value = 1;
       items.value = [];
       hasMore.value = true;
+      isSearching.value = !!search.value; // Marcamos que estamos en modo búsqueda si hay texto
     }
 
-    const { data } = await useApi(props.url).post({
+    const { data } = await useAxios(props.url).post({
       [props.searchParam]: search.value,
       page: page.value,
       ...props.params,
@@ -80,12 +96,12 @@ const loadItems = async (newSearch = false) => {
     const arrayInfo = props.arrayInfo + "_arrayInfo";
     const countLinks = props.arrayInfo + "_countLinks";
 
-    if (data.value.data) { // Si usa paginación estilo Laravel
-      items.value = newSearch ? data.value.data : [...items.value, ...data.value.data];
-      hasMore.value = data.value.current_page < data.value.last_page;
+    if (data.data) { // Si usa paginación estilo Laravel
+      items.value = newSearch ? data.data : [...items.value, ...data.data];
+      hasMore.value = data.current_page < data.last_page;
     } else { // Si es un endpoint personalizado
-      items.value = newSearch ? data.value[arrayInfo] : [...items.value, ...data.value[arrayInfo]];
-      hasMore.value = data.value[countLinks].length > 1;
+      items.value = newSearch ? data[arrayInfo] : [...items.value, ...data[arrayInfo]];
+      hasMore.value = data[countLinks].length > 1;
     }
 
     page.value++;
@@ -93,21 +109,67 @@ const loadItems = async (newSearch = false) => {
     error.value = 'Error al buscar datos.' + err;
   } finally {
     loading.value = false;
+    fetching.value = false;
   }
 };
-
 
 // Búsqueda con debounce
 watch(search, (newVal) => {
   clearTimeout(searchTimeout);
-  searchTimeout = setTimeout(() => loadItems(true), 500);
+
+  // Si se borra la búsqueda y tenemos itemsData, restauramos los datos originales
+  if (!newVal && props.itemsData.length > 0 && isSearching.value) {
+    isSearching.value = false;
+    items.value = [...props.itemsData];
+    return;
+  }
+
+  // Solo hacemos búsqueda si hay texto
+  if (newVal) {
+    searchTimeout = setTimeout(() => loadItems(true), 500);
+  }
 });
+
+// Watcher para itemsData, solo actualiza si no estamos en modo búsqueda
+watch(() => props.itemsData, (newItemsData) => {
+  if (newItemsData && newItemsData.length > 0 && !isSearching.value) {
+    // Solo actualizamos los items si no estamos en medio de una búsqueda
+    items.value = [...newItemsData];
+  }
+}, { deep: true });
 
 // Cargar datos iniciales
 onMounted(() => {
-  loadItems();
+  // Si hay datos proporcionados, los usamos directamente
+  if (props.itemsData.length > 0) {
+    items.value = [...props.itemsData];
+    return; // No hacemos petición si ya tenemos datos
+  }
+
+  // Si está deshabilitado, no hacemos petición
+  if (props.disabled) {
+    return;
+  }
+
+  // Solo hacemos la petición si firstFetch es true
+  if (props.firstFetch) {
+    loadItems();
+  }
 });
 
+// Método para limpiar la búsqueda
+const clearText = () => {
+  search.value = '';
+  // Si tenemos itemsData, restauramos los datos originales
+  if (props.itemsData.length > 0) {
+    isSearching.value = false;
+    items.value = [...props.itemsData];
+  } else if (isSearching.value) {
+    // Si no tenemos itemsData pero estábamos buscando, recargamos los datos
+    isSearching.value = false;
+    loadItems(true);
+  }
+}
 
 // Mensaje para el slot no-data basado en el valor de localValue
 const noDataMessage = computed(() => {
@@ -122,16 +184,12 @@ const noDataMessage = computed(() => {
     ? 'Escribe algo para buscar...'
     : `No se encontraron resultados para "<strong>${search.value}</strong>".`;
 });
-
-const clearText = () => {
-  search.value = '';
-}
 </script>
 
 <template>
   <AppSelect @blur="clearText" returnObject v-model="localValue" :items="items" :item-title="itemTitle"
-    :item-value="itemValue" :multiple="multiple" :search="search" :loading="loading"
-    @update:search="(value) => search = value" clearable>
+    :item-value="itemValue" :multiple="multiple" :search="search" :loading="fetching"
+    @update:search="(value) => search = value" clearable :disabled="props.disabled">
     <template #prepend-item class="sticky-search">
       <VListItem>
         <AppTextField v-model="search" placeholder="Teclee para buscar..." variant="outlined" density="compact"
@@ -144,7 +202,6 @@ const clearText = () => {
     </template>
     <!-- Codigo que itera sobre las ranuras disponibles en el componente padre e individualmente rinde cada ranura con sus propias propiedades -->
 
-
     <template v-slot:no-data>
       <VListItem>
         <VListItemTitle class="text-center" v-html="noDataMessage"></VListItemTitle>
@@ -152,28 +209,3 @@ const clearText = () => {
     </template>
   </AppSelect>
 </template>
-
-<style scoped>
-:deep(.sticky-search) {
-  position: sticky;
-  top: 0;
-  z-index: 999;
-  /* Asegúrate de que esté encima de otros elementos */
-  background: white;
-  /* Color de fondo según tu tema */
-  padding-top: 8px;
-  padding-bottom: 8px;
-  width: 100%;
-  /* Asegura que ocupe todo el ancho del contenedor */
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  /* Agrega sombra para hacerlo más visible */
-}
-
-/* Para temas oscuros */
-:deep(.v-theme--dark .sticky-search) {
-  background: #1e1e1e;
-  /* Color de fondo oscuro */
-  color: white;
-  /* Asegura que el texto sea visible en tema oscuro */
-}
-</style>

@@ -83,6 +83,8 @@ declare module 'vue-router/auto-routes' {
     'invoice-audit-components-modal-show-files': RouteRecordInfo<'invoice-audit-components-modal-show-files', '/InvoiceAudit/Components/ModalShowFiles', Record<never, never>, Record<never, never>>,
     'invoice-audit-components-modal-upload-glosa-file-csv': RouteRecordInfo<'invoice-audit-components-modal-upload-glosa-file-csv', '/InvoiceAudit/Components/ModalUploadGlosaFileCsv', Record<never, never>, Record<never, never>>,
     'InvoiceAudit-List': RouteRecordInfo<'InvoiceAudit-List', '/InvoiceAudit/List', Record<never, never>, Record<never, never>>,
+    'ReconciliationGroup-List': RouteRecordInfo<'ReconciliationGroup-List', '/ReconciliationGroup/List', Record<never, never>, Record<never, never>>,
+    'ReconciliationGroup-Form': RouteRecordInfo<'ReconciliationGroup-Form', 'reconciliationGroup-form/:action/:id?', Record<never, never>, Record<never, never>>,
     'ViewEventConciliationMessage': RouteRecordInfo<'ViewEventConciliationMessage', '/ViewEventConciliationMessage/:schedule_id', Record<never, never>, Record<never, never>>,
     'schedule-components-message-accepted': RouteRecordInfo<'schedule-components-message-accepted', '/Schedule/Components/MessageAccepted', Record<never, never>, Record<never, never>>,
     'schedule-components-modal-form': RouteRecordInfo<'schedule-components-modal-form', '/Schedule/Components/ModalForm', Record<never, never>, Record<never, never>>,

@@ -129,3 +129,29 @@ export const positiveNumberValidator = (value: string) => {
     return false
   }
 }
+
+export const validateEndTime = (value: string, startTime: string) => {
+  if (!startTime || !value) return true // No validamos si no hay ambos valores
+
+  const [startHour, startMin] = startTime.split(':').map(Number)
+  const [endHour, endMin] = value.split(':').map(Number)
+
+  const start = startHour * 60 + startMin
+  const end = endHour * 60 + endMin
+
+  return end > start || 'La hora fin debe ser mayor a la hora inicio'
+}
+
+export const validateStartTime = (startTime: string, endTime: string): true | string => {
+  if (!startTime || !endTime) return true
+
+  const [startHour, startMin] = startTime.split(':').map(Number)
+  const [endHour, endMin] = endTime.split(':').map(Number)
+
+  const startTotalMinutes = startHour * 60 + startMin
+  const endTotalMinutes = endHour * 60 + endMin
+
+  return startTotalMinutes < endTotalMinutes
+    ? true
+    : 'La hora inicio debe ser menor a la hora fin'
+}

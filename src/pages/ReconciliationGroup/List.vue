@@ -26,6 +26,7 @@ const optionsTable = {
   headers: [
     { key: 'name', title: 'Nombre' },  
     { key: 'third_name', title: 'Tercero' }, 
+    { key: 'link', title: 'Link' }, 
     { key: 'actions', title: 'Acciones', sortable: false,width: '50' },
   ],
   actions: {

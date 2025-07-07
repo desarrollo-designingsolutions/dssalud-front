@@ -26,10 +26,10 @@ const currentTab = ref<number>(0);
       <VCardText>
         <VWindow v-model="currentTab">
           <VWindowItem>
-            <AgendaConciliation />
+            <Schedule />
           </VWindowItem>
           <VWindowItem>
-            <Schedule />
+            <AgendaConciliation />
           </VWindowItem>
         </VWindow>
       </VCardText>

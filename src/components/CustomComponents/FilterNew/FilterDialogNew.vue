@@ -82,7 +82,12 @@ const updateQueries = async () => {
 
   for (const key in filters.extraFilters) {
     const field = filters.extraFilters[key];
-    if (field.value !== null && field.value !== undefined && field.value !== '') {
+    if (field.type === 'selectApi') {
+      const values = Array.isArray(field.value)
+        ? field.value.map(item => `${item.value}|${item.title}`)
+        : [field.value ? `${field.value.value}|${field.value.title}` : ''];
+      queries.value[`filter[${key}]`] = values.filter(v => v !== '').join(',');
+    } else if (field.value !== null && field.value !== undefined && field.value !== '') {
       queries.value[`filter[${key}]`] = field.value;
     }
   }
@@ -238,7 +243,7 @@ const clearGeneralSearchInput = () => {
 
 // Calcula los filtros activos para mostrar como chips
 const activeFilters = computed(() => {
-  const filters: Record<string, string> = {};
+  const filtersData: Record<string, string> = {};
 
   // Si disableUrlUpdate está activo, usamos currentFilters en lugar de route.query
   const sourceFilters = props.disableUrlUpdate ? currentFilters.value : route.query;
@@ -248,28 +253,33 @@ const activeFilters = computed(() => {
       const filterKey = key.replace('filter[', '').replace(']', '');
       const value = sourceFilters[key];
       const stringValue = value !== null && value !== undefined ? String(value) : '';
+
       if (stringValue.trim() !== '') {
-        const field = props.optionsFilter.dialog?.inputs?.find(f => f.name === filterKey);
+        let field = props.optionsFilter.dialog?.inputs?.find(f => f.name === filterKey);
+        if (!field && props.optionsFilter.extraFilters) {
+          field = props.optionsFilter.extraFilters[filterKey];
+        }
         if (field) {
           if (field.type === 'selectApi') {
             const titles = stringValue.split(',').map(v => v.split('|')[1] || v).join(', ');
-            filters[filterKey] = titles;
+            filtersData[filterKey] = titles;
           } else if (['select', 'selectChipCount'].includes(field.type)) {
             const titles = stringValue.split(',').map(v => field.options?.find(opt => opt.value == v)?.title || v).join(', ');
-            filters[filterKey] = titles;
+            filtersData[filterKey] = titles;
           } else if (field.type === 'booleanActive') {
             const selectedOption = booleanActive.find(opt => String(opt.value) === stringValue);
-            filters[filterKey] = selectedOption ? selectedOption.title : stringValue;
+            filtersData[filterKey] = selectedOption ? selectedOption.title : stringValue;
           } else {
-            filters[filterKey] = stringValue;
+            filtersData[filterKey] = stringValue;
           }
         } else {
-          filters[filterKey] = stringValue;
+          filtersData[filterKey] = stringValue;
         }
       }
     }
   }
-  return filters;
+
+  return filtersData;
 });
 
 // Elimina un filtro específico
@@ -428,6 +438,9 @@ defineExpose({
                 clearable />
               <AppSelect v-if="field.type === 'booleanActive'" v-model="field.value" :items="booleanActive"
                 :label="field.label" :chips="field.chips" :closable-chips="field.chips" clearable />
+
+
+
               <AppSelectRemote v-if="field.type === 'selectApi'" v-model="field.value" :url="field.url"
                 :arrayInfo="field.arrayInfo" :item-title="field.itemTitle" :item-value="field.itemValue"
                 :multiple="field.multiple" :search-param="field.searchParam" :label="field.label">
@@ -440,6 +453,10 @@ defineExpose({
                   </span>
                 </template>
               </AppSelectRemote>
+
+
+
+
               <AppSelect v-if="field.type === 'selectChipCount'" v-model="field.value" :items="field.options"
                 :label="field.label" :multiple="field.multiple" return-object clearable>
                 <template v-slot:selection="{ item, index }">

@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import ModalForm from '@/pages/Schedule/Components/ModalForm.vue'
-import ModalViewEvent from '@/pages/Schedule/Components/ModalViewEvent.vue'
+import ModalFormConciliation from '@/pages/Schedule/Components/ModalFormConciliation.vue'
+import ModalViewEventConciliation from '@/pages/Schedule/Components/ModalViewEventConciliation.vue'
 import { useAuthenticationStore } from "@/stores/useAuthenticationStore"
 import dayGridPlugin from '@fullcalendar/daygrid'
 import interactionPlugin from '@fullcalendar/interaction'
@@ -69,7 +69,6 @@ const options = reactive({
   moreLinkText: (eventCount) => `más (${eventCount})`,
 
   eventContent: function (arg: any) {
-    console.log(arg)
     const htmls = `
       <div data-event-id="${arg.event.id}" data-action="edit" style="width: 100%; background: ${arg.event._def.extendedProps.abc}; color:white; padding: 0 10px; cursor:pointer;"  >
         <b ><p data-event-id="${arg.event.id}" data-action="edit"  style="margin: 0px !important;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;">${arg.event._def.title}</p></b>
@@ -84,15 +83,14 @@ const options = reactive({
     const day = daySelected.dateStr.substring(0, 10)
 
     cal.unselect()
-    openModalForm(null, day);
+    openModalFormConciliation(null, day);
   },
 
   eventClick: async (arg: any) => {
-    console.log(arg.event._def.extendedProps.type)
     const eventId = arg.jsEvent.target.dataset.eventId
 
     if (eventId && arg.event._def.extendedProps.type === 'event') {
-      openModalViewEvent(eventId);
+      openModalViewEventConciliation(eventId);
     }
   },
 
@@ -201,20 +199,8 @@ const fetchCalendarEvents = async (params: object | null) => {
   return data;
 };
 
-const deleteData = async (id: string) => {
-  loading.calendar = true;
-
-  let url = '/schedule/delete/' + id;
-
-  const { data, response } = await useAxios(url).delete();
-
-  if (response.status == 200 && data) {
-    loadEventsRange();
-  }
-
-  loading.calendar = false;
-
-  return data;
+const deleteData = async () => {
+  loadEventsRange();  
 };
 
 const loadEventsRange = async () => {
@@ -316,21 +302,25 @@ const debouncedClick = debounce(async () => {
   await loadEventsRange();
 }, 500);
 
-// ModalViewEvent
-const refModalViewEvent = ref();
+// ModalViewEventConciliation
+const refModalViewEventConciliation = ref();
 
-const openModalViewEvent = (eventId: any) => {
-  refModalViewEvent.value.openModal(eventId);
+const openModalViewEventConciliation = (eventId: any) => {
+  refModalViewEventConciliation.value.openModal(eventId);
 };
 
-// ModalForm
-const refModalForm = ref();
+// ModalFormConciliation
+const refModalFormConciliation = ref();
 
-const openModalForm = (eventId: any = null, day: any = null) => {
+const openModalFormConciliation = (eventId: any = null, day: any = null) => {
   if (!day) {
     day = selectedDate.value.substring(0, 10)
   }
-  refModalForm.value.openModal(eventId, day);
+  refModalFormConciliation.value.openModal(eventId, day);
+};
+
+const openModalFormConciliationToReschedule = (eventId: any = null) => {
+  refModalFormConciliation.value.openModalToReschedule(eventId);
 };
 </script>
 
@@ -342,7 +332,7 @@ const openModalForm = (eventId: any = null, day: any = null) => {
         <!-- 👉 Navigation drawer -->
         <VNavigationDrawer width="292" absolute touchless location="start" class="calendar-add-event-drawer">
           <div style="margin: 1.4rem;">
-            <VBtn block prepend-icon="tabler-calendar" @click="openModalForm()">
+            <VBtn block prepend-icon="tabler-calendar" @click="openModalFormConciliation()">
               Crear Evento
             </VBtn>
           </div>
@@ -379,8 +369,8 @@ const openModalForm = (eventId: any = null, day: any = null) => {
 
     </AppCardActions>
 
-    <ModalViewEvent ref="refModalViewEvent" @modify="openModalForm($event)" @delete="deleteData"/>
-    <ModalForm ref="refModalForm" @execute="loadEventsRange()" />
+    <ModalViewEventConciliation ref="refModalViewEventConciliation" @modify="openModalFormConciliation($event)" @delete="deleteData" @reschedule="openModalFormConciliationToReschedule"/>
+    <ModalFormConciliation ref="refModalFormConciliation" @execute="loadEventsRange()" />
   </div>
 </template>
 

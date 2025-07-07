@@ -1,14 +1,18 @@
 <script setup lang="ts">
 import { useToast } from '@/composables/useToast';
-import MessageAccepted from '@/pages/Schedule/Components/MessageAccepted.vue';
+import StatusEventConciliation from '@/pages/Schedule/Components/StatusEventConciliation.vue';
+import { useConfigStore } from '@core/stores/config';
 import { onMounted, ref } from 'vue';
 
 const { toast } = useToast()
 const route = useRoute()
 
+const configStore = useConfigStore()
+configStore.theme = 'light'
+
 definePage({
-  name: "ViewEventConciliationMessage",
-  path: "/ViewEventConciliationMessage/:schedule_id",
+  name: "ViewEventConciliationResponse",
+  path: "/ViewEventConciliationResponse/:schedule_id",
   meta: {
     layout: 'blank',
     public: true,
@@ -62,10 +66,11 @@ const handleResponse = async (accepted: boolean) => {
 const sendAccept = async () => {
   try {
     loading.value = true;
-    const { data, response } = await useAxios(`/schedule/acceptInvitation/${route.params.schedule_id}`).get();
+    const { data, response } = await useAxios(`/schedule/conciliation/acceptInvitation/${route.params.schedule_id}`).get();
 
     if (response.status === 200 && data) {
-      eventData.value = data.event_data
+      eventData.value.response_status = data.event_data.response_status
+      eventData.value.response_date = data.event_data.response_date
       response.value = 'accepted'
     }
   } catch (error) {
@@ -78,10 +83,11 @@ const sendAccept = async () => {
 const sendReject = async () => {
   try {
     loading.value = true;
-    const { data, response } = await useAxios(`/schedule/rejectInvitation/${route.params.schedule_id}`).get();
+    const { data, response } = await useAxios(`/schedule/conciliation/rejectInvitation/${route.params.schedule_id}`).get();
 
     if (response.status === 200 && data) {
-      eventData.value = data.event_data
+      eventData.value.response_status = data.event_data.response_status
+      eventData.value.response_date = data.event_data.response_date
       response.value = 'rejected'
     }
   } catch (error) {
@@ -94,7 +100,7 @@ const sendReject = async () => {
 const getData = async () => {
   try {
     loading.value = true;
-    const { data, response } = await useAxios(`/schedule/getAcceptDataEvent/${route.params.schedule_id}`).get();
+    const { data, response } = await useAxios(`/schedule/conciliation/getAcceptDataEvent/${route.params.schedule_id}`).get();
 
     if (response.status === 200 && data) {
       eventData.value = data.event_data
@@ -109,10 +115,12 @@ const getData = async () => {
 onMounted(() => {
   getData();
 });
+
+
 </script>
 
 <template>
-  <v-app>
+  <v-app> 
     <div class="invitation-background" v-if="eventData?.response_status == 'SCHEDULE_RESPONSE_STATUS_001'">
       <v-container fluid class="fill-height pa-4">
         <v-row justify="center" align="center" class="fill-height">
@@ -288,7 +296,7 @@ onMounted(() => {
         </v-row>
       </v-container>
     </div>
-    <MessageAccepted v-if="!loading && eventData && eventData.response_status != 'SCHEDULE_RESPONSE_STATUS_001'"
+    <StatusEventConciliation v-if="!loading && eventData && eventData.response_status != 'SCHEDULE_RESPONSE_STATUS_001'"
       :eventData="eventData" />
   </v-app>
 </template>

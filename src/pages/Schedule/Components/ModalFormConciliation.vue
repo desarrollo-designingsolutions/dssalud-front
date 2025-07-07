@@ -10,7 +10,7 @@ const errorsBack = ref<IErrorsBack>({});
 const refForm = ref<VForm>();
 const emit = defineEmits(["execute"])
 
-const titleModal = ref<string>("Crear Evento")
+const titleModal = ref<string>("Crear Evento Conciliación")
 const isDialogVisible = reactive({ modal_user: false, modal_more_information: false })
 const disabledFiledsView = ref<boolean>(false)
 
@@ -27,9 +27,6 @@ interface ISelect {
 const form = ref({
   id: null as null | string,
   company_id: null as null | string,
-  user_id: null as null | string,
-  third_id: null as null | string,
-  emails: null as null | string,
   title: null as null | string,
   start_date: null as null | Date | string,
   start_hour: '12:00' as null | string,
@@ -37,18 +34,25 @@ const form = ref({
   end_hour: null as null | string,
   all_day: false as null | boolean | string,
   description: null as null | string,
+  emails: null as null | string,
+  user_id: null as null | string,
+  third_id: null as null | string,
   link: null as null | string,
+  reconciliation_group_id: null as null | string, 
+  scheduleable_id: null as null | string,
 })
 
 const user_arrayInfo = ref<ISelect[]>([])
 const third_arrayInfo = ref<ISelect[]>([])
-const typeEventEnum_arrayInfo = ref<ISelect[]>([])
+const reconciliationGroup_arrayInfo = ref<ISelect[]>([])
+
+const reschedule = ref<boolean>(false)
 
 const handleClearForm = () => {
   for (const key in form.value) {
     form.value[key] = null
   }
-  form.value.start_hour = '12:00'
+  form.value.start_hour = '12:00' 
 }
 
 const handleDialogVisible = () => {
@@ -57,6 +61,8 @@ const handleDialogVisible = () => {
 
 const openModal = async (id: string | null = null, date: string | null, disabled: boolean = false) => {
   disabledFiledsView.value = disabled
+  reschedule.value = false
+
 
   handleClearForm()
   handleDialogVisible();
@@ -67,7 +73,23 @@ const openModal = async (id: string | null = null, date: string | null, disabled
   form.value.start_hour = '00:00';
   form.value.end_hour = '23:55';
 
-  titleModal.value = id ? "Editar evento" : "Crear evento"
+  titleModal.value = id ? "Editar evento Conciliación" : "Crear evento Conciliación"
+
+  form.value.id = id
+  form.value.company_id = company.value.id
+  await fetchDataForm();
+};
+
+const openModalToReschedule = async (id: string) => {
+  reschedule.value = true
+
+  handleClearForm()
+  handleDialogVisible();
+
+  form.value.start_hour = '00:00';
+  form.value.end_hour = '23:55';
+
+  titleModal.value = "Reagendar evento Conciliación"
 
   form.value.id = id
   form.value.company_id = company.value.id
@@ -78,7 +100,7 @@ const roles = ref([])
 const companies = ref([])
 const fetchDataForm = async () => {
 
-  const url = form.value.id ? `/schedule/dataEditForm/${form.value.id}` : `/schedule/dataViewForm`
+  const url = form.value.id ? `/schedule/conciliation/edit/${form.value.id}` : `/schedule/conciliation/create`
 
   loading.form = true
   const { data, response } = await useAxios(url).get({
@@ -94,10 +116,15 @@ const fetchDataForm = async () => {
     //select infinitos
     user_arrayInfo.value = data.user_arrayInfo
     third_arrayInfo.value = data.third_arrayInfo
-    typeEventEnum_arrayInfo.value = data.typeEventEnum_arrayInfo
+    reconciliationGroup_arrayInfo.value = data.reconciliationGroup_arrayInfo
 
     if (data.form) {
       form.value = data.form;
+
+      //solo si es para reagendar
+      if(reschedule.value){
+        form.value.id = null
+      }
     }
   }
   loading.form = false
@@ -108,7 +135,7 @@ const submitForm = async () => {
 
   if (validation?.valid) {
 
-    const url = form.value.id ? `/schedule/update/${form.value.id}` : `/schedule/store`
+    const url = form.value.id ? `/schedule/conciliation/update/${form.value.id}` : `/schedule/conciliation/store`
 
     loading.form = true
 
@@ -129,7 +156,8 @@ const isLoading = computed(() => {
 });
 
 defineExpose({
-  openModal
+  openModal,
+  openModalToReschedule
 })
 
 const end_dateValidation = computed(() => {
@@ -183,6 +211,10 @@ const end_hourValidation = computed(() => {
   }
 })
 
+const computedNow = computed(() => {
+  return new Date().toISOString().substring(0, 10);
+});
+
 </script>
 
 <template>
@@ -224,17 +256,17 @@ const end_hourValidation = computed(() => {
               </VCol>
 
               <VCol cols="12">
-                <AppTextField :requiredField="true" clearable :disabled="disabledFiledsView" label="Emails Invitados"
-                  :rules="[requiredValidator]" v-model="form.emails" :error-messages="errorsBack.emails" />
+                <AppSelectRemote :disabled="disabledFiledsView" :requiredField="true"
+                  label="Grupo de conciliación" v-model="form.reconciliation_group_id" :errorMessages="errorsBack.reconciliation_group_id"
+                  @input="errorsBack.reconciliation_group_id = ''" url="/selectInfiniteReconciliationGroup" arrayInfo="reconciliationGroup" clearable
+                  :itemsData="reconciliationGroup_arrayInfo" :firstFetch="false" :rules="[requiredValidator]">
+                </AppSelectRemote>
               </VCol>
 
-              <!-- <VCol cols="12">
-                <AppSelectRemote :disabled="disabledFiledsView" :requiredField="true" label="Tipo de evento"
-                  v-model="form.type_event_id" :errorMessages="errorsBack.type_event_id"
-                  @input="errorsBack.type_event_id = ''" url="/selectTypeEventEnum" arrayInfo="typeEventEnum" clearable
-                  :itemsData="typeEventEnum_arrayInfo" :firstFetch="false" :rules="[requiredValidator]">
-                </AppSelectRemote>
-              </VCol> -->
+              <VCol cols="12">
+                <AppTextField :requiredField="true" clearable :disabled="disabledFiledsView" label="Emails Invitados"
+                  :rules="[requiredValidator]" v-model="form.emails" :error-messages="errorsBack.emails" />
+              </VCol> 
 
               <VCol cols="12">
                 <div class="d-flex">
@@ -245,7 +277,7 @@ const end_hourValidation = computed(() => {
               <VCol cols="12" md="6">
                 <AppTextField type="date" :requiredField="true" label="Fecha inicio" v-model="form.start_date" clearable
                   :errorMessages="errorsBack.start_date" @input="errorsBack.start_date = ''"
-                  :rules="[requiredValidator]" :max="form.end_date" />
+                  :rules="[requiredValidator]" :min="computedNow" />
               </VCol>
 
               <VCol cols="12" md="3" v-if="!form.all_day">

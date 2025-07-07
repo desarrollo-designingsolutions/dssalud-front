@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import AgendaConciliation from "@/pages/Schedule/Components/AgendaConciliation.vue";
 import Schedule from "@/pages/Schedule/Components/Schedule.vue";
 
 definePage({
@@ -11,14 +12,28 @@ definePage({
   },
 });
 
+const currentTab = ref<number>(0);
+
 </script>
 
 <template>
   <div>
+    <VTabs v-model="currentTab" class="v-tabs-pill">
+      <VTab>Calendario</VTab>
+      <VTab>Agenda de conciliaciones</VTab>
+    </VTabs>
     <VCard class="mt-3">
       <VCardText>
-        <Schedule />
+        <VWindow v-model="currentTab">
+          <VWindowItem>
+            <AgendaConciliation />
+          </VWindowItem>
+          <VWindowItem>
+            <Schedule />
+          </VWindowItem>
+        </VWindow>
       </VCardText>
     </VCard>
   </div>
 </template>
+

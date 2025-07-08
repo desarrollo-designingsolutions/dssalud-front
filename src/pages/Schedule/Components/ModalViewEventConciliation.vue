@@ -7,6 +7,13 @@ import { useAuthenticationStore } from "@/stores/useAuthenticationStore";
 const { toast } = useToast()
 const authenticationStore = useAuthenticationStore();
 
+const props = defineProps({
+  showBtn: {
+    type: Boolean,
+    default: true
+  }, 
+});
+
 const emits = defineEmits(["modify", "close", "delete","reschedule"]);
 
 const titleModal = ref<string>("Detalles del evento")
@@ -280,31 +287,33 @@ const handleDelete = async () => {
         <!-- Footer con botones mejorados -->
         <VDivider></VDivider>
 
-        <VCardText class="d-flex justify-end gap-3 flex-wrap" v-if="eventData.response_status === 'SCHEDULE_RESPONSE_STATUS_001'">
-          <VSpacer />
-          <VBtn color="error" :disabled="isLoading" @click="openModalQuestion" class="me-3">
-            Eliminar
-          </VBtn>
-          <VBtn color="info" :loading="isLoading" :disabled="isLoading" @click="handleModify">
-            Modificar
-          </VBtn>
-        </VCardText>
-
-        <VCardText  v-if="eventData.response_status === 'SCHEDULE_RESPONSE_STATUS_002'">
-          <VAlert  border="bottom" color="success" variant="tonal">
-            Esta conciliación ya ha sido aceptada y no se puede modificar.
-          </VAlert>
-        </VCardText>
-
-        <VCardText class="d-flex gap-3 flex-wrap " v-if="eventData.response_status === 'SCHEDULE_RESPONSE_STATUS_003'">
-          <VAlert  border="bottom" color="error" variant="tonal">
-            Esta conciliación ha sido rechazada y no se puede modificar.
-          </VAlert>
-          
-          <VBtn color="primary" :loading="isLoading" :disabled="isLoading" @click="handleReschedule">
-            Reagendar
-          </VBtn>
-        </VCardText>
+        <template v-if="props.showBtn"> 
+          <VCardText class="d-flex justify-end gap-3 flex-wrap" v-if="eventData.response_status === 'SCHEDULE_RESPONSE_STATUS_001'">
+            <VSpacer />
+            <VBtn color="error" :disabled="isLoading" @click="openModalQuestion" class="me-3">
+              Eliminar
+            </VBtn>
+            <VBtn color="info" :loading="isLoading" :disabled="isLoading" @click="handleModify">
+              Modificar
+            </VBtn>
+          </VCardText>
+  
+          <VCardText  v-if="eventData.response_status === 'SCHEDULE_RESPONSE_STATUS_002'">
+            <VAlert  border="bottom" color="success" variant="tonal">
+              Esta conciliación ya ha sido aceptada y no se puede modificar.
+            </VAlert>
+          </VCardText>
+  
+          <VCardText class="d-flex gap-3 flex-wrap " v-if="eventData.response_status === 'SCHEDULE_RESPONSE_STATUS_003'">
+            <VAlert  border="bottom" color="error" variant="tonal">
+              Esta conciliación ha sido rechazada y no se puede modificar.
+            </VAlert>
+            
+            <VBtn color="primary" :loading="isLoading" :disabled="isLoading" @click="handleReschedule">
+              Reagendar
+            </VBtn>
+          </VCardText>
+        </template>
       </VCard>
     </VDialog>
 

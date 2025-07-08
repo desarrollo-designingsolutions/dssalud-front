@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import ModalViewEventConciliation from '@/pages/Schedule/Components/ModalViewEventConciliation.vue';
 import { useAuthenticationStore } from "@/stores/useAuthenticationStore";
 
 const authenticationStore = useAuthenticationStore();
@@ -12,12 +13,13 @@ const optionsTable = {
   url: "/schedule/conciliation/paginateAgenda",
   headers: [
     { key: 'title', title: 'Título' },
-    { key: 'start_date', title: 'Fecha inicio' },
+    { key: 'start_date', title: 'Fecha inicio',width:100 },
     { key: "response_status", title: 'Estado de la respuesta', },
     { key: "response_date", title: 'Fecha de la respuesta', },
     { key: "third_name", title: 'Tercero', },
     { key: "user_name", title: 'Asignado', },
     { key: "reconciliation_group_name", title: 'Grupo de conciliación', },
+    { key: "btn", title: 'Acciones', },
   ],
 }
 
@@ -77,6 +79,18 @@ const downloadExcel = async () => {
     downloadExcelBase64(data.excel, "Agenda")
   }
 }
+
+const openModalInfo = ()=>{
+
+}
+
+// ModalViewEventConciliation
+const refModalViewEventConciliation = ref();
+
+const openModalViewEventConciliation = (eventId: any) => {
+  refModalViewEventConciliation.value.openModal(eventId);
+};
+
 </script>
 
 <template>
@@ -113,8 +127,17 @@ const downloadExcel = async () => {
             </div>
           </template>
 
+          <template #item.btn="{ item }">
+            <div>
+              <VBtn @click="openModalViewEventConciliation(item.id)">Ver información</VBtn>
+            </div>
+          </template>
+
         </TableFullNew>
       </VCardText>
     </VCard>
+
+    <ModalViewEventConciliation ref="refModalViewEventConciliation" :showBtn="false" />
+
   </div>
 </template>

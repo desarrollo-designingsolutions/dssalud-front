@@ -12,6 +12,7 @@ const optionsTable = {
   url: "/schedule/conciliation/paginateAgenda",
   headers: [
     { key: 'title', title: 'Título' },
+    { key: 'start_date', title: 'Fecha inicio' },
     { key: "response_status", title: 'Estado de la respuesta', },
     { key: "response_date", title: 'Fecha de la respuesta', },
     { key: "third_name", title: 'Tercero', },
@@ -23,7 +24,7 @@ const optionsTable = {
 //FILTER
 const optionsFilter = ref({
   dialog: {
-    width: 500,
+    width: 800,
     inputs: [
       {
         name: "response_status",
@@ -37,6 +38,12 @@ const optionsFilter = ref({
       {
         name: "response_date",
         label: "Fecha de respuestas",
+        type: "dateRange",
+        value: null,
+      },
+      {
+        name: "start_date",
+        label: "Fecha Inicio",
         type: "dateRange",
         value: null,
       },

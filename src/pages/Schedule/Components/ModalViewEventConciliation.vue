@@ -23,6 +23,7 @@ const eventData = ref({
   end_hour: null as string | null,
   description: null as string | null,
   response_status: null as string | null,
+  link: null as string | null,
   user: {
     id: null as string | null,
     full_name: null as string | null,
@@ -135,7 +136,7 @@ const handleDelete = async () => {
         <VCardText class="pa-6">
           <VRow>
             <!-- Columna izquierda - Información detallada -->
-            <VCol cols="12" lg="5">
+            <VCol cols="12" lg="7">
               <VCard variant="outlined" class="info-card h-100" elevation="2">
                 <VCardTitle class="bg-grey-lighten-4 d-flex align-center">
                   <VIcon color="primary" class="me-2">tabler-calendar-event</VIcon>
@@ -213,6 +214,15 @@ const handleDelete = async () => {
 
                     <VListItem class="px-0 py-2">
                       <template #prepend>
+                        <VIcon color="primary">tabler-link</VIcon>
+                      </template>
+                      <VListItemTitle class="text-body-2 text-grey-darken-1">Link</VListItemTitle>
+                      <VListItemSubtitle class="text-body-1 font-weight-medium" >
+                       <a :href="eventData.link" target="_blank">{{ eventData.link }}</a>
+                      </VListItemSubtitle>
+                    </VListItem>
+                    <VListItem class="px-0 py-2">
+                      <template #prepend>
                         <VIcon color="primary">tabler-file-description</VIcon>
                       </template>
                       <VListItemTitle class="text-body-2 text-grey-darken-1">Descripción</VListItemTitle>
@@ -227,7 +237,7 @@ const handleDelete = async () => {
             </VCol>
 
             <!-- Columna derecha - Equipo a cargo -->
-            <VCol cols="12" lg="7">
+            <VCol cols="12" lg="5">
               <VCard variant="outlined" class="team-card h-100" elevation="2">
                 <VCardTitle class="bg-grey-lighten-4 d-flex align-center justify-space-between">
                   <div class="d-flex align-center">
@@ -502,4 +512,5 @@ const handleDelete = async () => {
     grid-template-columns: 1fr;
   }
 }
+ 
 </style>

@@ -12,14 +12,14 @@ const refTableFull = ref()
 const optionsTable = {
   url: "/schedule/conciliation/paginateAgenda",
   headers: [
-    { key: 'title', title: 'Título' },
-    { key: 'start_date', title: 'Fecha inicio',width:100 },
-    { key: "response_status", title: 'Estado de la respuesta', },
-    { key: "response_date", title: 'Fecha de la respuesta', },
-    { key: "third_name", title: 'Tercero', },
-    { key: "user_name", title: 'Asignado', },
-    { key: "reconciliation_group_name", title: 'Grupo de conciliación', },
-    { key: "btn", title: 'Acciones', },
+    { key: 'title', title: 'Título', minWidth:200  },
+    { key: 'start_date', title: 'Fecha inicio',minWidth:160 },
+    { key: "response_status", title: 'Estado de la respuesta',minWidth:160 },
+    { key: "response_date", title: 'Fecha de la respuesta', minWidth:160},
+    { key: "third_name", title: 'Tercero', minWidth:300 },
+    { key: "user_name", title: 'Asignado', minWidth:300  },
+    { key: "reconciliation_group_name", title: 'Grupo de conciliación', minWidth:300  },
+    { key: "btn", title: 'Acciones',  minWidth:50 },
   ],
 }
 

@@ -12,7 +12,7 @@ definePage({
   },
 });
 
-const currentTab = ref<number>(0);
+const currentTab = ref<number>(1);
 
 </script>
 

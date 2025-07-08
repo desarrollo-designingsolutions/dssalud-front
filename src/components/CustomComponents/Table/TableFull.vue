@@ -68,7 +68,7 @@ const isFilterDialog = validateOptionsFilter();
 
 
 // posibles valores en los elementos de headers
-// title,key,value,sortable,width, align, fixed
+// title,key,value,sortable,width,minWidth, align, fixed
 
 const optionsTable = reactive<IOptionsTable>({
   url: null,

@@ -70,8 +70,6 @@ const options = reactive({
   moreLinkText: (eventCount) => `más (${eventCount})`,
 
  eventContent: function (arg: any) {
-  console.log("eventContent", arg);
-  
     const htmls = `
       <div data-event-id="${arg.event.id}" data-action="edit" style="width: 100%; background: ${arg.backgroundColor}; color:white; padding: 0 10px; cursor:pointer;"  >
         <b ><p data-event-id="${arg.event.id}" data-action="edit"  style="margin: 0px !important;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;">${arg.event._def.title}</p></b>

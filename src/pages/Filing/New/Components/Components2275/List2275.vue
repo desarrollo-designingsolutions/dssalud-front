@@ -279,8 +279,6 @@ const refreshTable = () => {
 
 window.Echo.channel(`filing.${filing_id}`)
   .listen('FilingRowUpdatedNow', (event: any) => {
-    console.log("event", event);
-
     filingData.value.status = event.status
   });
 </script>

@@ -44,7 +44,6 @@ const openModal = async (filing_invoice: any) => {
 
 const submitForm = async () => {
   const validation = await formValidation.value?.validate();
-  console.log("validation", validation);
   if (!validation?.valid) return;
 
   if (fileData.value.length === 0) {
@@ -93,8 +92,6 @@ const listenToProgress = (uploadId: string) => {
   window.Echo.channel(`upload-progress.${uploadId}`)
     .listen('.file-progress', (event: any) => {
 
-      console.log("event", event);
-      
       progress.value = Number(event.progress); // Actualizar progreso general
 
       const fileItem = fileData.value.find((item) => item.file.name === event.fileName);

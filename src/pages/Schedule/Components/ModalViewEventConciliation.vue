@@ -51,6 +51,36 @@ const eventData = ref({
   }>,
 })
 
+const clearData = () => {
+  eventData.value = {
+     id: null,
+  title: null,
+  start_date: null,
+  start_hour: null,
+  end_date: null,
+  end_hour: null,
+  description: null,
+  response_status: null,
+  link: null,
+  user: {
+    id: null,
+    full_name: null,
+    photo: null,
+    role: { description: null, }
+  },
+  third: {
+    id: null,
+    nit: null,
+    name: null,
+  },
+  reconciliation_group: {
+    id: null,
+    name: null,
+  },
+  guests: [],
+  }
+}
+
 // Tus métodos originales - mantén exactamente como los tienes
 const handleDialogVisible = () => {
   isDialogVisible.value = !isDialogVisible.value;
@@ -62,7 +92,7 @@ const handleDialogVisible = () => {
 const openModal = async (event_id: any) => {
   isDialogVisible.value = true;
 
-  // eventData.value = {}
+  clearData();
 
   await getData(event_id);
 };

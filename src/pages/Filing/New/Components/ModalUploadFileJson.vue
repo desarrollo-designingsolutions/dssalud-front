@@ -194,7 +194,7 @@ function cloneObject<T>(data: T): T {
 
 <template>
   <div>
-    <Loading ref="refLoading" :progress="progress" :is-loading="isLoading" />
+    <LoadingBase ref="refLoading" :progress="progress" :is-loading="isLoading" />
     <VDialog v-model="isDialogVisible" :overlay="false" max-width="90rem" transition="dialog-transition" persistent>
       <DialogCloseBtn @click="handleDialogVisible" />
       <VCard :loading="isLoading" :disabled="isLoading" class="w-100">

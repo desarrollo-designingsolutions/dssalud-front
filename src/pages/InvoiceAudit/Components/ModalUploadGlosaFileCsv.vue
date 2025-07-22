@@ -143,7 +143,7 @@ onUnmounted(() => {
 
 <template>
   <div>
-    <Loading ref="refLoading" :progress="progress" :is-loading="isLoading" />
+    <LoadingBase ref="refLoading" :progress="progress" :is-loading="isLoading" />
 
     <VDialog v-model="isDialogVisible" :overlay="false" max-width="30rem" transition="dialog-transition" persistent>
       <DialogCloseBtn @click="handleDialogVisible" />

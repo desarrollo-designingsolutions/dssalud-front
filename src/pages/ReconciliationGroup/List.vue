@@ -25,6 +25,7 @@ const optionsTable = {
   paramsGlobal: company_id,
   headers: [
     { key: 'name', title: 'Nombre' },  
+    { key: 'third_nit', title: 'Nit' }, 
     { key: 'third_name', title: 'Tercero' }, 
     { key: 'link', title: 'Link' }, 
     { key: 'actions', title: 'Acciones', sortable: false,width: '50' },

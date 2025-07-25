@@ -114,7 +114,7 @@ const startEchoChannel = (data: any) => {
     stopEchoChannel(); // Limpia los eventos específicos antes de volver a suscribirse
   }
 
-  channel = window.Echo.channel(`filing.${data.id}`);
+  channel = window.Echo.channel(`filing.${authenticationStore.user.id}`);
   channel.listen('.FilingFinishProcessJob', (event: any) => {
     setTimeout(() => {
       if (refLoading.value) {
@@ -184,7 +184,6 @@ const openFileDialog = () => {
 
 <template>
   <div>
-    <LoadingBase ref="refLoading" :progress="progress" :is-loading="isLoading" />
     <VDialog v-model="isDialogVisible" :overlay="false" max-width="30rem" transition="dialog-transition" persistent>
       <DialogCloseBtn @click="handleDialogVisible" />
       <VCard :loading="isLoading" :disabled="isLoading" class="w-100">

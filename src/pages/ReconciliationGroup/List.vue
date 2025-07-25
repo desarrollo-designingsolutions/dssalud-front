@@ -71,6 +71,26 @@ const refreshTable = () => {
     refTableFull.value.fetchTableData(null, false, true); // Forzamos la búsqueda
   }
 };
+
+const route = useRoute()
+
+const loading = reactive({ excel: false })
+const downloadExcel = async () => {
+  loading.excel = true;
+
+  const { data, response } = await useAxios("/reconciliationGroup/excelExport").get({
+    params: {
+      ...route.query,
+      company_id: authenticationStore.company.id
+    }
+  })
+
+  loading.excel = false;
+
+  if (response.status == 200 && data) {
+    downloadExcelBase64(data.excel, "Lista de clientes")
+  }
+}
 </script>
 
 <template>
@@ -83,6 +103,12 @@ const refreshTable = () => {
         </span>
 
         <div class="d-flex justify-end gap-3 flex-wrap ">
+        <VBtn :loading="loading.excel" :disabled="loading.excel" size="38" color="primary" icon
+            @click="downloadExcel()">
+            <VIcon icon="tabler-file-spreadsheet"></VIcon>
+            <VTooltip location="top" transition="scale-transition" activator="parent" text="Descargar Excel">
+            </VTooltip>
+          </VBtn>
           <VBtn @click="goViewCreate()">
             Agregar Grupo de conciliación
           </VBtn>

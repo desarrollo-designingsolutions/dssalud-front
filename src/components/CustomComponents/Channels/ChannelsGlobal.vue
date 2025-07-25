@@ -8,5 +8,8 @@
     <ChannelsGlosaStructureModalErrors />
     <ChannelsAssignmentModalErrors />
     <ChannelsAssignmentStructureModalErrors />
+
+    
+    <ChannelsFilingUploadFileZipLoading />
   </div>
 </template>

@@ -264,6 +264,7 @@ declare global {
   const useGamepad: typeof import('@vueuse/core')['useGamepad']
   const useGenerateImageVariant: typeof import('./src/@core/composable/useGenerateImageVariant')['useGenerateImageVariant']
   const useGeolocation: typeof import('@vueuse/core')['useGeolocation']
+  const useGlobalLoading: typeof import('./src/composables/useGlobalLoading')['useGlobalLoading']
   const useGlosaInportExport: typeof import('./src/composables/useGlosaInportExport')['useGlosaInportExport']
   const useI18n: typeof import('vue-i18n')['useI18n']
   const useId: typeof import('vue')['useId']
@@ -654,6 +655,7 @@ declare module 'vue' {
     readonly useGamepad: UnwrapRef<typeof import('@vueuse/core')['useGamepad']>
     readonly useGenerateImageVariant: UnwrapRef<typeof import('./src/@core/composable/useGenerateImageVariant')['useGenerateImageVariant']>
     readonly useGeolocation: UnwrapRef<typeof import('@vueuse/core')['useGeolocation']>
+    readonly useGlobalLoading: UnwrapRef<typeof import('./src/composables/useGlobalLoading')['useGlobalLoading']>
     readonly useGlosaInportExport: UnwrapRef<typeof import('./src/composables/useGlosaInportExport')['useGlosaInportExport']>
     readonly useI18n: UnwrapRef<typeof import('vue-i18n')['useI18n']>
     readonly useId: UnwrapRef<typeof import('vue')['useId']>

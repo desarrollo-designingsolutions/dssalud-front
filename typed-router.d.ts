@@ -83,6 +83,7 @@ declare module 'vue-router/auto-routes' {
     'invoice-audit-components-modal-show-files': RouteRecordInfo<'invoice-audit-components-modal-show-files', '/InvoiceAudit/Components/ModalShowFiles', Record<never, never>, Record<never, never>>,
     'invoice-audit-components-modal-upload-glosa-file-csv': RouteRecordInfo<'invoice-audit-components-modal-upload-glosa-file-csv', '/InvoiceAudit/Components/ModalUploadGlosaFileCsv', Record<never, never>, Record<never, never>>,
     'InvoiceAudit-List': RouteRecordInfo<'InvoiceAudit-List', '/InvoiceAudit/List', Record<never, never>, Record<never, never>>,
+    'modal-upload-xlsx': RouteRecordInfo<'modal-upload-xlsx', '/ModalUploadXlsx', Record<never, never>, Record<never, never>>,
     'ReconciliationGroup-List': RouteRecordInfo<'ReconciliationGroup-List', '/ReconciliationGroup/List', Record<never, never>, Record<never, never>>,
     'ReconciliationGroup-Form': RouteRecordInfo<'ReconciliationGroup-Form', 'reconciliationGroup-form/:action/:id?', Record<never, never>, Record<never, never>>,
     'ViewEventConciliationResponse': RouteRecordInfo<'ViewEventConciliationResponse', '/ViewEventConciliationResponse/:schedule_id', Record<never, never>, Record<never, never>>,

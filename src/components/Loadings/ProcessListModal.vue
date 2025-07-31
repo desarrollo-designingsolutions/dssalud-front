@@ -211,7 +211,12 @@
 
             <!-- Actions -->
             <div class="d-flex justify-end mt-3">
-              <v-btn v-if="process.status === 'completed'" icon="tabler-trash" size="small" variant="text" color="error"
+              <v-btn v-if="process.status === 'completed'" icon size="small" variant="text" color="warning"
+                @click.stop="$emit('showDataProcess', process.batch_id)">
+                <v-icon icon="tabler-eye" />
+                <v-tooltip activator="parent" location="top">Eliminar proceso</v-tooltip>
+              </v-btn>
+              <v-btn v-if="process.status === 'completed'" icon size="small" variant="text" color="error"
                 @click.stop="$emit('removeProcess', process.batch_id)">
                 <v-icon icon="tabler-trash" />
                 <v-tooltip activator="parent" location="top">Eliminar proceso</v-tooltip>
@@ -270,6 +275,7 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   removeProcess: [batchId: string];
+  showDataProcess: [batchId: string];
   clearCompleted: [];
   close: [];
 }>();

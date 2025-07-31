@@ -16,7 +16,7 @@
           {{ globalLoading.activeProcesses.value.length }} activo{{ globalLoading.activeProcesses.value.length !== 1 ?
             's' : '' }}
           {{ globalLoading.queuedProcesses.value.length > 0 ? `, ${globalLoading.queuedProcesses.value.length} en cola`
-          : '' }}
+            : '' }}
         </div>
         <div class="text-caption text-medium-emphasis">
           {{ Math.round(globalLoading.currentProgress.value) }}% completado
@@ -34,7 +34,13 @@
     :active-processes="globalLoading.activeProcesses.value"
     :completed-processes="globalLoading.completedProcesses.value"
     :queued-processes="globalLoading.queuedProcesses.value" :sorted-processes="globalLoading.sortedProcesses.value"
-    @remove-process="handleRemoveProcess" @clear-completed="handleClearCompleted" @close="handleCloseProcessList" />
+    @remove-process="handleRemoveProcess" @clear-completed="handleClearCompleted" @close="handleCloseProcessList"
+    @showDataProcess="handleShowDataProcess" />
+
+
+  <!-- Modal Listado de errores -->
+  <ModalListErrors ref="refModalListErrors" />
+
 
   <!-- Notification cuando completa -->
   <v-snackbar v-model="showCompletionNotification" :timeout="5000" color="success" location="top">
@@ -105,6 +111,10 @@ const handleShowMultiple = () => {
 const handleRemoveProcess = (batchId: string) => {
   globalLoading.removeProcess(batchId);
 };
+const handleShowDataProcess = (batchId: string) => {
+  openModalListErrors(batchId)
+  // globalLoading.showDataProcess(batchId);
+};
 
 // ✅ NUEVA FUNCIÓN PARA LIMPIAR COMPLETADOS
 const handleClearCompleted = () => {
@@ -132,6 +142,14 @@ const setupCallbacks = () => {
     console.log(`📊 [MANAGER] Progreso: ${progress}% para batch ${batchId}`);
   });
 };
+
+//refModalListErrors
+const refModalListErrors = ref()
+
+const openModalListErrors = (batchId: string) => {
+  refModalListErrors.value.openModal(batchId)
+}
+
 
 onMounted(() => {
   console.log('🚀 [MANAGER] GlobalLoadingManager mounted');

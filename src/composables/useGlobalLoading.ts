@@ -590,6 +590,20 @@ const removeProcess = (batchId: string) => {
   }
 }
 
+const showDataProcess = async (batchId: string) => {
+  console.log(`[SHOW] Ver data del proceso: ${batchId}`)
+
+  const { response, data } = await useAxios(`/process/${batchId}/errors`).get();
+
+  if (response.status == 200 && data) { }
+
+
+  // Si era el proceso activo, detener
+  if (currentProcess.value?.batch_id === batchId) {
+    stopLoading()
+  }
+}
+
 // ✅ NUEVA FUNCIÓN PARA LIMPIAR COMPLETADOS
 const clearCompletedProcesses = () => {
   console.log(`🧹 [CLEAR] Limpiando procesos completados`)
@@ -658,6 +672,7 @@ export function useGlobalLoading() {
     showProcessListModal,
     hideProcessListModal,
     removeProcess,
+    showDataProcess,
     clearCompletedProcesses, // ✅ NUEVA: Limpiar completados
 
     // Event listeners

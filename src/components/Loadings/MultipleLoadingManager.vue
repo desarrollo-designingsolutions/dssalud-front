@@ -44,11 +44,10 @@
   </v-snackbar>
 </template>
 
-<script setup lang="ts">
-import { useMultipleLoading } from '@/composables/useMultipleLoading';
+<script setup lang="ts"> 
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import LoadingV2Enhanced from './LoadingV2Enhanced.vue';
-import MultipleProcessList from './MultipleProcessList-copy.vue';
+import MultipleProcessList from './MultipleProcessList.vue';
 
 const multiLoading = useMultipleLoading();
 const showCompletionNotification = ref(false);

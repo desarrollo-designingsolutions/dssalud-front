@@ -1,5 +1,4 @@
-<script setup lang="ts">
-import ModalUploadXlsx from '@/pages/ModalUploadXlsx.vue';
+<script setup lang="ts"> 
 import { useAuthenticationStore } from "@/stores/useAuthenticationStore";
 
 const authenticationStore = useAuthenticationStore();
@@ -31,6 +30,7 @@ const submitForm = async () => {
   let formData = new FormData();
   formData.append("file", form.value.logo);
   formData.append("company_id", String(authenticationStore.company.id));
+  formData.append("user_id", String(authenticationStore.user.id));
 
   const { response, data } = await useAxios(`/conciliation/uploadFile`).post(formData);
 
@@ -46,10 +46,11 @@ const submitForm = async () => {
 
 <template>
   <div>
+      <MultipleLoadingManager />
+
     <VBtn @click="openModalUploadXlsx()">prueba</VBtn>
     <VBtn @click="submitForm()">subir</VBtn>
     <VFileInput @change="changeFile($event, logo)">
-    </VFileInput>
-    <ModalUploadXlsx ref="refModalUploadXlsx" />
+    </VFileInput> 
   </div>
 </template>

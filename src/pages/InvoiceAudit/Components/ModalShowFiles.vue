@@ -57,7 +57,7 @@ const executeFetchTable = (page: number | null = null) => {
 const getFiles = async () => {
   isLoading.value = true;
   const { data, response } = await useApi<any>(
-    createUrl(`file/listTableV2`, {
+    createUrl(`file/paginate`, {
       query: searchQuery.value,
     })
   );

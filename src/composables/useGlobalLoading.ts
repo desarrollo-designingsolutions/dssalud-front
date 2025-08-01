@@ -1,4 +1,4 @@
-import { computed, ref } from "vue"
+import { computed, ref } from "vue";
 
 declare const echo: any
 
@@ -114,8 +114,9 @@ const startWebSocket = (batchId: string) => {
 const handleProgressUpdate = (batchId: string, data: any) => {
   const process = currentProcess.value
   if (!process || process.batch_id !== batchId) {
+    currentProcess.value = data
     console.warn(`⚠️ [UPDATE] Batch no coincide: ${batchId}`)
-    return
+    // return
   }
 
   console.log(`📊 [UPDATE] Datos recibidos para ${batchId}:`, data)
@@ -224,79 +225,6 @@ const handleProgressUpdate = (batchId: string, data: any) => {
       processNextInQueue()
     }, 500)
   }
-}
-
-// ✅ FUNCIÓN MEJORADA PARA CALCULAR VELOCIDAD DE PROCESAMIENTO
-const calculateProcessingSpeed = (process: ImportProcess, backendMetadata?: any): number => {
-  const processedRecords = backendMetadata?.processed_records || process.metadata?.processed_records || 0
-  const startTime = backendMetadata?.processing_start_time || process.metadata?.processing_start_time
-
-  if (!processedRecords || !startTime) return 0
-
-  const startTimeMs = new Date(startTime).getTime()
-  const currentTimeMs = new Date().getTime()
-  const elapsedSeconds = (currentTimeMs - startTimeMs) / 1000
-
-  if (elapsedSeconds <= 0) return 0
-
-  const speed = Math.round(processedRecords / elapsedSeconds)
-  console.log(
-    `📈 [SPEED] Calculando velocidad: ${processedRecords} registros / ${elapsedSeconds.toFixed(1)}s = ${speed} reg/s`,
-  )
-
-  return speed
-}
-
-// ✅ FUNCIÓN MEJORADA PARA CALCULAR TIEMPO ESTIMADO
-const calculateEstimatedTimeImproved = (
-  progress: number,
-  startTime: string | undefined,
-  processedRecords: number,
-  totalRecords: number,
-): number => {
-  if (!startTime || progress === 0 || totalRecords === 0) {
-    console.log(
-      `⏱️ [ETA] No se puede calcular: startTime=${startTime}, progress=${progress}, totalRecords=${totalRecords}`,
-    )
-    return 0
-  }
-
-  const startTimeMs = new Date(startTime).getTime()
-  const currentTimeMs = new Date().getTime()
-  const elapsedSeconds = (currentTimeMs - startTimeMs) / 1000
-
-  if (elapsedSeconds <= 0) return 0
-
-  // Método 1: Basado en progreso porcentual
-  const remainingProgress = 100 - progress
-  const estimatedTotalTime = (elapsedSeconds * 100) / progress
-  const estimatedRemainingByProgress = estimatedTotalTime - elapsedSeconds
-
-  // Método 2: Basado en registros procesados
-  let estimatedRemainingByRecords = 0
-  if (processedRecords > 0) {
-    const recordsPerSecond = processedRecords / elapsedSeconds
-    const remainingRecords = totalRecords - processedRecords
-    estimatedRemainingByRecords = remainingRecords / recordsPerSecond
-  }
-
-  // Usar el promedio de ambos métodos si ambos están disponibles
-  let finalEstimate = estimatedRemainingByProgress
-  if (estimatedRemainingByRecords > 0) {
-    finalEstimate = (estimatedRemainingByProgress + estimatedRemainingByRecords) / 2
-  }
-
-  const result = Math.max(0, Math.round(finalEstimate))
-
-  console.log(`⏱️ [ETA] Cálculo detallado:`)
-  console.log(`   - Tiempo transcurrido: ${elapsedSeconds.toFixed(1)}s`)
-  console.log(`   - Progreso: ${progress}%`)
-  console.log(`   - Registros: ${processedRecords}/${totalRecords}`)
-  console.log(`   - ETA por progreso: ${estimatedRemainingByProgress.toFixed(1)}s`)
-  console.log(`   - ETA por registros: ${estimatedRemainingByRecords.toFixed(1)}s`)
-  console.log(`   - ETA final: ${result}s`)
-
-  return result
 }
 
 const stopWebSocket = (batchId: string) => {
@@ -642,6 +570,57 @@ const onProgressUpdated = (callback: (batchId: string, progress: number) => void
   callbacks.progressUpdated.push(callback)
 }
 
+ 
+
+const getUserProcesses = async (user_id: string) => {
+  console.log('📡 [LOAD] Cargando procesos del usuario');
+  try { 
+  const { response, data } = await useAxios(`/user/getUserProcesses/${user_id}`).get();
+
+    if (response.status === 200 && data.processes) {
+      console.log(`✅ [LOAD] ${data.processes.length} procesos cargados`);
+
+      // Limpiar allProcesses antes de agregar nuevos
+      allProcesses.value = [];
+
+      // Llenar allProcesses
+      data.processes.forEach(element => {
+        allProcesses.value.push(element);
+      });
+
+      // Ordenar por started_at (ascendente) para obtener el proceso activo más antiguo primero
+      allProcesses.value.sort((a, b) => {
+        const dateA = new Date(a.started_at || '').getTime();
+        const dateB = new Date(b.started_at || '').getTime();
+        return dateA - dateB; // Orden ascendente: el más antiguo primero
+      });
+
+      // Buscar el primer proceso activo
+      const activeProcess = allProcesses.value.find(process => process.status === 'active');
+      if (activeProcess) {
+        console.log('✅ [LOAD] Primer proceso activo encontrado:', activeProcess);
+        currentProcess.value = activeProcess;
+        isLoading.value = true;
+        isMinimized.value = true; // Minimizar por defecto
+        startWebSocket(activeProcess.batch_id);
+      }
+
+      // Agregar procesos activos (excepto el primero encontrado) y queued a processQueue
+      processQueue.value = allProcesses.value
+        .filter(p => 
+          (p.status === 'active' || p.status === 'queued') && // Solo activos o en cola
+          p.batch_id !== activeProcess?.batch_id && // Excluir el primer proceso activo
+          p.status !== 'completed' // Excluir completados
+        )
+        .map(p => ({ batch_id: p.batch_id, fileName: p.file_name }));
+
+      console.log(`📋 [QUEUE] ${processQueue.value.length} procesos agregados a la cola`);
+    }
+  } catch (error) {
+    console.error('❌ [LOAD] Error cargando procesos:', error);
+  }
+};
+
 export function useGlobalLoading() {
   return {
     // Estado reactivo
@@ -672,6 +651,7 @@ export function useGlobalLoading() {
     showProcessListModal,
     hideProcessListModal,
     removeProcess,
+    getUserProcesses,
     showDataProcess,
     clearCompletedProcesses, // ✅ NUEVA: Limpiar completados
 

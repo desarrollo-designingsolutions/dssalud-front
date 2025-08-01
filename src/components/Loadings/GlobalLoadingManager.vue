@@ -56,9 +56,12 @@
 
 <script setup lang="ts">
 import { useGlobalLoading } from '@/composables/useGlobalLoading';
+import { useAuthenticationStore } from "@/stores/useAuthenticationStore";
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import LoadingV2Enhanced from './LoadingV2Enhanced.vue';
 import ProcessListModal from './ProcessListModal.vue';
+const authenticationStore = useAuthenticationStore();
+
 
 const globalLoading = useGlobalLoading();
 const showCompletionNotification = ref(false);
@@ -141,6 +144,9 @@ const setupCallbacks = () => {
   globalLoading.onProgressUpdated((batchId: string, progress: number) => {
     console.log(`📊 [MANAGER] Progreso: ${progress}% para batch ${batchId}`);
   });
+
+  globalLoading.getUserProcesses(authenticationStore.user.id);
+ 
 };
 
 //refModalListErrors
@@ -149,7 +155,7 @@ const refModalListErrors = ref()
 const openModalListErrors = (batchId: string) => {
   refModalListErrors.value.openModal(batchId)
 }
-
+ 
 
 onMounted(() => {
   console.log('🚀 [MANAGER] GlobalLoadingManager mounted');

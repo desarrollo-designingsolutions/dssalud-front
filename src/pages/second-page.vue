@@ -46,7 +46,6 @@ const submitForm = async () => {
 
 <template>
   <div>
-      <MultipleLoadingManager />
 
     <VBtn @click="openModalUploadXlsx()">prueba</VBtn>
     <VBtn @click="submitForm()">subir</VBtn>

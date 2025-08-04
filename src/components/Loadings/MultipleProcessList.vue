@@ -59,7 +59,7 @@
               <!-- Detalles adicionales para procesos activos -->
               <div v-if="process.status === 'active' && process.details" class="mt-2">
                 <div class="text-caption text-medium-emphasis">
-                  {{ process.details.current_student }} •
+                  {{ process.details.current_element }} •
                   Registros: {{ process.details.processed_records }}/{{ process.details.total_records }} •
                   Hoja: {{ process.details.sheet }}
                 </div>
@@ -99,7 +99,7 @@ interface ProcessInfo {
   connection_status: string;
   is_active: boolean;
   details?: {
-    current_student: string;
+    current_element: string;
     processed_records: number;
     total_records: number;
     sheet: number;

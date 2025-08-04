@@ -6,7 +6,7 @@ interface ImportProcess {
   batch_id: string
   file_name: string
   progress: number
-  current_student: string
+  current_element: string
   current_action: string
   status: "active" | "completed" | "error" | "paused"
   started_at: string
@@ -15,7 +15,7 @@ interface ImportProcess {
   is_active: boolean
   websocket_channel?: any
   details?: {
-    current_student: string
+    current_element: string
     processed_records: number
     total_records: number
     sheet: number
@@ -116,12 +116,12 @@ const handleProgressUpdate = (batchId: string, data: any) => {
 
   // Actualizar proceso
   process.progress = progress
-  process.current_student = data.current_student || "Procesando..."
+  process.current_element = data.current_element || "Procesando..."
   process.current_action = data.current_action || "Importando datos"
 
   // Actualizar detalles
   process.details = {
-    current_student: data.current_student || "Procesando...",
+    current_element: data.current_element || "Procesando...",
     processed_records: data.processed_records || 0,
     total_records: data.total_records || 0,
     sheet: data.sheet || 1,
@@ -223,14 +223,14 @@ const startLoading = (batchId: string, fileName: string) => {
     batch_id: batchId,
     file_name: fileName,
     progress: 0,
-    current_student: "Iniciando proceso...",
+    current_element: "Iniciando proceso...",
     current_action: "Preparando importación",
     status: "active",
     started_at: new Date().toISOString(),
     connection_status: "connecting",
     is_active: true,
     details: {
-      current_student: "Iniciando proceso...",
+      current_element: "Iniciando proceso...",
       processed_records: 0,
       total_records: 0,
       sheet: 1,

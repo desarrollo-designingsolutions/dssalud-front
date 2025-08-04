@@ -76,6 +76,7 @@ declare module 'vue' {
     ModalFileForm: typeof import('./src/components/CustomComponents/File/ModalFileForm.vue')['default']
     ModalListErrors: typeof import('./src/components/Loadings/ModalListErrors.vue')['default']
     ModalListErrors2: typeof import('./src/components/Loadings/ModalListErrors2.vue')['default']
+    ModalListErrors3: typeof import('./src/components/Loadings/ModalListErrors3.vue')['default']
     ModalMassUpload: typeof import('./src/components/CustomComponents/File/ModalMassUpload.vue')['default']
     ModalQuestion: typeof import('./src/components/CustomComponents/ModalQuestion.vue')['default']
     ModalShowFiles: typeof import('./src/components/CustomComponents/File/ModalShowFiles.vue')['default']

@@ -70,7 +70,7 @@ const getSubtitle = () => {
   const progressValue = process.progress;
   if (progressValue >= 100) return '¡El archivo se ha procesado exitosamente!';
   if (progressValue === 0) return 'Iniciando proceso de importación...';
-  return `${Math.round(progressValue)}% completado - ${process.current_student}`;
+  return `${Math.round(progressValue)}% completado - ${process.current_element}`;
 };
 
 const handleCompleted = () => {

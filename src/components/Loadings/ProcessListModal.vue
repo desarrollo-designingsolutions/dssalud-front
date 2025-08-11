@@ -57,7 +57,7 @@
                     :class="process.status === 'active' ? 'spin-animation' : ''" />
                 </v-avatar>
                 <div>
-                  <h3 class="text-h6 font-weight-bold">{{ process.file_name }}</h3>
+                  <h3 class="text-h6 font-weight-bold">{{ process.metadata?.file_name }}</h3>
                   <div class="d-flex align-center mt-1">
                     <v-chip :color="getStatusColor(process.status)" size="small" class="me-2">
                       {{ getStatusText(process) }}

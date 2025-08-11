@@ -4,7 +4,6 @@ declare const echo: any
 
 interface ImportProcess {
   batch_id: string
-  file_name: string
   progress: number
   current_element: string
   current_action: string
@@ -18,11 +17,11 @@ interface ImportProcess {
     processed_records_in_chunk?: number
     current_sheet?: number
     total_sheets?: number
-    errors_count?: number
-    warnings_count?: number
+    errors_count?: number 
     processing_speed?: number
     estimated_time_remaining?: number
     file_size?: number
+    file_name: string,
     connection_status?: "connected" | "connecting" | "reconnecting" | "error" | "disconnected"
     last_activity?: string
     memory_usage?: number
@@ -147,9 +146,9 @@ const handleProgressUpdate = (batchId: string, data: any) => {
         data.metadata.processed_records_in_chunk || process.metadata.processed_records_in_chunk || 0,
       current_sheet: data.metadata.current_sheet || process.metadata.current_sheet || 1,
       total_sheets: data.metadata.total_sheets || process.metadata.total_sheets || 1,
-      errors_count: data.metadata.errors_count || process.metadata.errors_count || 0,
-      warnings_count: data.metadata.warnings_count || process.metadata.warnings_count || 0,
+      errors_count: data.metadata.errors_count || process.metadata.errors_count || 0, 
       file_size: data.metadata.file_size || process.metadata.file_size || 0,
+      file_name: data.metadata.file_name || process.metadata.file_name || 0,
       processing_start_time: data.metadata.processing_start_time || process.metadata.processing_start_time,
       memory_usage: data.metadata.memory_usage || process.metadata.memory_usage || 0,
       cpu_usage: data.metadata.cpu_usage || process.metadata.cpu_usage || 0,
@@ -266,8 +265,7 @@ export function useGlobalLoading() {
       processed_records_in_chunk: process.metadata?.processed_records_in_chunk || 0,
       current_sheet: process.metadata?.current_sheet || 1,
       total_sheets: process.metadata?.total_sheets || 1,
-      errors_count: process.metadata?.errors_count || 0,
-      warnings_count: process.metadata?.warnings_count || 0,
+      errors_count: process.metadata?.errors_count || 0, 
       connection_status: process.metadata?.connection_status || "disconnected",
       processing_speed: process.metadata?.processing_speed || 0,
       estimated_time_remaining: process.metadata?.estimated_time_remaining || 0,
@@ -292,7 +290,6 @@ export function useGlobalLoading() {
 
     const newProcess: ImportProcess = {
       batch_id: batchId,
-      file_name: file_name,
       progress: 0,
       current_element: "Iniciando proceso...",
       current_action: "Preparando importación",
@@ -304,11 +301,11 @@ export function useGlobalLoading() {
         processed_records_in_chunk: 0,
         current_sheet: 1,
         total_sheets: 1,
-        errors_count: 0,
-        warnings_count: 0,
+        errors_count: 0, 
         processing_speed: 0,
         estimated_time_remaining: 0,
         file_size: 0,
+        file_name: file_name,
         connection_status: "connecting",
         last_activity: new Date().toISOString(),
         processing_start_time: new Date().toISOString(),
@@ -419,9 +416,9 @@ export function useGlobalLoading() {
   const getUserProcesses = async (user_id: string) => {
     console.log("📡 [LOAD] Cargando procesos del usuario")
     try {
-       const { response, data } = await useAxios(`/user/getUserProcesses/${user_id}`).get();
+      const { response, data } = await useAxios(`/processBatch/getUserProcesses/${user_id}`).get();
 
-    if (response.status === 200 && data.processes) { 
+      if (response.status === 200 && data.processes) {
         console.log(`✅ [LOAD] ${data.processes.length} procesos cargados`)
 
         const loadedProcessesMap = new Map(data.processes.map((p) => [p.batch_id, p]))
@@ -431,9 +428,11 @@ export function useGlobalLoading() {
         allProcesses.value.forEach((existingProcess) => {
           if (loadedProcessesMap.has(existingProcess.batch_id)) {
             const backendProcess = loadedProcessesMap.get(existingProcess.batch_id)
+            console.log("backendProcess",backendProcess);
+            
             Object.assign(existingProcess, {
               batch_id: backendProcess.batch_id,
-              file_name: backendProcess.file_name,
+              file_name: backendProcess.metadata.file_name,
               progress: backendProcess.progress,
               current_element: backendProcess.current_element,
               current_action: backendProcess.current_action,
@@ -456,9 +455,11 @@ export function useGlobalLoading() {
         })
 
         loadedProcessesMap.forEach((newBackendProcess) => {
+            console.log("newBackendProcess",newBackendProcess);
+
           const newProcess: ImportProcess = {
             batch_id: newBackendProcess.batch_id,
-            file_name: newBackendProcess.file_name,
+            file_name: newBackendProcess.metadata.file_name,
             progress: newBackendProcess.progress,
             current_element: newBackendProcess.current_element,
             current_action: newBackendProcess.current_action,
@@ -480,7 +481,7 @@ export function useGlobalLoading() {
             startWebSocket(p)
           }
         })
- 
+
 
         console.log(`DEBUG: allProcesses after getUserProcesses merge:`, allProcesses.value)
         console.log(`DEBUG: isLoading after getUserProcesses merge:`, isLoading.value)

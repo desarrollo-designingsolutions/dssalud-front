@@ -2,7 +2,7 @@
 import { useToast } from '@/composables/useToast';
 import IErrorsBack from "@/interfaces/Axios/IErrorsBack";
 import ModalShowFiles from '@/pages/Conciliation/Components/ModalShowFiles.vue';
-import ModalUploadXlsx from '@/pages/Conciliation/Components/ModalUploadXlsx.vue';
+import ModalUploadCsv from '@/pages/Conciliation/Components/ModalUploadCsv.vue';
 import { useAuthenticationStore } from "@/stores/useAuthenticationStore";
 
 definePage({
@@ -129,10 +129,10 @@ const openUploadModal = () => {
 }
 
 
-//ModalUploadXlsx
-const refModalUploadXlsx = ref()
-const openModalUploadXlsx = () => {
-  refModalUploadXlsx.value.openModal()
+//ModalUploadCsv
+const refModalUploadCsv = ref()
+const openModalUploadCsv = () => {
+  refModalUploadCsv.value.openModal()
 }
 
 //ModalShowFiles
@@ -187,8 +187,8 @@ const downloadExcel = async () => {
                   Añadir Soportes
                 </VListItem> 
                 <VListItem @click="openModalShowFiles()">Ver soportes</VListItem>
-                <VListItem @click="openModalUploadXlsx">
-                  Subir Excel
+                <VListItem @click="openModalUploadCsv">
+                  Subir CSV
                 </VListItem> 
               </VList>
             </VMenu>
@@ -234,13 +234,12 @@ const downloadExcel = async () => {
     </VCard>
 
     <template v-if="form.id">
-
       <FileUploadModal ref="refFileUploadModal" v-model="showUploadModal" :maxFileSizeMB="200"  :fileable_id="form.id"
           fileable_type="ReconciliationGroup" />
     </template>
 
 
-    <ModalUploadXlsx ref="refModalUploadXlsx" />
+    <ModalUploadCsv ref="refModalUploadCsv" :maxFileSizeMB="200" />
 
     <ModalShowFiles ref="refModalShowFiles" />
 

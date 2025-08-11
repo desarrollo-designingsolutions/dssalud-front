@@ -34,7 +34,7 @@ declare module 'vue-router/auto-routes' {
     'Company-Form': RouteRecordInfo<'Company-Form', 'company-form/:action/:id?', Record<never, never>, Record<never, never>>,
     'Company-List': RouteRecordInfo<'Company-List', '/Company/List', Record<never, never>, Record<never, never>>,
     'conciliation-components-modal-show-files': RouteRecordInfo<'conciliation-components-modal-show-files', '/Conciliation/Components/ModalShowFiles', Record<never, never>, Record<never, never>>,
-    'conciliation-components-modal-upload-xlsx': RouteRecordInfo<'conciliation-components-modal-upload-xlsx', '/Conciliation/Components/ModalUploadXlsx', Record<never, never>, Record<never, never>>,
+    'conciliation-components-modal-upload-csv': RouteRecordInfo<'conciliation-components-modal-upload-csv', '/Conciliation/Components/ModalUploadCsv', Record<never, never>, Record<never, never>>,
     'Conciliation-Form': RouteRecordInfo<'Conciliation-Form', 'conciliation-form/:action/:id?', Record<never, never>, Record<never, never>>,
     'Conciliation-List': RouteRecordInfo<'Conciliation-List', '/Conciliation/List', Record<never, never>, Record<never, never>>,
     'Filing-New-ListUsers': RouteRecordInfo<'Filing-New-ListUsers', 'Filing/New/ListUsers/:id/:invoice_id', Record<never, never>, Record<never, never>>,

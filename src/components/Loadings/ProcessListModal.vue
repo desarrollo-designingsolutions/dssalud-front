@@ -155,7 +155,7 @@
                       <v-icon icon="tabler-user" color="primary" class="me-2" />
                       <div>
                         <div class="text-caption text-medium-emphasis">Procesando</div>
-                        <div class="text-body-1 font-weight-medium">{{ process.current_action }}</div>
+                        <div class="text-body-1 font-weight-medium">{{ process.current_element }}</div>
                       </div>
                     </div>
                     <div v-if="process.metadata.last_activity" class="text-right">

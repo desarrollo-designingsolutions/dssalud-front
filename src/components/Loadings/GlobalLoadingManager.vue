@@ -98,7 +98,7 @@ const subtitle = computed(() => {
   if (!process) return 'Sin proceso activo';
   if (progress >= 100 && process.status === 'completed') return '¡El archivo se ha procesado exitosamente!'; // Asegurarse de que el estado sea final
   if (progress === 0) return 'Iniciando proceso de importación...';
-  let subtitleText = `${Math.round(progress)}% completado - ${process.current_student}`;
+  let subtitleText = `${Math.round(progress)}% completado - ${process.current_element}`;
   if (globalLoading.queuedProcesses.value.length > 0) {
     subtitleText += ` • ${globalLoading.queuedProcesses.value.length} en cola`;
   }

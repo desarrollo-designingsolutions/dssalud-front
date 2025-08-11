@@ -86,7 +86,7 @@ defineExpose({
 });
 
 // DropZone
-const { dropZoneRef, fileData, open, error, resetValues } = useFileDrop(1, ['xlsx', 'xls']);
+const { dropZoneRef, fileData, open, error, resetValues } = useFileDrop(1, ['csv']);
 
 watch(error, (newError) => {
   if (newError && refModalQuestion.value) {

@@ -6,7 +6,7 @@ export function useFileUpload() {
   const key = ref<number>(1);
   const name = ref<string | null>(null);
   const allowedExtensions = ref<Array<string>>([]);
-  const allowedSizeFile = ref<number>(10240);
+  const allowedSizeFile = ref<number>(10000240);
   const loading = ref<boolean>(false);
 
   function handleImageSelected(event: Event, swal = false) {

@@ -87,6 +87,8 @@ const optionsTable = {
     { key: 'origin', title: 'Origen' }, 
     { key: 'modality', title: 'Modalidad' }, 
     { key: 'contract_number', title: 'Número de contacto' }, 
+    { key: 'status_description', title: 'Estado' },
+
   ],
     actions: {
     changeStatus: {
@@ -223,6 +225,12 @@ const downloadExcel = async () => {
       <VCardText class="mt-2">
         <TableFullNew ref="refTableFull" :options="optionsTable"  
           @update:loading="tableLoading = $event">
+
+             <template #item.status_description="{ item }">
+            <div>
+              <VChip :color="item.status_backgroundColor">{{ item.status_description }}</VChip>
+            </div>
+          </template>
 
         </TableFullNew>
       </VCardText>

@@ -88,9 +88,9 @@ const optionsTable = {
     { key: 'modality', title: 'Modalidad' }, 
     { key: 'contract_number', title: 'Número de contacto' }, 
     { key: 'status_description', title: 'Estado' },
-    { key: 'sum_accepted_value_ips', title: 'sum_accepted_value_ips' },
-    { key: 'sum_accepted_value_eps', title: 'sum_accepted_value_eps' },
-    { key: 'sum_eps_ratified_value', title: 'sum_eps_ratified_value' },
+    { key: 'sum_accepted_value_ips', title: 'Valor aceptado ips' },
+    { key: 'sum_accepted_value_eps', title: 'Valor aceptado eps' },
+    { key: 'sum_eps_ratified_value', title: 'Valor ratificado' },
 
   ],
     actions: {

@@ -1,18 +1,18 @@
 // composables/useToast.ts
-import type { ToastType } from 'mosha-vue-toastify'
+import type { Position, ToastType } from 'mosha-vue-toastify'
 import { createToast } from 'mosha-vue-toastify'
 import 'mosha-vue-toastify/dist/style.css'
 
 export function useToast() {
-  const toast = (title: string, description: string, type: ToastType) => {
+  const toast = (title: string, description: string, type: ToastType, position: Position = 'bottom-center') => {
     createToast({
       title,
-      description,
+      description, 
     }, {
       type, // 'info', 'danger', 'warning', 'success', 'default'
       timeout: 5000,
       showCloseButton: true,
-      position: 'bottom-center',
+      position,
       transition: 'slide',
       hideProgressBar: false,
       showIcon: true,

@@ -155,6 +155,7 @@ const downloadExcel = async () => {
     params: {
       ...route.query,
       company_id: authenticationStore.company.id,
+      user_id: authenticationStore.user.id,
       reconciliation_group_id: form.value.id,
     }
   })

@@ -33,6 +33,8 @@ declare module 'vue-router/auto-routes' {
     'VerifyEmail': RouteRecordInfo<'VerifyEmail', '/VerifyEmail', Record<never, never>, Record<never, never>>,
     'Company-Form': RouteRecordInfo<'Company-Form', 'company-form/:action/:id?', Record<never, never>, Record<never, never>>,
     'Company-List': RouteRecordInfo<'Company-List', '/Company/List', Record<never, never>, Record<never, never>>,
+    'conciliation-components-modal-change-status': RouteRecordInfo<'conciliation-components-modal-change-status', '/Conciliation/Components/ModalChangeStatus', Record<never, never>, Record<never, never>>,
+    'conciliation-components-modal-generate-conciliation-report': RouteRecordInfo<'conciliation-components-modal-generate-conciliation-report', '/Conciliation/Components/ModalGenerateConciliationReport', Record<never, never>, Record<never, never>>,
     'conciliation-components-modal-show-files': RouteRecordInfo<'conciliation-components-modal-show-files', '/Conciliation/Components/ModalShowFiles', Record<never, never>, Record<never, never>>,
     'conciliation-components-modal-upload-csv': RouteRecordInfo<'conciliation-components-modal-upload-csv', '/Conciliation/Components/ModalUploadCsv', Record<never, never>, Record<never, never>>,
     'Conciliation-Form': RouteRecordInfo<'Conciliation-Form', 'conciliation-form/:action/:id?', Record<never, never>, Record<never, never>>,

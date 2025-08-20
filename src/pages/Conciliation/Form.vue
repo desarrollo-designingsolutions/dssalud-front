@@ -1,6 +1,8 @@
 <script lang="ts" setup>
 import { useToast } from '@/composables/useToast';
 import IErrorsBack from "@/interfaces/Axios/IErrorsBack";
+import ModalChangeStatus from '@/pages/Conciliation/Components/ModalChangeStatus.vue';
+import ModalGenerateConciliationReport from '@/pages/Conciliation/Components/ModalGenerateConciliationReport.vue';
 import ModalShowFiles from '@/pages/Conciliation/Components/ModalShowFiles.vue';
 import ModalUploadCsv from '@/pages/Conciliation/Components/ModalUploadCsv.vue';
 import { useAuthenticationStore } from "@/stores/useAuthenticationStore";
@@ -30,6 +32,7 @@ const form = ref({
   name: null as string | null,
   third_id: null as string | null,
   third_name: null as string | null,
+  status_description: null as string | null,
 })
 
 const clearForm = () => {
@@ -167,6 +170,26 @@ const downloadExcel = async () => {
   }
 }
 
+
+//ModalChangeStatus
+const refModalChangeStatus = ref()
+
+const openModalChangeStatus = () => {
+  refModalChangeStatus.value.openModal(form.value.id)
+}
+
+//ModalGenerateConciliationReport
+const refModalGenerateConciliationReport = ref()
+
+const openModalGenerateConciliationReport = () => {
+  refModalGenerateConciliationReport.value.openModal(form.value.id)
+}
+
+const changeData = (data:any) => {  
+  form.value.status_description =  data.status_description
+}
+
+
 </script>
 
 
@@ -196,6 +219,12 @@ const downloadExcel = async () => {
                 <VListItem @click="openModalUploadCsv">
                   Subir CSV
                 </VListItem> 
+                <VListItem @click="openModalChangeStatus">
+                  Cambiar estado conciliación
+                </VListItem> 
+                <VListItem @click="openModalGenerateConciliationReport">
+                  Generar acta conciliación
+                </VListItem> 
               </VList>
             </VMenu>
           </VBtn>
@@ -215,6 +244,12 @@ const downloadExcel = async () => {
               <div class="d-flex flex-column">
                 <span>Tercero:</span>
                 <span>{{ form.third_name }}</span>  
+              </div>
+            </VCol>
+            <VCol cols="12" md="6">
+              <div class="d-flex flex-column">
+                <span>Estado:</span>
+                <span>{{ form.status_description }}</span>  
               </div>
             </VCol>
           </VRow> 
@@ -254,6 +289,10 @@ const downloadExcel = async () => {
     <ModalUploadCsv ref="refModalUploadCsv" :maxFileSizeMB="200" />
 
     <ModalShowFiles ref="refModalShowFiles" />
+
+    <ModalChangeStatus ref="refModalChangeStatus" @execute="changeData"/>
+
+    <ModalGenerateConciliationReport ref="refModalGenerateConciliationReport" />
 
   </div>
 </template>

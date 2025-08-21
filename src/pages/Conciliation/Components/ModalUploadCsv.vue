@@ -19,9 +19,9 @@ interface FileUpload {
   xhr?: XMLHttpRequest
 }
 
-interface FileUploadProps { 
+interface FileUploadProps {
   maxFileSizeMB?: number
-  allowedExtensions?: string[] 
+  allowedExtensions?: string[]
   maxFiles?: number
 }
 
@@ -195,6 +195,7 @@ const startUpload = async () => {
     formData.append('file', file.file);
     formData.append('company_id', String(authenticationStore.company.id));
     formData.append('user_id', String(authenticationStore.user.id));
+    formData.append('reconciliation_group_id', reconciliation_group_id.value);
 
     try {
       file.status = 'uploading';
@@ -237,7 +238,7 @@ const startUpload = async () => {
       file.progress = 100;
 
       const response = JSON.parse(xhr.response)
-      if(response.status == "success"){
+      if (response.status == "success") {
         globalLoading.startLoading(response.batch_id);
       }
 
@@ -343,27 +344,24 @@ const handleDialogVisible = () => {
   isDialogVisible.value = !isDialogVisible.value;
 };
 
-const openModal = async () => {
+const reconciliation_group_id = ref<string>("")
+const openModal = async (reconciliationGroupId: string) => {
   handleDialogVisible();
   resetState()
+
+  reconciliation_group_id.value = reconciliationGroupId
 };
 
 defineExpose({
-  openModal, 
+  openModal,
 });
 </script>
 
 <template>
-  <VDialog 
-    v-model="isDialogVisible" 
-    :overlay="false" 
-    max-width="600px" 
-    transition="dialog-transition" 
-    persistent
-    class="upload-dialog"
-  >  
-    <DialogCloseBtn @click="openModalQuestionCancelUpload()" v-if="hasUploadsInProgress"/>
-    <DialogCloseBtn @click="handleDialogVisible()" v-else/>
+  <VDialog v-model="isDialogVisible" :overlay="false" max-width="600px" transition="dialog-transition" persistent
+    class="upload-dialog">
+    <DialogCloseBtn @click="openModalQuestionCancelUpload()" v-if="hasUploadsInProgress" />
+    <DialogCloseBtn @click="handleDialogVisible()" v-else />
     <v-card class="upload-card" elevation="12">
       <div>
         <VToolbar color="primary">
@@ -377,30 +375,17 @@ defineExpose({
       <v-card-text>
         <!-- File Upload Section -->
         <div v-if="currentStep === 'upload'" class="upload-section">
-          <div 
-            ref="dropzone" 
-            class="modern-dropzone" 
-            :class="{ 'dragover': isDragOver }" 
-            @drop="onDrop"
-            @dragover.prevent="isDragOver = true" 
-            @dragleave.prevent="isDragOver = false" 
-            @dragenter.prevent
-          >
+          <div ref="dropzone" class="modern-dropzone" :class="{ 'dragover': isDragOver }" @drop="onDrop"
+            @dragover.prevent="isDragOver = true" @dragleave.prevent="isDragOver = false" @dragenter.prevent>
             <div class="dropzone-content">
               <div class="icon-container">
                 <v-icon size="64" color="primary">tabler-file-spreadsheet</v-icon>
               </div>
-              
+
               <h3 class="text-h5 font-weight-medium mb-2">Arrastra tu archivo CSV aquí</h3>
               <p class="text-body-1 text-medium-emphasis mb-4">o selecciona desde tu computadora</p>
-              
-              <v-btn 
-                color="primary" 
-                variant="elevated" 
-                size="large"
-                class="upload-btn"
-                @click="openFileDialog"
-              >
+
+              <v-btn color="primary" variant="elevated" size="large" class="upload-btn" @click="openFileDialog">
                 <v-icon start>tabler-folder-open</v-icon>
                 Seleccionar archivo
               </v-btn>
@@ -434,37 +419,23 @@ defineExpose({
           <div v-if="files.length > 0" class="file-list mt-4">
             <div v-for="file in files" :key="file.id" class="file-card">
               <div class="file-icon-section">
-                <v-icon 
-                  size="40" 
-                  :color="file.status === 'error' ? 'error' : 'primary'"
-                >
+                <v-icon size="40" :color="file.status === 'error' ? 'error' : 'primary'">
                   tabler-file-spreadsheet
                 </v-icon>
               </div>
-              
+
               <div class="file-details">
                 <h4 class="text-subtitle-1 font-weight-medium">{{ file.name }}</h4>
                 <p class="text-body-2 text-medium-emphasis">{{ formatFileSize(file.size) }}</p>
-                
-                <v-alert 
-                  v-if="file.errorMessage" 
-                  type="error" 
-                  density="compact" 
-                  class="mt-2"
-                >
+
+                <v-alert v-if="file.errorMessage" type="error" density="compact" class="mt-2">
                   <v-icon start>tabler-alert-triangle</v-icon>
                   {{ file.errorMessage }}
                 </v-alert>
               </div>
-              
+
               <div class="file-actions">
-                <v-btn 
-                  icon="tabler-x" 
-                  size="small" 
-                  variant="text" 
-                  color="error"
-                  @click="removeFile(file.id)" 
-                />
+                <v-btn icon="tabler-x" size="small" variant="text" color="error" @click="removeFile(file.id)" />
               </div>
             </div>
           </div>
@@ -484,7 +455,7 @@ defineExpose({
               <div class="progress-file-icon">
                 <v-icon size="32" color="primary">tabler-file-spreadsheet</v-icon>
               </div>
-              
+
               <div class="progress-details">
                 <h4 class="text-subtitle-1 font-weight-medium">{{ file.name }}</h4>
                 <p class="text-body-2 text-medium-emphasis">{{ formatFileSize(file.size) }}</p>
@@ -495,28 +466,23 @@ defineExpose({
             <div class="progress-section">
               <div class="progress-info d-flex justify-space-between align-center mb-2">
                 <span class="text-body-1 font-weight-medium">{{ getProgressMessage(file.progress) }}</span>
-                <span class="text-h6 font-weight-bold" :class="`text-${getProgressColor(file.progress)}`">{{ file.progress }}%</span>
+                <span class="text-h6 font-weight-bold" :class="`text-${getProgressColor(file.progress)}`">{{
+                  file.progress }}%</span>
               </div>
-              
-              <v-progress-linear 
-                v-if="file.status === 'uploading'" 
-                :model-value="file.progress" 
-                :color="getProgressColor(file.progress)"
-                height="12" 
-                rounded
-                class="progress-bar mb-3"
-                striped
-                :stream="true"
-              />
-              
+
+              <v-progress-linear v-if="file.status === 'uploading'" :model-value="file.progress"
+                :color="getProgressColor(file.progress)" height="12" rounded class="progress-bar mb-3" striped
+                :stream="true" />
+
               <div v-if="file.status === 'completed'" class="status-completed">
                 <v-icon color="success" size="24" class="mr-2">tabler-circle-check</v-icon>
                 <span class="text-success font-weight-medium">¡Archivo cargado exitosamente!</span>
               </div>
-              
+
               <div v-if="file.status === 'error'" class="status-error">
                 <v-icon color="error" size="24" class="mr-2">tabler-alert-circle</v-icon>
-                <span class="text-error font-weight-medium">{{ file.errorMessage || 'Error al cargar el archivo' }}</span>
+                <span class="text-error font-weight-medium">{{ file.errorMessage || 'Error al cargar el archivo'
+                  }}</span>
               </div>
             </div>
           </div>
@@ -525,11 +491,12 @@ defineExpose({
 
       <VDivider />
       <VCardText class="d-flex justify-end gap-3 flex-wrap">
-        <v-btn @click="openModalQuestionCancelUpload" v-if="hasUploadsInProgress" :disabled="!hasUploadsInProgress" :loading="isCancelling">
+        <v-btn @click="openModalQuestionCancelUpload" v-if="hasUploadsInProgress" :disabled="!hasUploadsInProgress"
+          :loading="isCancelling">
           Cancelar Subidas
         </v-btn>
-        <v-btn @click="handleDialogVisible" v-else  >
-           Cancelar 
+        <v-btn @click="handleDialogVisible" v-else>
+          Cancelar
         </v-btn>
 
         <v-btn v-if="currentStep === 'upload'" color="primary" :disabled="files.length === 0" @click="startUpload">
@@ -579,7 +546,7 @@ defineExpose({
   transform: translateY(-2px);
   box-shadow: 0 8px 32px rgba(var(--v-theme-primary), 0.2);
 }
- 
+
 
 .modern-dropzone.dragover {
   border-color: rgb(var(--v-theme-primary));

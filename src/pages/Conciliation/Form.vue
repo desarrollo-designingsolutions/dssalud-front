@@ -140,7 +140,7 @@ const openUploadModal = () => {
 //ModalUploadCsv
 const refModalUploadCsv = ref()
 const openModalUploadCsv = () => {
-  refModalUploadCsv.value.openModal()
+  refModalUploadCsv.value.openModal(form.value.id)
 }
 
 //ModalShowFiles

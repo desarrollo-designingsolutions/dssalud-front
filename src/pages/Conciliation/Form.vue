@@ -90,7 +90,7 @@ const optionsTable = {
     { key: 'origin', title: 'Origen' }, 
     { key: 'modality', title: 'Modalidad' }, 
     { key: 'contract_number', title: 'Número de contacto' }, 
-    { key: 'status_description', title: 'Estado' },
+    { key: 'status_description', title: 'Estado',sortable:false },
     { key: 'sum_accepted_value_ips', title: 'Valor aceptado ips' },
     { key: 'sum_accepted_value_eps', title: 'Valor aceptado eps' },
     { key: 'sum_eps_ratified_value', title: 'Valor ratificado' },

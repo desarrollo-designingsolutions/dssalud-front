@@ -114,7 +114,7 @@ const startEchoChannel = (data: any) => {
     stopEchoChannel(); // Limpia los eventos específicos antes de volver a suscribirse
   }
 
-  channel = window.Echo.channel(`filing.${authenticationStore.user.id}`);
+  channel = window.Echo.channel(`filing.${data.id}`);
   channel.listen('.FilingFinishProcessJob', (event: any) => {
     setTimeout(() => {
       if (refLoading.value) {

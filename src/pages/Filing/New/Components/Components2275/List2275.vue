@@ -109,11 +109,10 @@ const finishFiling = async () => {
 }
 const responseFinishFiling = async () => {
   loading.finishFiling = true
-  const { data, response } = await useAxios(`/filing/changeStatusFilingInvoicePreRadicated/${filing_id}`).get({
-    params:{
-      user_id: authenticationStore.user.id,
-      company_id: authenticationStore.company.id,
-    }
+   const { data, response } = await useAxios(`/filing/changeStatusFilingInvoicePreRadicated`).post({
+    filing_id: filing_id,
+    user_id: authenticationStore.user.id,
+    company_id: authenticationStore.company.id,
   })
   if (response.status==200 && data) {
     refModalQuestionResponseFinishFiling.value.componentData.isDialogVisible = true

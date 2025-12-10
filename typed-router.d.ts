@@ -91,6 +91,7 @@ declare module 'vue-router/auto-routes' {
     'InvoiceAudit-List': RouteRecordInfo<'InvoiceAudit-List', '/InvoiceAudit/List', Record<never, never>, Record<never, never>>,
     'ReconciliationGroup-List': RouteRecordInfo<'ReconciliationGroup-List', '/ReconciliationGroup/List', Record<never, never>, Record<never, never>>,
     'ReconciliationGroup-Form': RouteRecordInfo<'ReconciliationGroup-Form', 'reconciliationGroup-form/:action/:id?', Record<never, never>, Record<never, never>>,
+    'SaludIA-List': RouteRecordInfo<'SaludIA-List', '/SaludIA/List', Record<never, never>, Record<never, never>>,
     'ViewEventConciliationResponse': RouteRecordInfo<'ViewEventConciliationResponse', '/ViewEventConciliationResponse/:schedule_id', Record<never, never>, Record<never, never>>,
     'schedule-components-agenda-conciliation': RouteRecordInfo<'schedule-components-agenda-conciliation', '/Schedule/Components/AgendaConciliation', Record<never, never>, Record<never, never>>,
     'schedule-components-modal-form-conciliation': RouteRecordInfo<'schedule-components-modal-form-conciliation', '/Schedule/Components/ModalFormConciliation', Record<never, never>, Record<never, never>>,

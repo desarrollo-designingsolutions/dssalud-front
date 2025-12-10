@@ -13,6 +13,7 @@ const emit = defineEmits(["execute"])
 const titleModal = ref<string>("Crear usuario")
 const isDialogVisible = ref<boolean>(false)
 const disabledFiledsView = ref<boolean>(false)
+const third_arrayInfo = ref<Array<object>>([])
 
 const isLoading = ref<boolean>(false)
 
@@ -26,6 +27,7 @@ const form = ref({
   role_id: null as null | string,
   company_id: null as null | string,
   third_id: null as null | string,
+  thirds_id: null as null | string,
 })
 
 const handleClearForm = () => {
@@ -73,6 +75,10 @@ const fetchDataForm = async () => {
 
     if (data.value.form) {
       form.value = data.value.form
+    }
+
+    if (data.value.third_arrayInfo) {
+      third_arrayInfo.value = data.value.third_arrayInfo
     }
   }
 }
@@ -126,6 +132,20 @@ const showThirdField = computed(() => {
   if (!selectedRole) return false;
   return selectedRole.type.includes("ROLE_TYPE_001");
 });
+
+const showUserThirdsField = computed(() => {
+  const selectedRole = roles.value.find(role => role.value === form.value.role_id);
+  if (!selectedRole) return false;
+  return selectedRole.type.includes("ROLE_TYPE_002");
+});
+
+const clearRole = () => {
+  console.log("clearRole")
+  errorsBack.value.role_id = ''
+
+  form.value.third_id = null
+  form.value.thirds_id = null
+}
 </script>
 
 <template>
@@ -171,14 +191,21 @@ const showThirdField = computed(() => {
               </VCol>
               <VCol cols="12">
                 <AppSelect :requiredField="true" :items="roles" label="Rol" :rules="[requiredValidator]"
-                  v-model="form.role_id" :error-messages="errorsBack.role_id" clearable @input="errorsBack.role_id = ''"
+                  v-model="form.role_id" :error-messages="errorsBack.role_id" clearable @update:modelValue="clearRole()"
                   :disabled="disabledFiledsView" />
               </VCol>
               <VCol cols="12" v-if="showThirdField">
                 <AppSelectRemote v-model="form.third_id" url="selectInfiniteThird" arrayInfo="third" label="Terceros"
                   :params="{ company_id: company?.id }" :requiredField="true"
                   :rules="[showThirdField ? requiredValidator : null]" :error-messages="errorsBack.third_id" clearable
-                  :disabled="disabledFiledsView" />
+                  :disabled="disabledFiledsView" :itemsData="third_arrayInfo" :firstFetch="false" />
+              </VCol>
+              
+              <VCol cols="12" v-if="showUserThirdsField">
+                <AppSelectRemote v-model="form.thirds_id" url="selectInfiniteThird" arrayInfo="third" label="Terceros"
+                  :params="{ company_id: company?.id }" :requiredField="true" multiple
+                  :rules="[showUserThirdsField ? requiredValidator : null]" :error-messages="errorsBack.thirds_id" clearable
+                  :disabled="disabledFiledsView" :itemsData="third_arrayInfo" :firstFetch="false" />
               </VCol>
               <!-- <VCol cols="12" v-if="user.role_id == ROLE_SUPERADMIN_UUID">
                 <AppSelect :requiredField="true" :items="companies" label="Compañia" :rules="[requiredValidator]"

@@ -39,6 +39,8 @@ declare module 'vue-router/auto-routes' {
     'conciliation-components-modal-upload-csv': RouteRecordInfo<'conciliation-components-modal-upload-csv', '/Conciliation/Components/ModalUploadCsv', Record<never, never>, Record<never, never>>,
     'Conciliation-Form': RouteRecordInfo<'Conciliation-Form', 'conciliation-form/:action/:id?', Record<never, never>, Record<never, never>>,
     'Conciliation-List': RouteRecordInfo<'Conciliation-List', '/Conciliation/List', Record<never, never>, Record<never, never>>,
+    'contract-components-modal-form': RouteRecordInfo<'contract-components-modal-form', '/Contract/Components/ModalForm', Record<never, never>, Record<never, never>>,
+    'Contract-List': RouteRecordInfo<'Contract-List', '/Contract/List', Record<never, never>, Record<never, never>>,
     'Filing-New-ListUsers': RouteRecordInfo<'Filing-New-ListUsers', 'Filing/New/ListUsers/:id/:invoice_id', Record<never, never>, Record<never, never>>,
     'Filing-New-ListUserServicesView2275': RouteRecordInfo<'Filing-New-ListUserServicesView2275', 'Filing/New/ListUserServicesView2275/:id/:numFactura/:numDocumentoIdentificacion', Record<never, never>, Record<never, never>>,
     'filing-new-components-components2275-list2275': RouteRecordInfo<'filing-new-components-components2275-list2275', '/Filing/New/Components/Components2275/List2275', Record<never, never>, Record<never, never>>,

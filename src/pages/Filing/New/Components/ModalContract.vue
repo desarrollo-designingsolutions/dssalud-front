@@ -8,16 +8,20 @@ const errorsBack = ref<IErrorsBack>({});
 const refForm = ref<VForm>();
 const authenticationStore = useAuthenticationStore();
 
+const { company, user } = storeToRefs(authenticationStore)
+
 const emits = defineEmits(["execute"]);
 
 const titleModal = ref<string>("Tipo de contrato")
 const isDialogVisible = ref<boolean>(false)
 const disabledFiledsView = ref<boolean>(false)
 const isLoading = ref<boolean>(false)
+const refSelectContract = ref();
 
 const form = ref({
   filing_id: null as null | string,
   type: null as null | string,
+  third_id: null as null | string,
   contract_id: null as null | string,
 })
 
@@ -60,6 +64,15 @@ const submitForm = async () => {
   }
 }
 
+const loadItemsContract = (event: any) => {
+  form.value.contract_id = null
+  if (!event?.value) {
+    refSelectContract.value.items = []
+  } else {
+    refSelectContract.value.reloadItems({ page: 1, company_id: company.value?.id, third_id: event?.value })
+  }
+}
+
 defineExpose({
   openModal,
   disabledFiledsView,
@@ -81,8 +94,21 @@ defineExpose({
 
         <VCardText>
           <VForm ref="refForm" @submit.prevent="() => { }">
-            <AppSelectRemote label="Seleccionar contrato"   clearable url="/selectInfiniteContract" array-info="contract" v-model="form.contract_id"
-               />
+            <VRow>
+              <VCol cols="12">
+                <AppSelectRemote v-model="form.third_id" url="selectInfiniteThird" arrayInfo="third" label="Terceros"
+                  :params="{ company_id: company?.id, user_id: user?.id }" :requiredField="true"
+                  :rules="[requiredValidator]" :error-messages="errorsBack.thirds_id" clearable
+                  :disabled="disabledFiledsView" @update:modelValue="loadItemsContract"
+                  @click:clear="loadItemsContract(null)" />
+              </VCol>
+
+              <VCol cols="12">
+                <AppSelectRemote ref="refSelectContract" label="Seleccionar contrato" clearable
+                  url="/selectInfiniteContract" array-info="contract" v-model="form.contract_id" :requiredField="true"
+                  :rules="[requiredValidator]" :error-messages="errorsBack.contract_id" :firstFetch="false" />
+              </VCol>
+            </VRow>
           </VForm>
         </VCardText>
 
@@ -95,7 +121,5 @@ defineExpose({
 
       </VCard>
     </VDialog>
-
-
   </div>
 </template>

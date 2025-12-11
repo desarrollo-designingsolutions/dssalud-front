@@ -140,7 +140,6 @@ const showUserThirdsField = computed(() => {
 });
 
 const clearRole = () => {
-  console.log("clearRole")
   errorsBack.value.role_id = ''
 
   form.value.third_id = null

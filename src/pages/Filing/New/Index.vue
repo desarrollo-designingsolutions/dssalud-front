@@ -36,6 +36,7 @@ const optionsTable = {
   url: "/filing/paginate",
   paramsGlobal: {
     company_id: authenticationStore.company.id,
+    user_id: authenticationStore.user.id,
   },
   headers: [
     { key: 'contract_name', title: 'Contrato' },

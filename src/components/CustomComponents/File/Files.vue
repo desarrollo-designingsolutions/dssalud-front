@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import ModalFileForm from "@/components/File/ModalFileForm.vue";
-import ModalQuestion from "@/components/ModalQuestion.vue";
+import ModalFileForm from "@/components/CustomComponents/File/ModalFileForm.vue";
+import ModalQuestion from "@/components/CustomComponents/ModalQuestion.vue";
 
 const { toast } = useToast();
 const { model, id, disabled, maxFiles } = defineProps({

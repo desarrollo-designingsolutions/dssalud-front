@@ -209,7 +209,7 @@ window.Echo.channel(`filing.${filing_id}`)
       <VCardTitle class="d-flex justify-space-between">
         <span>
           Lista de Facturas
-        </span>
+        </span> 
 
         <div class="d-flex justify-end gap-3 flex-wrap ">
           <ProgressCircularChannel :channel="'filingSupport.' + filing_id" tooltipText="Subiendo soportes masivos" />

@@ -74,6 +74,7 @@ declare module 'vue-router/auto-routes' {
     'filing-new-components-modal-xml-masive-files': RouteRecordInfo<'filing-new-components-modal-xml-masive-files', '/Filing/New/Components/ModalXmlMasiveFiles', Record<never, never>, Record<never, never>>,
     'Filing-New-List': RouteRecordInfo<'Filing-New-List', 'Filing/New/List/:type/:id', Record<never, never>, Record<never, never>>,
     'Filing-New-Index': RouteRecordInfo<'Filing-New-Index', '/Filing/New/Index', Record<never, never>, Record<never, never>>,
+    'ProviderInvoices-List': RouteRecordInfo<'ProviderInvoices-List', 'providerInvoicesList', Record<never, never>, Record<never, never>>,
     'glosa-components-list': RouteRecordInfo<'glosa-components-list', '/Glosa/Components/List', Record<never, never>, Record<never, never>>,
     'glosa-components-modal-form': RouteRecordInfo<'glosa-components-modal-form', '/Glosa/Components/ModalForm', Record<never, never>, Record<never, never>>,
     'glosa-components-modal-form-masive': RouteRecordInfo<'glosa-components-modal-form-masive', '/Glosa/Components/ModalFormMasive', Record<never, never>, Record<never, never>>,

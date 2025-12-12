@@ -42,6 +42,7 @@ const patient_id = route.params.patient_id;
 const isLoading = ref<boolean>(false)
 const isLoadingExcelList = ref<boolean>(false)
 const isLoadingSuccessFinalizedAudit = ref<boolean>(false)
+const isLoadingSuccessReturnAudit = ref<boolean>(false)
 
 //FILTER
 const optionsFilter = ref({
@@ -74,7 +75,7 @@ const fetchData = async () => {
     value_approved.value = data.data.value_approved
     assignment.value = data.assignment
 
-    if (assignment.value && assignment.value.status == 'ASSIGNMENT_EST_003') {
+    if (assignment.value && (assignment.value.status == 'ASSIGNMENT_EST_003' || assignment.value.status == 'ASSIGNMENT_EST_004')) {
       showBtnsView.value = false
     } else {
       showBtnsView.value = true
@@ -223,11 +224,42 @@ const successFinalizedAudit = async () => {
   }
 }
 
+//ModalQuestionReturnt
+const refModalQuestionReturn = ref()
+
+const openModalQuestionReturn = () => {
+  if (value_glosa.value == invoiceAudit.value.total_value) {
+    if (refModalQuestionReturn.value) {
+      refModalQuestionReturn.value.componentData.isDialogVisible = true;
+      refModalQuestionReturn.value.componentData.btnSuccessText = 'Si';
+      refModalQuestionReturn.value.componentData.btnCancelText = 'No';
+      refModalQuestionReturn.value.componentData.title = '¿Esta seguro que deseea hacer devolución de la factura?';
+    }
+  } else {
+    toast("La factura debe estar totalmente glosada para hacer la devolucion", "", "info")
+    return
+  }
+
+}
+
+const successReturnAudit = async () => {
+  isLoadingSuccessReturnAudit.value = true;
+  const { data, response } = await useAxios("/invoiceAudit/successReturnAudit").post({
+    assignments_ids: [assignment.value.id],
+  })
+  isLoadingSuccessReturnAudit.value = false;
+
+  if (response.status == 200 && data && data.code == 200) {
+    showBtnsView.value = false
+  }
+}
+
 const isLoadingBtn = computed(() => {
 
   let loading = [
     isLoadingExcel.value,
     isLoadingSuccessFinalizedAudit.value,
+    isLoadingSuccessReturnAudit.value,
     isLoadingExcelList.value,
   ]
 
@@ -414,6 +446,13 @@ const isLoadingBtn = computed(() => {
                     <span>Descargar</span>
                   </VListItem>
 
+                  <VListItem v-if="showBtnsView" @click="openModalQuestionReturn()">
+                    <template #prepend>
+                      <VIcon start icon="tabler-file-download" />
+                    </template>
+                    <span>Devolución</span>
+                  </VListItem>
+
                   <VListItem v-if="showBtnsView" @click="openModalQuestion()">
                     <template #prepend>
                       <VIcon start icon="tabler-file-download" />
@@ -467,5 +506,7 @@ const isLoadingBtn = computed(() => {
     <ModalErrorsGlosas ref="refModalErrorsGlosas" />
 
     <ModalQuestion ref="refModalQuestion" @success="successFinalizedAudit" />
+
+    <ModalQuestion ref="refModalQuestionReturn" @success="successReturnAudit" />
   </div>
 </template>

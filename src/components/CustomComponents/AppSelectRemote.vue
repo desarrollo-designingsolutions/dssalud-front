@@ -67,6 +67,7 @@ const hasMore = ref(true);
 const error = ref('');
 const isSearching = ref(false); // Nueva variable para controlar si estamos en modo búsqueda
 const fetching = ref(false);
+const paramsGlobal = ref({});
 
 // Debounce para la búsqueda
 let searchTimeout: ReturnType<typeof setTimeout>;
@@ -90,7 +91,7 @@ const loadItems = async (newSearch = false) => {
     const { data } = await useAxios(props.url).post({
       [props.searchParam]: search.value,
       page: page.value,
-      ...props.params,
+      ...paramsGlobal.value,
     })
 
     const arrayInfo = props.arrayInfo + "_arrayInfo";
@@ -151,6 +152,10 @@ onMounted(() => {
     return;
   }
 
+  if (props.params) {
+    paramsGlobal.value = props.params;
+  }
+
   // Solo hacemos la petición si firstFetch es true
   if (props.firstFetch) {
     loadItems();
@@ -184,6 +189,17 @@ const noDataMessage = computed(() => {
     ? 'Escribe algo para buscar...'
     : `No se encontraron resultados para "<strong>${search.value}</strong>".`;
 });
+
+const reloadItems = async (params = {}) => {
+  items.value = [];
+  paramsGlobal.value = params;
+  loadItems();
+}
+
+defineExpose({
+  items,
+  reloadItems
+})
 </script>
 
 <template>
